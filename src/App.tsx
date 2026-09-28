@@ -12,6 +12,7 @@ import { Faq } from './components/Faq';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { LensSelectorModal } from './components/LensSelectorModal';
+import { trackWhatsAppLead, trackProductView } from './firebase';
 
 // Configuração central do número de atendimento WhatsApp da Óticas Aion
 export const WHATSAPP_PHONE_NUMBER = '5511999999999';
@@ -24,7 +25,8 @@ export const App: React.FC = () => {
   const [selectedProductForLenses, setSelectedProductForLenses] = useState<Product | null>(null);
   const [isLensModalOpen, setIsLensModalOpen] = useState(false);
 
-  const handleOpenWhatsApp = (message?: string) => {
+  const handleOpenWhatsApp = (message?: string, context: string = 'geral') => {
+    trackWhatsAppLead(context, { messagePreview: message?.substring(0, 50) });
     const text =
       message ||
       'Olá! Gostaria de consultar o catálogo e tirar dúvidas sobre óculos de grau completo na Óticas Aion.';
@@ -33,6 +35,7 @@ export const App: React.FC = () => {
   };
 
   const handleOpenProductDetail = (product: Product) => {
+    trackProductView(product.id, product.name, product.currentPrice);
     setActiveProductDetail(product);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

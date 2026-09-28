@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Product, LensOption } from '../types';
 import { LENS_OPTIONS } from '../data/lenses';
 import { X, Check, ShieldCheck, Sparkles, MessageCircle, HelpCircle, Layers } from 'lucide-react';
+import { trackBeginCheckout } from '../firebase';
 
 interface LensSelectorModalProps {
   product: Product | null;
@@ -26,6 +27,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
   const pixPrice = totalPrice * (1 - product.pixDiscountPercent / 100);
 
   const handleWhatsAppCheckout = () => {
+    trackBeginCheckout(product.name, currentLens.name, pixPrice);
     const colorName = product.colors[selectedColor]?.name || 'Padrão';
     const message = `*Olá, Óticas Aion!* 👋\n\nGostaria de encomendar este óculos de grau completo:\n\n👓 *Armação:* ${product.name}\n🎨 *Cor escolhida:* ${colorName}\n🔬 *Lente escolhida:* ${currentLens.name} (${currentLens.subtitle})\n💰 *Valor estimado:* R$ ${pixPrice.toFixed(2)} à vista no PIX (ou R$ ${totalPrice.toFixed(2)} parcelado)\n\nTenho minha receita em mãos e gostaria de enviar a foto para conferência técnica e medição da DNP. Como procedemos?`;
     onConfirmWhatsApp(message);
