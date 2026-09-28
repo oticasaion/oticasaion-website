@@ -1,0 +1,60 @@
+import { LensOption } from '../types';
+
+export const LENS_OPTIONS: LensOption[] = [
+  {
+    id: 'only-frame',
+    name: 'Somente a Armação (Sem Grau)',
+    subtitle: 'Vem com lentes de acrílico padrão de demonstração',
+    material: 'Lentes padrão sem correção',
+    features: ['Para colocar grau na sua ótica de confiança', 'Acompanha estojo e flanela Aion'],
+    recommendedDegrees: 'Sem graduação',
+    price: 0,
+    thicknessBadge: 'Sem grau',
+  },
+  {
+    id: 'fina-poly',
+    name: 'Lente Anti-Reflexo Fina',
+    subtitle: 'Policarbonato 1.59',
+    material: 'Policarbonato 1.59 de alta resistência',
+    features: [
+      'Tratamento Anti-Reflexo Premium',
+      'Camada Protetora Anti-Risco',
+      'Proteção total UV400 contra raios nocivos',
+      'Altíssima resistência a impactos',
+    ],
+    recommendedDegrees: 'Recomendada para graus de até -4.00 ou +3.00',
+    price: 209,
+    thicknessBadge: 'Mais Resistente',
+    highlight: true,
+  },
+  {
+    id: 'super-fina-167',
+    name: 'Lente Anti-Reflexo Super Fina',
+    subtitle: 'Resina 1.67 Estendido',
+    material: 'Resina de Alto Índice 1.67',
+    features: [
+      'Até 30% mais fina e leve que lentes convencionais',
+      'Anti-Reflexo Cristalino + Anti-Risco Duplo',
+      'Proteção UV400 + Camada Hidrorrepelente',
+      'Elimina o efeito de "fundo de garrafa"',
+    ],
+    recommendedDegrees: 'Recomendada para graus moderados a altos (de -4.00 a -7.00)',
+    price: 369,
+    thicknessBadge: 'Mais Leve & Fina',
+  },
+  {
+    id: 'ultra-fina-174',
+    name: 'Lente Anti-Reflexo Ultra Fina',
+    subtitle: 'Resina 1.74 Surfaçada',
+    material: 'Resina de Índice Máximo 1.74',
+    features: [
+      'A lente mais fina e estética do mercado',
+      'Até 50% mais fina que lentes comuns',
+      'Anti-Reflexo Avançado com corte de reflexos intensos',
+      'Acabamento estético perfeito mesmo em graus altos',
+    ],
+    recommendedDegrees: 'Recomendada para altos graus (acima de -6.00)',
+    price: 1389,
+    thicknessBadge: 'A Lente Mais Fina',
+  },
+];
