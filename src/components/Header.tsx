@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo';
 import { MessageCircle, Menu, X, ShieldCheck, Truck, Sparkles, CheckCircle2 } from 'lucide-react';
 
@@ -9,44 +9,70 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) setMobileMenuOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Prevent background scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
-    { label: 'Catálogo', href: '#catalogo' },
+    { label: 'Catálogo de Armações', href: '#catalogo' },
     { label: 'Como Funciona', href: '#como-funciona' },
-    { label: 'Lentes Oftálmicas', href: '#lentes' },
     { label: 'Por Que a Aion?', href: '#comparativo' },
-    { label: 'Depoimentos', href: '#depoimentos' },
-    { label: 'Dúvidas', href: '#faq' },
+    { label: 'Depoimentos de Clientes', href: '#depoimentos' },
+    { label: 'Perguntas Frequentes', href: '#faq' },
   ];
 
   return (
     <header className="sticky top-0 z-40 w-full shadow-md">
       {/* Top Notification Announcement Bar */}
-      <div className="bg-[#081a14] text-[#e7d7b5] text-xs font-medium py-2 px-4 border-b border-[#c8a25a]/20">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto whitespace-nowrap gap-6 scrollbar-none">
-          <div className="flex items-center gap-2">
+      <div className="bg-[#081a14] text-[#e7d7b5] text-[11px] sm:text-xs font-medium py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#c8a25a]/20">
+        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto whitespace-nowrap gap-4 sm:gap-6 scrollbar-none">
+          <div className="flex items-center gap-1.5 shrink-0">
             <Truck className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span>Envio para todo o Brasil • <strong>Entrega em até 7 dias úteis</strong></span>
+            <span>Envio Nacional • <strong>Entrega em até 7 dias</strong></span>
           </div>
-          <div className="hidden md:flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span>Até <strong>50% mais econômico</strong> que óticas físicas</span>
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <ShieldCheck className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span><strong>7 Dias de Garantia</strong> de Adaptação</span>
+            <span><strong>7 Dias de Garantia</strong></span>
           </div>
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-[#c8a25a]" />
+            <span>Até <strong>50% mais econômico</strong></span>
+          </div>
+          <div className="hidden lg:flex items-center gap-1.5 shrink-0">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>5% de Desconto no PIX</span>
+            <span>5% OFF no PIX</span>
           </div>
         </div>
       </div>
 
       {/* Main Navbar */}
       <div className="bg-[#0c251d] text-white backdrop-blur-md bg-opacity-95 border-b border-[#c8a25a]/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <a href="#" className="flex items-center">
-            <Logo variant="light" size="md" />
+            {/* Logo adapts size */}
+            <div className="block sm:hidden">
+              <Logo variant="light" size="sm" showSlogan={false} />
+            </div>
+            <div className="hidden sm:block">
+              <Logo variant="light" size="md" />
+            </div>
           </a>
 
           {/* Desktop Nav Links */}
@@ -62,23 +88,25 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
             ))}
           </nav>
 
-          {/* Action Button */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Action Button & Mobile icons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick WhatsApp button always accessible */}
             <button
-              onClick={() => onWhatsAppClick('Olá! Gostaria de consultar armações e tirar dúvidas sobre óculos de grau na Óticas Aion.')}
-              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg shadow-[#25D366]/20 transition-all hover:scale-105 active:scale-95"
+              onClick={() =>
+                onWhatsAppClick('Olá! Gostaria de consultar armações e tirar dúvidas sobre óculos de grau na Óticas Aion.')
+              }
+              className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-md transition-all active:scale-95"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
-              <span>Enviar Receita</span>
+              <span className="hidden xs:inline">Enviar Receita</span>
+              <span className="xs:hidden">WhatsApp</span>
             </button>
-          </div>
 
-          {/* Mobile menu trigger */}
-          <div className="lg:hidden flex items-center gap-2">
+            {/* Mobile menu trigger button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-lg transition"
-              aria-label="Menu"
+              className="lg:hidden p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-xl transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -86,33 +114,40 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-4">
-          <div className="flex flex-col space-y-3">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-stone-200 hover:text-[#c8a25a] text-base font-medium py-2 border-b border-white/5"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+        <div className="fixed inset-0 top-[100px] z-50 lg:hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-6 max-h-[calc(100vh-100px)] overflow-y-auto">
+            <nav className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 active:bg-white/5 px-2 rounded-lg flex items-center justify-between"
+                >
+                  <span>{link.label}</span>
+                  <span className="text-stone-500 text-xs">→</span>
+                </a>
+              ))}
+            </nav>
 
-          <div className="pt-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onWhatsAppClick('Olá! Gostaria de enviar minha receita e ver as armações disponíveis.');
-              }}
-              className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold py-3 px-4 rounded-xl shadow-md"
-            >
-              <MessageCircle className="w-5 h-5 fill-white" />
-              <span>Chamar no WhatsApp com Receita</span>
-            </button>
+            <div className="pt-2 space-y-3">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onWhatsAppClick('Olá! Gostaria de enviar minha receita e ver as armações disponíveis.');
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg active:scale-95 text-sm"
+              >
+                <MessageCircle className="w-5 h-5 fill-white" />
+                <span>Chamar no WhatsApp com Receita</span>
+              </button>
+
+              <div className="text-center text-xs text-stone-400 pt-2">
+                Atendimento humanizado de Segunda a Sábado
+              </div>
+            </div>
           </div>
         </div>
       )}

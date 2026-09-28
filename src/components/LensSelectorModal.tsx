@@ -34,21 +34,21 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden bg-black/70 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-3xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden h-[92vh] sm:h-auto sm:max-h-[90vh] flex flex-col">
         
         {/* Modal Header */}
-        <div className="bg-[#0c251d] text-white p-5 sm:px-8 sm:py-6 flex items-center justify-between border-b border-[#c8a25a]/30">
+        <div className="sticky top-0 z-20 bg-[#0c251d] text-white p-4 sm:px-8 sm:py-5 flex items-center justify-between border-b border-[#c8a25a]/30 shrink-0">
           <div>
-            <span className="text-xs uppercase tracking-widest text-[#c8a25a] font-semibold">Configurador de Grau</span>
-            <h3 className="text-xl sm:text-2xl font-serif-brand font-bold">{product.name}</h3>
+            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#c8a25a] font-semibold">Configurador de Grau</span>
+            <h3 className="text-base sm:text-2xl font-serif-brand font-bold truncate max-w-[240px] xs:max-w-none">{product.name}</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-stone-300 hover:text-white hover:bg-white/10 rounded-full transition"
+            className="p-1.5 sm:p-2 text-stone-300 hover:text-white hover:bg-white/10 rounded-full transition"
             aria-label="Fechar"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
@@ -204,27 +204,29 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
 
         </div>
 
-        {/* Modal Footer / Checkout Bar */}
-        <div className="bg-stone-50 border-t border-stone-200 p-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="w-full sm:w-auto text-center sm:text-left">
-            <span className="text-xs text-stone-500 block">Total do Pedido (Armação + Lentes):</span>
-            <div className="flex items-baseline justify-center sm:justify-start gap-2">
-              <span className="text-2xl sm:text-3xl font-extrabold text-[#0c251d]">
-                R$ {pixPrice.toFixed(2)}
-              </span>
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                no PIX (5% OFF)
-              </span>
+        {/* Modal Footer / Checkout Bar - Sticky at bottom */}
+        <div className="sticky bottom-0 z-20 bg-stone-50 border-t border-stone-200 p-4 sm:px-8 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg shrink-0 pb-safe">
+          <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start sm:flex-col gap-2">
+            <div>
+              <span className="text-[10px] sm:text-xs text-stone-500 block">Total do Pedido:</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-3xl font-extrabold text-[#0c251d]">
+                  R$ {pixPrice.toFixed(2)}
+                </span>
+                <span className="text-[10px] sm:text-xs font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                  no PIX
+                </span>
+              </div>
             </div>
-            <span className="text-xs text-stone-500">ou R$ {totalPrice.toFixed(2)} em até 12x no cartão</span>
+            <span className="text-[10px] sm:text-xs text-stone-400 text-right sm:text-left">ou até 12x no cartão</span>
           </div>
 
-          <div className="w-full sm:w-auto flex items-center gap-3">
+          <div className="w-full sm:w-auto">
             <button
               onClick={handleWhatsAppCheckout}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-base px-8 py-4 rounded-xl shadow-xl shadow-[#25D366]/25 transition-all hover:scale-105 active:scale-95"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl shadow-xl shadow-[#25D366]/25 active:scale-95 text-center"
             >
-              <MessageCircle className="w-5 h-5 fill-white" />
+              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white shrink-0" />
               <span>Concluir no WhatsApp com Receita</span>
             </button>
           </div>

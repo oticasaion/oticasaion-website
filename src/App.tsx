@@ -98,7 +98,10 @@ export const App: React.FC = () => {
       <Footer onWhatsAppClick={handleOpenWhatsApp} />
 
       {/* Floating WhatsApp Action Button */}
-      <WhatsAppButton onClick={handleOpenWhatsApp} />
+      <WhatsAppButton
+        onClick={handleOpenWhatsApp}
+        isDetailView={!!activeProductDetail}
+      />
 
       {/* Lens Selection & WhatsApp Checkout Modal */}
       <LensSelectorModal

@@ -75,36 +75,36 @@ export const Catalog: React.FC<CatalogProps> = ({
     selectedPriceRange !== 'todos';
 
   return (
-    <section id="catalogo" className="py-16 sm:py-20 bg-[#faf8f5] text-stone-900 border-b border-stone-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="catalogo" className="py-12 sm:py-20 bg-[#faf8f5] text-stone-900 border-b border-stone-200">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#0c251d]/10 text-[#0c251d] text-xs font-bold tracking-wider uppercase mb-3">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0c251d]/10 text-[#0c251d] text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-2 sm:mb-3">
             <Sparkles className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span>Coleção Completa de Armações</span>
+            <span>Coleção de Armações</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand">
             Óculos de Grau Completo
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-stone-600">
-            Armações anatômicas para colocar qualquer tipo de grau. Clique no modelo para ver todas as medidas técnicas ou configure as lentes diretamente para fechar no WhatsApp.
+          <p className="mt-2 sm:mt-3 text-xs sm:text-base text-stone-600 px-2">
+            Armações anatômicas com lentes oftálmicas digitais. Toque no modelo para ver fotos e medidas ou monte suas lentes direto no WhatsApp.
           </p>
         </div>
 
         {/* Results Bar (Filter trigger & sorting) */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-4 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+        <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 mb-6 sm:mb-8 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-start">
             <button
-              onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-              className="lg:hidden flex items-center gap-2 bg-[#0c251d] text-[#c8a25a] font-bold text-xs px-4 py-2 rounded-xl"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="lg:hidden flex items-center gap-1.5 bg-[#0c251d] text-[#c8a25a] font-bold text-xs px-3.5 py-2 rounded-xl active:scale-95"
             >
               <Filter className="w-3.5 h-3.5" />
-              <span>Filtros {hasActiveFilters && '• Ativos'}</span>
+              <span>Filtrar {hasActiveFilters && '• (Ativo)'}</span>
             </button>
 
             <span className="text-xs sm:text-sm font-semibold text-stone-600">
-              Mostrando <strong className="text-stone-900">{filteredProducts.length}</strong> modelos disponíveis
+              <strong className="text-stone-900">{filteredProducts.length}</strong> modelos
             </span>
 
             {hasActiveFilters && (
@@ -113,20 +113,20 @@ export const Catalog: React.FC<CatalogProps> = ({
                 className="text-xs font-bold text-rose-600 hover:underline flex items-center gap-1"
               >
                 <X className="w-3 h-3" />
-                <span>Limpar filtros</span>
+                <span>Limpar</span>
               </button>
             )}
           </div>
 
           {/* Sort By Dropdown */}
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end text-xs">
-            <span className="text-stone-500 font-medium">Ordenar por:</span>
+            <span className="text-stone-500 font-medium hidden xs:inline">Ordenar:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-stone-50 border border-stone-300 rounded-xl px-3 py-1.5 font-semibold text-stone-800 focus:outline-none focus:border-[#0c251d]"
+              className="w-full sm:w-auto bg-stone-50 border border-stone-300 rounded-xl px-2.5 py-2 text-xs font-semibold text-stone-800 focus:outline-none focus:border-[#0c251d]"
             >
-              <option value="relevance">Mais Vendidos / Destaques</option>
+              <option value="relevance">Mais Vendidos</option>
               <option value="price-asc">Menor Preço</option>
               <option value="price-desc">Maior Preço</option>
             </select>
@@ -134,14 +134,10 @@ export const Catalog: React.FC<CatalogProps> = ({
         </div>
 
         {/* Layout with Sidebar & Products Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* Left Sidebar Filter (Inspirado no layout de coleção da Euglasses!) */}
-          <aside
-            className={`lg:col-span-3 space-y-6 ${
-              isMobileFilterOpen ? 'block' : 'hidden lg:block'
-            }`}
-          >
+          {/* Desktop Left Sidebar Filter */}
+          <aside className="hidden lg:block lg:col-span-3 space-y-6">
             <div className="bg-white rounded-3xl border border-stone-200 p-6 shadow-sm space-y-6">
               <div className="flex items-center justify-between pb-3 border-b border-stone-100">
                 <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2">
@@ -178,7 +174,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                     >
                       <input
                         type="radio"
-                        name="format"
+                        name="desktop-format"
                         checked={selectedFormat === item.id}
                         onChange={() => setSelectedFormat(item.id)}
                         className="accent-[#0c251d]"
@@ -207,7 +203,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                     >
                       <input
                         type="radio"
-                        name="rimType"
+                        name="desktop-rimType"
                         checked={selectedRimType === item.id}
                         onChange={() => setSelectedRimType(item.id)}
                         className="accent-[#0c251d]"
@@ -262,7 +258,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                     >
                       <input
                         type="radio"
-                        name="priceRange"
+                        name="desktop-priceRange"
                         checked={selectedPriceRange === item.id}
                         onChange={() => setSelectedPriceRange(item.id)}
                         className="accent-[#0c251d]"
@@ -273,7 +269,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                 </div>
               </div>
 
-              {/* Consultor Callout (Inspirado no "Não conseguiu decidir?") */}
+              {/* Consultor Callout */}
               <div className="pt-4 border-t border-stone-100 bg-amber-50/60 rounded-2xl p-4 border border-amber-200/60 text-xs">
                 <strong className="text-amber-950 font-bold block mb-1">
                   Não sabe qual combina com seu rosto?
@@ -283,9 +279,9 @@ export const Catalog: React.FC<CatalogProps> = ({
                 </p>
                 <button
                   onClick={() => onWhatsAppQuickAsk('Ajuda para escolher o modelo ideal')}
-                  className="w-full flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2 px-3 rounded-xl transition"
+                  className="w-full flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2.5 px-3 rounded-xl transition"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 fill-white" />
+                  <MessageCircle className="w-4 h-4 fill-white" />
                   <span>Pedir Ajuda no Zap</span>
                 </button>
               </div>
@@ -293,10 +289,10 @@ export const Catalog: React.FC<CatalogProps> = ({
             </div>
           </aside>
 
-          {/* Right Area: Products Grid */}
+          {/* Right Area: Products Grid - 2 columns on mobile, 3 on desktop */}
           <div className="lg:col-span-9">
             {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-stone-200 p-12 text-center space-y-4">
+              <div className="bg-white rounded-3xl border border-stone-200 p-8 sm:p-12 text-center space-y-4">
                 <p className="text-stone-600 text-sm">
                   Nenhuma armação encontrada com os filtros selecionados.
                 </p>
@@ -308,7 +304,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {filteredProducts.map((product) => {
                   const discount = Math.round(
                     ((product.originalPrice - product.currentPrice) / product.originalPrice) * 100
@@ -317,23 +313,23 @@ export const Catalog: React.FC<CatalogProps> = ({
                   return (
                     <div
                       key={product.id}
-                      className="group bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                      className="group bg-white rounded-2xl sm:rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         {/* Image Preview with Badges */}
                         <div
                           onClick={() => onOpenProductDetail(product)}
-                          className="relative aspect-[4/3] bg-stone-50 cursor-pointer overflow-hidden p-4 flex items-center justify-center"
+                          className="relative aspect-square sm:aspect-[4/3] bg-stone-50 cursor-pointer overflow-hidden p-2 sm:p-4 flex items-center justify-center"
                         >
                           {/* Badges */}
-                          <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
+                          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
                             {product.isBestseller && (
-                              <span className="bg-[#0c251d] text-[#c8a25a] font-bold text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
+                              <span className="bg-[#0c251d] text-[#c8a25a] font-bold text-[9px] sm:text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm">
                                 Destaque
                               </span>
                             )}
                             {discount > 0 && (
-                              <span className="bg-rose-600 text-white font-bold text-[10px] uppercase px-2 py-0.5 rounded-full shadow-sm">
+                              <span className="bg-rose-600 text-white font-bold text-[9px] sm:text-[10px] uppercase px-1.5 sm:px-2 py-0.5 rounded-full shadow-sm">
                                 {discount}% OFF
                               </span>
                             )}
@@ -342,11 +338,12 @@ export const Catalog: React.FC<CatalogProps> = ({
                           <img
                             src={product.images[0]}
                             alt={product.name}
+                            loading="lazy"
                             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                           />
 
-                          {/* Quick view hover action */}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
+                          {/* Quick view hover action on desktop */}
+                          <div className="hidden sm:flex absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2 p-4">
                             <span className="bg-white text-stone-900 font-bold text-xs px-4 py-2 rounded-xl shadow-lg flex items-center gap-1.5">
                               <Eye className="w-3.5 h-3.5 text-[#c8a25a]" />
                               <span>Ver Medidas & Fotos</span>
@@ -355,61 +352,58 @@ export const Catalog: React.FC<CatalogProps> = ({
                         </div>
 
                         {/* Card Content */}
-                        <div className="p-5">
-                          {/* Frete tag as in reference */}
-                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md inline-flex mb-2">
-                            <Truck className="w-3 h-3 text-amber-600" />
-                            <span>Entrega em até 7 dias úteis</span>
+                        <div className="p-3 sm:p-5">
+                          {/* Delivery info */}
+                          <div className="flex items-center gap-1 text-[9px] sm:text-[11px] font-bold text-amber-800 bg-amber-50 px-1.5 sm:px-2 py-0.5 rounded-md inline-flex mb-1.5 sm:mb-2 truncate max-w-full">
+                            <Truck className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-600 shrink-0" />
+                            <span className="truncate">Envio em 7 dias úteis</span>
                           </div>
 
                           <h3
                             onClick={() => onOpenProductDetail(product)}
-                            className="font-bold text-stone-900 text-base group-hover:text-[#0c251d] cursor-pointer transition line-clamp-1"
+                            className="font-bold text-stone-900 text-xs sm:text-base group-hover:text-[#0c251d] cursor-pointer transition line-clamp-1"
                           >
                             {product.name}
                           </h3>
 
-                          <p className="text-xs text-stone-500 mt-0.5 line-clamp-1">
+                          <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5 line-clamp-1">
                             {product.material}
                           </p>
 
                           {/* Color Swatches */}
-                          <div className="flex items-center gap-1.5 mt-2.5">
-                            <span className="text-[11px] text-stone-400 mr-1">Cores:</span>
+                          <div className="flex items-center gap-1 mt-2">
                             {product.colors.map((c) => (
                               <span
                                 key={c.name}
                                 title={c.name}
-                                className="w-3.5 h-3.5 rounded-full border border-black/20"
+                                className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 rounded-full border border-black/20"
                                 style={{ backgroundColor: c.hex }}
                               />
                             ))}
                             {product.colors.length > 2 && (
-                              <span className="text-[10px] text-stone-400 font-medium">
-                                + {product.colors.length - 2}
+                              <span className="text-[9px] sm:text-[10px] text-stone-400 font-medium">
+                                +{product.colors.length - 2}
                               </span>
                             )}
                           </div>
 
                           {/* Rating */}
-                          <div className="flex items-center gap-1 text-xs text-stone-500 mt-2">
-                            <div className="flex items-center text-amber-500">
-                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                            </div>
+                          <div className="flex items-center gap-1 text-[10px] sm:text-xs text-stone-500 mt-1.5">
+                            <Star className="w-3 h-3 fill-amber-400 text-amber-400 shrink-0" />
                             <span className="font-semibold text-stone-700">{product.rating}</span>
-                            <span>({product.reviewsCount} avaliações)</span>
+                            <span className="hidden xs:inline">({product.reviewsCount})</span>
                           </div>
 
                           {/* Price */}
-                          <div className="mt-4 pt-3 border-t border-stone-100">
-                            <span className="text-xs text-stone-400 line-through block">
+                          <div className="mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-stone-100">
+                            <span className="text-[10px] sm:text-xs text-stone-400 line-through block">
                               De R$ {product.originalPrice.toFixed(2)}
                             </span>
-                            <div className="flex items-baseline gap-1.5">
-                              <span className="text-xl font-black text-[#0c251d]">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-base sm:text-xl font-black text-[#0c251d]">
                                 R$ {product.currentPrice.toFixed(2)}
                               </span>
-                              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded">
+                              <span className="text-[9px] sm:text-[10px] font-bold text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded">
                                 no PIX
                               </span>
                             </div>
@@ -418,21 +412,21 @@ export const Catalog: React.FC<CatalogProps> = ({
                       </div>
 
                       {/* Card Buttons */}
-                      <div className="p-5 pt-0 space-y-2">
+                      <div className="p-3 sm:p-5 pt-0 space-y-1.5 sm:space-y-2">
                         <button
                           onClick={() => onOpenLensModal(product)}
-                          className="w-full flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition active:scale-95 uppercase tracking-wide"
+                          className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-extrabold text-[11px] sm:text-xs py-2.5 sm:py-3 px-2 sm:px-4 rounded-xl shadow-md transition active:scale-95 uppercase tracking-tight sm:tracking-wide text-center"
                         >
-                          <span>Comprar com Lentes</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <span>Comprar c/ Grau</span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                         </button>
 
                         <button
                           onClick={() => onOpenProductDetail(product)}
-                          className="w-full flex items-center justify-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs py-2 px-3 rounded-xl transition"
+                          className="w-full flex items-center justify-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-[10px] sm:text-xs py-1.5 sm:py-2 px-2 rounded-xl transition"
                         >
-                          <Eye className="w-3.5 h-3.5 text-stone-500" />
-                          <span>Ver Medidas & Detalhes</span>
+                          <Eye className="w-3 h-3 text-stone-500 shrink-0" />
+                          <span>Medidas & Fotos</span>
                         </button>
                       </div>
                     </div>
@@ -445,6 +439,100 @@ export const Catalog: React.FC<CatalogProps> = ({
         </div>
 
       </div>
+
+      {/* Mobile Filters Drawer / Bottom Sheet */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col justify-end bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <h3 className="font-bold text-stone-900 text-base flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-[#c8a25a]" />
+                <span>Filtrar Modelos</span>
+              </h3>
+              <button
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="p-1.5 rounded-full bg-stone-100 text-stone-600 hover:bg-stone-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Mobile Format Filter */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+                Formato da Armação
+              </label>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[
+                  { id: 'todos', label: 'Todos os formatos' },
+                  { id: 'retangular', label: 'Retangular' },
+                  { id: 'quadrado', label: 'Quadrado' },
+                  { id: 'gatinho', label: 'Gatinho' },
+                  { id: 'oval', label: 'Oval' },
+                  { id: 'redondo', label: 'Redondo' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedFormat(item.id)}
+                    className={`py-2 px-3 rounded-xl font-semibold text-left transition ${
+                      selectedFormat === item.id
+                        ? 'bg-[#0c251d] text-[#c8a25a]'
+                        : 'bg-stone-100 text-stone-700'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Rim Filter */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+                Tipo do Aro
+              </label>
+              <div className="space-y-1.5 text-xs">
+                {[
+                  { id: 'todos', label: 'Todos os aros' },
+                  { id: 'balgriff', label: 'Sem Aro (Balgriff / 3 Peças)' },
+                  { id: 'fechado', label: 'Aro Fechado (Clássico)' },
+                  { id: 'meio-aro', label: 'Meio Aro' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedRimType(item.id)}
+                    className={`w-full py-2 px-3 rounded-xl font-semibold text-left transition ${
+                      selectedRimType === item.id
+                        ? 'bg-[#0c251d] text-[#c8a25a]'
+                        : 'bg-stone-100 text-stone-700'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Actions */}
+            <div className="pt-2 flex items-center gap-3">
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="flex-1 py-3 px-4 rounded-xl border border-stone-300 font-bold text-xs text-stone-700"
+                >
+                  Limpar
+                </button>
+              )}
+              <button
+                onClick={() => setIsMobileFilterOpen(false)}
+                className="flex-1 py-3 px-4 rounded-xl bg-[#0c251d] text-[#c8a25a] font-bold text-xs shadow-md text-center"
+              >
+                Ver {filteredProducts.length} Resultados
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
