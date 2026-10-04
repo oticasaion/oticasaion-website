@@ -17,11 +17,6 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
           
           {/* Left Column: Value Proposition */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#c8a25a]/15 border border-[#c8a25a]/30 text-[#e9d29b] text-[11px] sm:text-xs font-semibold tracking-wide uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-[#c8a25a] shrink-0" />
-              <span>O Carro-Chefe da Aion: Óculos de Grau Completo</span>
-            </div>
-
             <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] font-serif-brand">
               Seu óculos de grau completo sem sair de casa e com{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5e48e] via-[#c8a25a] to-[#e5c77a]">
@@ -86,7 +81,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
               {/* Main Card */}
               <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 bg-[#c8a25a] text-[#0c251d] font-bold text-[10px] sm:text-xs uppercase px-3.5 py-1 rounded-bl-xl tracking-wider shadow">
-                  Carro-Chefe
+                  Mais Vendido
                 </div>
 
                 <div className="pt-2 sm:pt-4 pb-2 text-center">

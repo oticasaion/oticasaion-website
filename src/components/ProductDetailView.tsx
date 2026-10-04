@@ -131,7 +131,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 )}
                 {product.isBestseller && (
                   <span className="bg-[#0c251d] text-[#c8a25a] font-bold text-[10px] sm:text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
-                    Carro-Chefe
+                    Mais Vendido
                   </span>
                 )}
               </div>
@@ -323,13 +323,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <button
                 onClick={() =>
                   onWhatsAppClick(
-                    `Olá! Gostaria de consultar sobre a armação *${product.name}* na cor *${product.colors[selectedColorIndex]?.name}*. Tenho minha receita em mãos!`
+                    `Olá! Gostaria de tirar dúvidas sobre a armação *${product.name}* na cor *${product.colors[selectedColorIndex]?.name}*. Tenho minha receita em mãos!`
                   )
                 }
-                className="w-full flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-2xl shadow-md active:scale-98 text-center"
+                className="w-full flex items-center justify-center gap-2 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 font-semibold text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl transition active:scale-98 text-center"
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                <span>Tirar Dúvida no WhatsApp</span>
+                <MessageCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Dúvidas? Falar com consultor</span>
               </button>
             </div>
 

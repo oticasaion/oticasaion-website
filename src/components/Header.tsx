@@ -90,16 +90,15 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
 
           {/* Action Button & Mobile icons */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick WhatsApp button always accessible */}
+            {/* Quick WhatsApp button on desktop (hidden on mobile to prevent duplicate with floating button) */}
             <button
               onClick={() =>
                 onWhatsAppClick('Olá! Gostaria de consultar armações e tirar dúvidas sobre óculos de grau na Óticas Aion.')
               }
-              className="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-md transition-all active:scale-95"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-md transition-all active:scale-95"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
-              <span className="hidden xs:inline">Enviar Receita</span>
-              <span className="xs:hidden">WhatsApp</span>
+              <span>Enviar Receita</span>
             </button>
 
             {/* Mobile menu trigger button */}
