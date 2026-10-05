@@ -73,7 +73,7 @@ export const Logo: React.FC<LogoProps> = ({
       {/* Brand Name & Slogan */}
       <div className="flex flex-col leading-none">
         <span
-          className={`font-serif-brand font-bold tracking-[0.2em] ${titleSizes[size]} ${
+          className={`font-serif-brand font-extrabold tracking-[0.16em] ${titleSizes[size]} ${
             isDark ? 'text-stone-900' : 'text-[#f5f1e8]'
           }`}
         >
@@ -81,7 +81,7 @@ export const Logo: React.FC<LogoProps> = ({
         </span>
         {showSlogan && (
           <span
-            className={`font-sans-brand uppercase tracking-[0.25em] font-medium mt-1 ${sloganSizes[size]} ${
+            className={`font-sans-brand uppercase tracking-[0.22em] font-medium mt-1 ${sloganSizes[size]} ${
               isDark ? 'text-[#0C251D]/70' : 'text-[#c8a25a]'
             }`}
           >
