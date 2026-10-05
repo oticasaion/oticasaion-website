@@ -20,6 +20,7 @@ import {
 
 interface ProductDetailViewProps {
   product: Product;
+  allProducts?: Product[];
   onBackToCatalog: () => void;
   onSelectProduct: (product: Product) => void;
   onOpenLensModal: (product: Product) => void;
@@ -28,6 +29,7 @@ interface ProductDetailViewProps {
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   product,
+  allProducts = PRODUCTS,
   onBackToCatalog,
   onSelectProduct,
   onOpenLensModal,
@@ -50,11 +52,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     ((product.originalPrice - product.currentPrice) / product.originalPrice) * 100
   );
 
-  const currentIndex = PRODUCTS.findIndex((p) => p.id === product.id);
-  const prevProduct = PRODUCTS[(currentIndex - 1 + PRODUCTS.length) % PRODUCTS.length];
-  const nextProduct = PRODUCTS[(currentIndex + 1) % PRODUCTS.length];
+  const productList = allProducts && allProducts.length > 0 ? allProducts : PRODUCTS;
+  const currentIndex = productList.findIndex((p) => p.id === product.id);
+  const safeIndex = currentIndex >= 0 ? currentIndex : 0;
+  const prevProduct = productList[(safeIndex - 1 + productList.length) % productList.length];
+  const nextProduct = productList[(safeIndex + 1) % productList.length];
 
-  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
+  const relatedProducts = productList.filter((p) => p.id !== product.id).slice(0, 4);
 
   const handleCalculateShipping = (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,14 +314,28 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </div>
 
-            {/* Actions */}
+            {/* Actions (Direcionado para WhatsApp - Sem compra no site) */}
             <div className="space-y-2.5 pt-1">
               <button
                 onClick={() => onOpenLensModal(product)}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-extrabold text-sm sm:text-base py-3.5 sm:py-4 px-4 sm:px-6 rounded-2xl shadow-xl shadow-amber-700/25 active:scale-98 tracking-wide uppercase text-center"
               >
                 <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Adicionar Lentes e Comprar</span>
+                <span>Personalizar Lentes & Pedir no WhatsApp</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const colorName = product.colors[selectedColorIndex]?.name || 'Padrão';
+                  const pixVal = product.currentPrice * (1 - product.pixDiscountPercent / 100);
+                  onWhatsAppClick(
+                    `*Olá, Óticas Aion!* 👋\n\nGostaria de pedir apenas a *armação sem lentes de grau*:\n\n👓 *Modelo:* ${product.name}\n🎨 *Cor:* ${colorName}\n💰 *Valor com desconto PIX:* R$ ${pixVal.toFixed(2)} (ou R$ ${product.currentPrice.toFixed(2)} normal)\n\nQual o procedimento para envio e entrega?`
+                  );
+                }}
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition active:scale-98 text-center shadow-md shadow-emerald-700/20"
+              >
+                <MessageCircle className="w-4 h-4 fill-white shrink-0" />
+                <span>Pedir Apenas a Armação no WhatsApp</span>
               </button>
 
               <button
@@ -328,8 +346,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 }
                 className="w-full flex items-center justify-center gap-2 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 font-semibold text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl transition active:scale-98 text-center"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Dúvidas? Falar com consultor</span>
+                <HelpCircle className="w-4 h-4 text-stone-500 shrink-0" />
+                <span>Dúvidas sobre o modelo? Falar com consultor</span>
               </button>
             </div>
 

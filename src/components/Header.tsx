@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo';
-import { MessageCircle, Menu, X, ShieldCheck, Truck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { MessageCircle, Menu, X, ShieldCheck, Truck, Sparkles, CheckCircle2, FileText } from 'lucide-react';
 
 interface HeaderProps {
   onWhatsAppClick: (customText?: string) => void;
+  onNavigate: (view: 'home' | 'catalog' | 'terms-policy') => void;
+  currentView?: 'home' | 'catalog' | 'product-detail' | 'terms-policy';
 }
 
-export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onWhatsAppClick,
+  onNavigate,
+  currentView = 'home',
+}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Close mobile menu on resize to desktop
@@ -30,13 +36,24 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
     };
   }, [mobileMenuOpen]);
 
-  const navLinks = [
-    { label: 'Catálogo de Armações', href: '#catalogo' },
-    { label: 'Como Funciona', href: '#como-funciona' },
-    { label: 'Por Que a Aion?', href: '#comparativo' },
-    { label: 'Depoimentos de Clientes', href: '#depoimentos' },
-    { label: 'Perguntas Frequentes', href: '#faq' },
-  ];
+  const handleLinkClick = (action: () => void) => {
+    action();
+    setMobileMenuOpen(false);
+  };
+
+  const handleSectionClick = (anchor: string) => {
+    if (currentView !== 'home') {
+      onNavigate('home');
+      setTimeout(() => {
+        const el = document.querySelector(anchor);
+        el?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.querySelector(anchor);
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full shadow-md">
@@ -65,7 +82,10 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
       {/* Main Navbar */}
       <div className="bg-[#0c251d] text-white backdrop-blur-md bg-opacity-95 border-b border-[#c8a25a]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-          <a href="#" className="flex items-center">
+          <button
+            onClick={() => onNavigate('home')}
+            className="flex items-center focus:outline-none text-left"
+          >
             {/* Logo adapts size */}
             <div className="block sm:hidden">
               <Logo variant="light" size="sm" showSlogan={false} />
@@ -73,19 +93,57 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
             <div className="hidden sm:block">
               <Logo variant="light" size="md" />
             </div>
-          </a>
+          </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-xs xl:text-sm font-medium text-stone-200">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="whitespace-nowrap hover:text-[#c8a25a] transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#c8a25a] hover:after:w-full after:transition-all"
-              >
-                {link.label}
-              </a>
-            ))}
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-medium text-stone-200">
+            <button
+              onClick={() => onNavigate('home')}
+              className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
+                currentView === 'home' ? 'text-[#c8a25a] font-bold border-b-2 border-[#c8a25a]' : ''
+              }`}
+            >
+              Início
+            </button>
+
+            <button
+              onClick={() => onNavigate('catalog')}
+              className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
+                currentView === 'catalog' ? 'text-[#c8a25a] font-bold border-b-2 border-[#c8a25a]' : ''
+              }`}
+            >
+              Catálogo de Armações
+            </button>
+
+            <button
+              onClick={() => handleSectionClick('#como-funciona')}
+              className="whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a]"
+            >
+              Como Funciona
+            </button>
+
+            <button
+              onClick={() => handleSectionClick('#comparativo')}
+              className="whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a]"
+            >
+              Por Que a Aion?
+            </button>
+
+            <button
+              onClick={() => onNavigate('terms-policy')}
+              className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
+                currentView === 'terms-policy' ? 'text-[#c8a25a] font-bold border-b-2 border-[#c8a25a]' : ''
+              }`}
+            >
+              Políticas & Termos
+            </button>
+
+            <button
+              onClick={() => handleSectionClick('#faq')}
+              className="whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a]"
+            >
+              Dúvidas Frequentes
+            </button>
           </nav>
 
           {/* Action Button & Mobile icons */}
@@ -118,17 +176,59 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
         <div className="fixed inset-0 top-[100px] z-50 lg:hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-6 max-h-[calc(100vh-100px)] overflow-y-auto">
             <nav className="flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 active:bg-white/5 px-2 rounded-lg flex items-center justify-between"
-                >
-                  <span>{link.label}</span>
-                  <span className="text-stone-500 text-xs">→</span>
-                </a>
-              ))}
+              <button
+                onClick={() => handleLinkClick(() => onNavigate('home'))}
+                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'home' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                }`}
+              >
+                <span>Início</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleLinkClick(() => onNavigate('catalog'))}
+                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'catalog' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                }`}
+              >
+                <span>Catálogo Completo</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleSectionClick('#como-funciona')}
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+              >
+                <span>Como Funciona o Envio da Receita</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleSectionClick('#comparativo')}
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+              >
+                <span>Por Que a Aion?</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleLinkClick(() => onNavigate('terms-policy'))}
+                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'terms-policy' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                }`}
+              >
+                <span>Políticas de Privacidade & Termos</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleSectionClick('#faq')}
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+              >
+                <span>Perguntas Frequentes (FAQ)</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
             </nav>
 
             <div className="pt-2 space-y-3">

@@ -1,12 +1,18 @@
 import React from 'react';
 import { Logo } from './Logo';
-import { ShieldCheck, Truck, Lock, CreditCard, MessageCircle, Heart } from 'lucide-react';
+import { ShieldCheck, Truck, Lock, CreditCard, MessageCircle, FileText, Sparkles } from 'lucide-react';
 
 interface FooterProps {
   onWhatsAppClick: (customText?: string) => void;
+  onNavigate: (view: 'home' | 'catalog' | 'terms-policy') => void;
+  onOpenAdminLogin: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onWhatsAppClick,
+  onNavigate,
+  onOpenAdminLogin,
+}) => {
   return (
     <footer className="bg-[#081a14] text-stone-300 pt-16 pb-12 border-t border-[#c8a25a]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,7 +22,9 @@ export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
           
           {/* Brand Info */}
           <div className="lg:col-span-5 space-y-4">
-            <Logo variant="light" size="md" />
+            <div onClick={() => onNavigate('home')} className="cursor-pointer inline-block">
+              <Logo variant="light" size="md" />
+            </div>
             <p className="text-xs text-stone-400 max-w-sm leading-relaxed mt-2">
               A Óticas Aion nasceu com a missão de tornar a saúde visual e o conforto estético acessíveis a todos, unindo armações premium em titânio e lentes oftálmicas de alta definição direto na sua casa.
             </p>
@@ -35,23 +43,48 @@ export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
           {/* Quick Links */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs uppercase font-bold tracking-widest text-[#c8a25a]">
-              Navegação Rápida
+              Navegação
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
               <li>
-                <a href="#catalogo" className="hover:text-white transition">Catálogo de Armações</a>
+                <button
+                  onClick={() => onNavigate('home')}
+                  className="hover:text-white transition text-left"
+                >
+                  Início
+                </button>
               </li>
               <li>
-                <a href="#como-funciona" className="hover:text-white transition">Como Funciona o Envio da Receita</a>
+                <button
+                  onClick={() => onNavigate('catalog')}
+                  className="hover:text-white transition text-left font-semibold text-[#c8a25a]"
+                >
+                  Catálogo Completo de Armações
+                </button>
               </li>
               <li>
-                <a href="#comparativo" className="hover:text-white transition">Por Que a Aion é Mais Barata</a>
+                <a href="#como-funciona" className="hover:text-white transition block">
+                  Como Funciona o Envio da Receita
+                </a>
               </li>
               <li>
-                <a href="#depoimentos" className="hover:text-white transition">Opiniões de Clientes Reais</a>
+                <a href="#comparativo" className="hover:text-white transition block">
+                  Por Que a Aion é Mais Barata
+                </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition">Perguntas Frequentes (FAQ)</a>
+                <button
+                  onClick={() => onNavigate('terms-policy')}
+                  className="hover:text-white transition text-left flex items-center gap-1"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#c8a25a]" />
+                  <span>Políticas & Termos de Uso (LGPD)</span>
+                </button>
+              </li>
+              <li>
+                <a href="#faq" className="hover:text-white transition block">
+                  Perguntas Frequentes (FAQ)
+                </a>
               </li>
             </ul>
           </div>
@@ -62,7 +95,10 @@ export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
               Segurança & Compromisso
             </h4>
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
+              <div
+                onClick={() => onNavigate('terms-policy')}
+                className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
+              >
                 <ShieldCheck className="w-5 h-5 text-[#c8a25a] shrink-0" />
                 <span>Garantia de 7 Dias de Adaptação</span>
               </div>
@@ -70,7 +106,10 @@ export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
                 <Truck className="w-5 h-5 text-emerald-400 shrink-0" />
                 <span>Entrega em até 7 dias úteis</span>
               </div>
-              <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
+              <div
+                onClick={() => onNavigate('terms-policy')}
+                className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
+              >
                 <Lock className="w-5 h-5 text-[#c8a25a] shrink-0" />
                 <span>Compra Segura & Dados Protegidos</span>
               </div>
@@ -83,14 +122,32 @@ export const Footer: React.FC<FooterProps> = ({ onWhatsAppClick }) => {
 
         </div>
 
-        {/* Bottom Copyright & Disclaimer */}
+        {/* Bottom Copyright & Disclaimer + Discrete Admin Login Button */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-500 gap-4 text-center sm:text-left">
           <div>
             <p>© {new Date().getFullYear()} Óticas Aion. Todos os direitos reservados.</p>
-            <p className="mt-0.5">As receitas médicas oftálmicas são manipuladas em laboratório homologado com surfaçagem digital.</p>
+            <p className="mt-0.5">
+              As receitas médicas oftálmicas são manipuladas em laboratório homologado com surfaçagem digital.
+            </p>
           </div>
-          <div className="flex items-center gap-1 text-stone-400">
-            <span>Visão que permanece.</span>
+          
+          <div className="flex items-center gap-4 text-stone-400">
+            <button
+              onClick={() => onNavigate('terms-policy')}
+              className="text-stone-400 hover:text-[#c8a25a] transition"
+            >
+              Termos e Privacidade
+            </button>
+            <span className="text-stone-700">•</span>
+            {/* Botão Discreto de Acesso Lojista (Supabase) */}
+            <button
+              onClick={onOpenAdminLogin}
+              className="inline-flex items-center gap-1.5 text-[11px] text-stone-500 hover:text-stone-200 transition py-1 px-2 rounded-lg border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10"
+              title="Acesso Lojista / Gerenciar Produtos (Supabase)"
+            >
+              <Lock className="w-3 h-3 text-[#c8a25a]" />
+              <span>Acesso Lojista</span>
+            </button>
           </div>
         </div>
 

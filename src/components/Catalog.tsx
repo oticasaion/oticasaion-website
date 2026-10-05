@@ -15,12 +15,14 @@ import {
 } from 'lucide-react';
 
 interface CatalogProps {
+  products?: Product[];
   onOpenProductDetail: (product: Product) => void;
   onOpenLensModal: (product: Product) => void;
   onWhatsAppQuickAsk: (productName: string) => void;
 }
 
 export const Catalog: React.FC<CatalogProps> = ({
+  products = PRODUCTS,
   onOpenProductDetail,
   onOpenLensModal,
   onWhatsAppQuickAsk,
@@ -33,7 +35,8 @@ export const Catalog: React.FC<CatalogProps> = ({
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Filters logic
-  const filteredProducts = PRODUCTS.filter((product) => {
+  const listToFilter = products && products.length > 0 ? products : PRODUCTS;
+  const filteredProducts = listToFilter.filter((product) => {
     // Format
     if (selectedFormat !== 'todos' && product.shape !== selectedFormat) {
       return false;
