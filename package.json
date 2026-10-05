@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/app.html', 'dist/index.html'); fs.copyFileSync('dist/app.html', 'index.html'); fs.cpSync('dist/assets', 'assets', {recursive: true});\"",
+    "build": "vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/app.html', 'dist/index.html'); fs.copyFileSync('dist/app.html', 'dist/404.html'); fs.copyFileSync('dist/app.html', 'index.html'); fs.copyFileSync('dist/app.html', '404.html'); fs.writeFileSync('dist/.nojekyll', ''); fs.writeFileSync('.nojekyll', ''); fs.cpSync('dist/assets', 'assets', {recursive: true});\"",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist --dotfiles -b gh-pages"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
