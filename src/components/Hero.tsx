@@ -17,7 +17,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
           
           {/* Left Column: Value Proposition */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.2] font-serif-brand">
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.15] font-sans-brand">
               Seu óculos de grau completo sem sair de casa e com{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5e48e] via-[#c8a25a] to-[#e5c77a]">
                 até 50% de economia
@@ -88,7 +88,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
                   <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#c8a25a] font-semibold">
                     Modelo em Destaque
                   </span>
-                  <h3 className="text-lg sm:text-xl font-serif-brand font-bold text-white mt-0.5">
+                  <h3 className="text-lg sm:text-xl font-sans-brand font-bold text-white mt-0.5">
                     Aion Aetherium Titanium
                   </h3>
                   <p className="text-[11px] sm:text-xs text-stone-300">
@@ -98,7 +98,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
 
                 <div className="relative my-3 sm:my-4 aspect-[4/3] rounded-2xl overflow-hidden bg-stone-900/60 border border-white/10 flex items-center justify-center p-3">
                   <img
-                    src="https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=800&q=80"
+                    src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80"
                     alt="Óculos de Grau Aion Aetherium"
                     className="w-full h-full object-cover rounded-xl"
                   />

@@ -76,12 +76,12 @@ export const Header: React.FC<HeaderProps> = ({ onWhatsAppClick }) => {
           </a>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-stone-200">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-xs xl:text-sm font-medium text-stone-200">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="hover:text-[#c8a25a] transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#c8a25a] hover:after:w-full after:transition-all"
+                className="whitespace-nowrap hover:text-[#c8a25a] transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#c8a25a] hover:after:w-full after:transition-all"
               >
                 {link.label}
               </a>

@@ -35,15 +35,7 @@ export const Logo: React.FC<LogoProps> = ({
     <div className="flex items-center gap-3 select-none">
       {/* Brand Icon SVG */}
       <div className={`relative ${iconSizes[size]} shrink-0 flex items-center justify-center`}>
-        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
-          <circle
-            cx="50"
-            cy="50"
-            r="46"
-            className={isDark ? 'fill-[#0C251D]' : 'fill-[#071d16]'}
-            stroke="url(#aionGoldGrad)"
-            strokeWidth="2.5"
-          />
+        <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
           <defs>
             <linearGradient id="aionGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#F5E48E" />
@@ -51,10 +43,20 @@ export const Logo: React.FC<LogoProps> = ({
               <stop offset="100%" stopColor="#8A6B29" />
             </linearGradient>
           </defs>
+          {/* Badge Background Circle */}
+          <circle
+            cx="50"
+            cy="50"
+            r="46"
+            className={isDark ? 'fill-[#0C251D]' : 'fill-[#061e16]'}
+            stroke="#C8A25A"
+            strokeWidth="2.8"
+          />
           {/* Stylized Serif A */}
           <path
             d="M 50 24 L 37 68 H 44 L 47 58 H 53 L 56 68 H 63 Z M 50 40 L 52 51 H 48 Z"
             fill="url(#aionGoldGrad)"
+            fillRule="evenodd"
           />
           {/* Cross Arrow */}
           <line
@@ -62,18 +64,18 @@ export const Logo: React.FC<LogoProps> = ({
             y1="51.5"
             x2="78"
             y2="51.5"
-            stroke="url(#aionGoldGrad)"
-            strokeWidth="2.2"
+            stroke="#C8A25A"
+            strokeWidth="2.5"
             strokeLinecap="round"
           />
-          <polygon points="76,48 83,51.5 76,55" fill="url(#aionGoldGrad)" />
+          <polygon points="76,47.5 84,51.5 76,55.5" fill="#F5E48E" />
         </svg>
       </div>
 
       {/* Brand Name & Slogan */}
       <div className="flex flex-col leading-none">
         <span
-          className={`font-serif-brand font-extrabold tracking-[0.16em] ${titleSizes[size]} ${
+          className={`font-sans-brand font-bold tracking-[0.14em] ${titleSizes[size]} ${
             isDark ? 'text-stone-900' : 'text-[#f5f1e8]'
           }`}
         >
