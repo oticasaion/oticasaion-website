@@ -89,17 +89,17 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
                     Modelo em Destaque
                   </span>
                   <h3 className="text-lg sm:text-xl font-sans-brand font-bold text-white mt-0.5">
-                    Aion Aetherium Titanium
+                    Aion Balgriff Sem Aro JC9477
                   </h3>
                   <p className="text-[11px] sm:text-xs text-stone-300">
-                    Titânio Aeroespacial • Apenas 13 gramas
+                    Titânio & Prata • Apenas 11 gramas • Sem Aro Frontal
                   </p>
                 </div>
 
                 <div className="relative my-3 sm:my-4 aspect-[4/3] rounded-2xl overflow-hidden bg-stone-900/60 border border-white/10 flex items-center justify-center p-3">
                   <img
-                    src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80"
-                    alt="Óculos de Grau Aion Aetherium"
+                    src="./produtos-reais/02-jc9477-balgriff-sem-aro-prata.jpeg"
+                    alt="Óculos Balgriff Sem Aro JC9477"
                     className="w-full h-full object-cover rounded-xl"
                   />
                   <div className="absolute bottom-2 left-2 right-2 bg-[#0c251d]/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 truncate">
@@ -110,9 +110,9 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
 
                 <div className="flex items-center justify-between pt-2 border-t border-white/10">
                   <div>
-                    <span className="text-[11px] text-stone-400 line-through">De R$ 159,00</span>
+                    <span className="text-[11px] text-stone-400 line-through">De R$ 209,00</span>
                     <div className="text-xl sm:text-2xl font-bold text-white flex items-baseline gap-1">
-                      <span>R$ 141,55</span>
+                      <span>R$ 90,15</span>
                       <span className="text-[10px] sm:text-xs text-[#c8a25a] font-semibold">no PIX</span>
                     </div>
                   </div>

@@ -80,8 +80,8 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
     setFormPixDiscount('5');
     setFormIsPromo(true);
     setFormIsBestseller(false);
-    setFormImages('https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80');
-    setFormColors('Dourado Nobre:#c8a25a, Preto Fosco:#1a1a1a');
+    setFormImages('./produtos-reais/01-js8067-metal-cinza-grafite-53-17-140.jpeg');
+    setFormColors('Cinza Grafite:#44474c, Preto Fosco:#1a1a1a');
     setFormLensWidth('54');
     setFormBridgeWidth('18');
     setFormTempleLength('145');
@@ -124,7 +124,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
       .filter((url) => url.length > 0);
 
     if (imageList.length === 0) {
-      imageList.push('https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=800&q=80');
+      imageList.push('./produtos-reais/01-js8067-metal-cinza-grafite-53-17-140.jpeg');
     }
 
     // Parse colors
@@ -696,7 +696,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
                     rows={3}
                     value={formImages}
                     onChange={(e) => setFormImages(e.target.value)}
-                    placeholder="https://exemplo.com/foto1.jpg&#10;https://exemplo.com/foto2.jpg"
+                    placeholder="./produtos-reais/01-js8067-metal-cinza-grafite-53-17-140.jpeg&#10;./produtos-reais/02-jc9477-balgriff-sem-aro-prata.jpeg"
                     className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-[#0c251d]"
                   />
                 </div>

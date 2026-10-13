@@ -53,11 +53,22 @@ Os arquivos otimizados e minificados serão gerados na pasta `/dist/`.
 
 ---
 
+## 📁 Organização de Pastas & Documentação
+
+- 📂 [**`docs/briefing/`**](file:///c:/Users/evand/OneDrive/Documents/oticasaion/docs/briefing/): Contém o briefing oficial do negócio ([`BRIEFING.md`](file:///c:/Users/evand/OneDrive/Documents/oticasaion/docs/briefing/BRIEFING.md)) e o PDF original alinhado com o cliente.
+- 📂 [**`docs/benchmarks/`**](file:///c:/Users/evand/OneDrive/Documents/oticasaion/docs/benchmarks/): Capturas completas e referências visuais de benchmark (Euglasses).
+- 📂 [**`public/branding/`**](file:///c:/Users/evand/OneDrive/Documents/oticasaion/public/branding/): Selo dourado oficial da marca e mockup do cartão de visitas.
+- 📂 [**`public/produtos-reais/`**](file:///c:/Users/evand/OneDrive/Documents/oticasaion/public/produtos-reais/): Fotos dos 10 modelos reais do estoque físico, nomeadas com códigos e medidas técnicas.
+- 📋 [**`CATALOGO_PRODUTOS_REAIS.md`**](file:///c:/Users/evand/OneDrive/Documents/oticasaion/CATALOGO_PRODUTOS_REAIS.md): Tabela descritiva de todas as armações em estoque com materiais, medidas e estilos.
+
+---
+
 ## ⚙️ Personalização do Número de WhatsApp
 
 Para alterar o número que recebe os pedidos e receitas:
-1. Abra o arquivo [src/App.tsx](file:///c:/Users/evand/OneDrive/%C3%81rea%20de%20Trabalho/Oticas%20Aion/src/App.tsx).
+1. Abra o arquivo [src/App.tsx](file:///c:/Users/evand/OneDrive/Documents/oticasaion/src/App.tsx).
 2. Modifique a constante:
    ```ts
    export const WHATSAPP_PHONE_NUMBER = '5511999999999'; // Seu número comercial com DDI e DDD
    ```
+

@@ -2,7 +2,7 @@ import { Product } from '../types';
 import { PRODUCTS as INITIAL_PRODUCTS } from '../data/products';
 import { supabase } from '../lib/supabase';
 
-const LOCAL_STORAGE_KEY = 'oticas_aion_products_v1';
+const LOCAL_STORAGE_KEY = 'oticas_aion_products_v2';
 
 // Script SQL pronto para o usuário criar a tabela no Supabase
 export const SUPABASE_PRODUCTS_SQL = `-- Script para criar a tabela de produtos no Supabase (SQL Editor)
@@ -116,7 +116,12 @@ export function getLocalStoredProducts(): Product[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        const hasLegacyImages = parsed.some((p: any) =>
+          Array.isArray(p.images) && p.images.some((img: string) => typeof img === 'string' && img.includes('unsplash.com'))
+        );
+        if (!hasLegacyImages) {
+          return parsed;
+        }
       }
     }
   } catch (err) {
