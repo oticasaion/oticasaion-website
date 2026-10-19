@@ -1,6 +1,7 @@
 import React from 'react';
 import { Logo } from './Logo';
-import { ShieldCheck, Truck, Lock, CreditCard, MessageCircle, FileText, Sparkles } from 'lucide-react';
+import { ShieldCheck, Truck, Lock, CreditCard, FileText } from '@phosphor-icons/react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface FooterProps {
   onWhatsAppClick: (customText?: string) => void;
@@ -26,7 +27,7 @@ export const Footer: React.FC<FooterProps> = ({
               <Logo variant="light" size="md" />
             </div>
             <p className="text-xs text-stone-400 max-w-sm leading-relaxed mt-2">
-              A Óticas Aion nasceu com a missão de tornar a saúde visual e o conforto estético acessíveis a todos, unindo armações premium em titânio e lentes oftálmicas de alta definição direto na sua casa.
+              A Óticas Aion nasceu com a missão de tornar a saúde visual e o conforto estético acessíveis a todos, unindo armações nobres e lentes oftálmicas laboratoriais com atendimento consultivo no WhatsApp.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <span className="text-xs text-stone-400">Atendimento humanizado:</span>
@@ -34,7 +35,7 @@ export const Footer: React.FC<FooterProps> = ({
                 onClick={() => onWhatsAppClick('Olá! Gostaria de falar com o atendimento da Óticas Aion.')}
                 className="inline-flex items-center gap-1.5 text-xs text-[#c8a25a] hover:underline font-semibold"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <WhatsAppIcon className="w-4 h-4 text-emerald-400" />
                 <span>WhatsApp Oficial</span>
               </button>
             </div>
@@ -42,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Quick Links */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs uppercase font-bold tracking-widest text-[#c8a25a]">
+            <h4 className="text-xs font-bold text-[#c8a25a]">
               Navegação
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
@@ -59,17 +60,17 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => onNavigate('catalog')}
                   className="hover:text-white transition text-left font-semibold text-[#c8a25a]"
                 >
-                  Catálogo Completo de Armações
+                  Catálogo completo de armações
                 </button>
               </li>
               <li>
                 <a href="#como-funciona" className="hover:text-white transition block">
-                  Como Funciona o Envio da Receita
+                  Como funciona o envio da receita
                 </a>
               </li>
               <li>
                 <a href="#comparativo" className="hover:text-white transition block">
-                  Por Que a Aion é Mais Barata
+                  Por que escolher a Aion
                 </a>
               </li>
               <li>
@@ -83,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <a href="#faq" className="hover:text-white transition block">
-                  Perguntas Frequentes (FAQ)
+                  Perguntas frequentes (FAQ)
                 </a>
               </li>
             </ul>
@@ -91,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Security & Benefits Badges */}
           <div className="lg:col-span-4 space-y-4">
-            <h4 className="text-xs uppercase font-bold tracking-widest text-[#c8a25a]">
+            <h4 className="text-xs font-bold text-[#c8a25a]">
               Segurança & Compromisso
             </h4>
             <div className="grid grid-cols-2 gap-3 text-xs">
@@ -100,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({
                 className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
               >
                 <ShieldCheck className="w-5 h-5 text-[#c8a25a] shrink-0" />
-                <span>Garantia de 7 Dias de Adaptação</span>
+                <span>Garantia de 7 dias de adaptação</span>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
                 <Truck className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -111,11 +112,11 @@ export const Footer: React.FC<FooterProps> = ({
                 className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
               >
                 <Lock className="w-5 h-5 text-[#c8a25a] shrink-0" />
-                <span>Compra Segura & Dados Protegidos</span>
+                <span>Compra segura & dados protegidos</span>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
                 <CreditCard className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span>PIX 5% OFF ou 12x no Cartão</span>
+                <span>PIX 5% OFF ou 12x no cartão</span>
               </div>
             </div>
           </div>
@@ -123,7 +124,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Copyright & Disclaimer + Discrete Admin Login Button */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-500 gap-4 text-center sm:text-left">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4 text-center sm:text-left">
           <div>
             <p>© {new Date().getFullYear()} Óticas Aion. Todos os direitos reservados.</p>
             <p className="mt-0.5">
@@ -136,17 +137,17 @@ export const Footer: React.FC<FooterProps> = ({
               onClick={() => onNavigate('terms-policy')}
               className="text-stone-400 hover:text-[#c8a25a] transition"
             >
-              Termos e Privacidade
+              Termos e privacidade
             </button>
             <span className="text-stone-700">•</span>
             {/* Botão Discreto de Acesso Lojista (Supabase) */}
             <button
               onClick={onOpenAdminLogin}
-              className="inline-flex items-center gap-1.5 text-[11px] text-stone-500 hover:text-stone-200 transition py-1 px-2 rounded-lg border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10"
+              className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-200 transition py-1 px-2.5 rounded-lg border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10"
               title="Acesso Lojista / Gerenciar Produtos (Supabase)"
             >
               <Lock className="w-3 h-3 text-[#c8a25a]" />
-              <span>Acesso Lojista</span>
+              <span>Acesso lojista</span>
             </button>
           </div>
         </div>

@@ -198,10 +198,11 @@ export const App: React.FC = () => {
         onOpenAdminLogin={() => setIsAdminModalOpen(true)}
       />
 
-      {/* Floating WhatsApp Action Button */}
+      {/* Floating WhatsApp Action Button (Oculto na primeira página / Home) */}
       <WhatsAppButton
         onClick={handleOpenWhatsApp}
         isDetailView={currentView === 'product-detail'}
+        isHome={currentView === 'home'}
       />
 
       {/* Lens Selection & WhatsApp Checkout Modal (Direcionado para WhatsApp) */}

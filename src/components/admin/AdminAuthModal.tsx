@@ -4,16 +4,14 @@ import { Product } from '../../types';
 import { AdminProductManager } from './AdminProductManager';
 import {
   Lock,
-  Mail,
+  Envelope,
   Key,
   X,
-  AlertCircle,
+  WarningCircle,
   CheckCircle,
   Eye,
-  EyeOff,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
+  EyeSlash,
+} from '@phosphor-icons/react';
 
 interface AdminAuthModalProps {
   isOpen: boolean;
@@ -181,7 +179,7 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
         <div className="p-6 space-y-5">
           {errorMessage && (
             <div className="bg-rose-50 border border-rose-200 text-rose-800 text-xs p-3 rounded-xl flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <WarningCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -199,7 +197,7 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
                 E-mail do Supabase
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Envelope className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="email"
                   required
@@ -230,7 +228,7 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>

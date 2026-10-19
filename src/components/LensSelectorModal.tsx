@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Product, LensOption } from '../types';
+import { Product } from '../types';
 import { LENS_OPTIONS } from '../data/lenses';
-import { X, Check, ShieldCheck, Sparkles, MessageCircle, HelpCircle, Layers } from 'lucide-react';
+import { X, Check, ShieldCheck, Question, Stack } from '@phosphor-icons/react';
 import { trackBeginCheckout } from '../firebase';
+import { ImageWithFade } from './ImageWithFade';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface LensSelectorModalProps {
   product: Product | null;
@@ -40,7 +42,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
         {/* Modal Header */}
         <div className="sticky top-0 z-20 bg-[#0c251d] text-white p-4 sm:px-8 sm:py-5 flex items-center justify-between border-b border-[#c8a25a]/30 shrink-0">
           <div>
-            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#c8a25a] font-semibold">Configurador de Grau</span>
+            <span className="text-xs text-[#c8a25a] font-medium block">Configurador de grau</span>
             <h3 className="text-base sm:text-2xl font-serif-brand font-bold truncate max-w-[240px] xs:max-w-none">{product.name}</h3>
           </div>
           <button
@@ -58,10 +60,11 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
           {/* Step 1: Frame review & Color selection */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             <div className="md:col-span-5 bg-stone-50 rounded-2xl p-4 border border-stone-200/80 flex flex-col items-center justify-center">
-              <img
+              <ImageWithFade
                 src={product.images[0]}
                 alt={product.name}
-                className="w-full h-44 object-cover rounded-xl"
+                containerClassName="w-full h-44 rounded-xl flex items-center justify-center"
+                className="w-full h-44 object-contain rounded-xl"
               />
               <div className="w-full mt-3 pt-3 border-t border-stone-200 text-xs text-stone-600 flex justify-between">
                 <span>Material: <strong>{product.material}</strong></span>
@@ -71,8 +74,8 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
 
             <div className="md:col-span-7 space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  1. Selecione a Cor da Armação:
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  1. Selecione a cor da armação:
                 </label>
                 <div className="flex flex-wrap gap-2.5">
                   {product.colors.map((color, index) => (
@@ -98,19 +101,19 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Garantia de 7 Dias:</strong> Se a armação não vestir perfeitamente no seu rosto ou você não se adaptar ao grau, efetuamos a troca sem complicação.
+                  <strong>Garantia de 7 dias:</strong> Se a armação não vestir perfeitamente no seu rosto ou você não se adaptar ao grau, efetuamos a troca sem complicação.
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Step 2: Choose Lenses (Reproducing the Euglasses design from reference photo!) */}
+          {/* Step 2: Choose Lenses */}
           <div className="pt-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="text-base font-bold text-stone-900 flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-[#c8a25a]" />
-                  <span>2. Escolha suas Lentes Oftálmicas</span>
+                  <Stack className="w-5 h-5 text-[#c8a25a]" />
+                  <span>2. Escolha suas lentes oftálmicas</span>
                 </h4>
                 <p className="text-xs text-stone-500">Selecione o índice ideal para a sua receita médica</p>
               </div>
@@ -140,7 +143,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
                               : 'border-stone-300 bg-white'
                           }`}
                         >
-                          {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          {isSelected && <Check weight="bold" className="w-3.5 h-3.5" />}
                         </div>
 
                         <div className="space-y-1">
@@ -148,12 +151,12 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
                             <span className="font-bold text-stone-900 text-sm sm:text-base">
                               {lens.name}
                             </span>
-                            <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-stone-100 text-stone-700 border border-stone-200">
+                            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-stone-100 text-stone-700 border border-stone-200">
                               {lens.thicknessBadge}
                             </span>
                             {lens.highlight && (
-                              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                                Mais Escolhida
+                              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                Mais escolhida
                               </span>
                             )}
                           </div>
@@ -162,7 +165,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
                           
                           <p className="text-xs text-stone-500">{lens.recommendedDegrees}</p>
 
-                          <ul className="pt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-stone-600">
+                          <ul className="pt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-600">
                             {lens.features.slice(0, 3).map((feat, i) => (
                               <li key={i} className="flex items-center gap-1">
                                 <span className="text-emerald-600 font-bold">✓</span>
@@ -189,13 +192,13 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               })}
             </div>
 
-            {/* Informational Callout (from reference) */}
+            {/* Informational Callout */}
             <div className="bg-stone-50 border border-stone-200/80 rounded-2xl p-4 text-xs text-stone-600 flex items-start gap-3">
-              <HelpCircle className="w-5 h-5 text-[#c8a25a] shrink-0 mt-0.5" />
+              <Question className="w-5 h-5 text-[#c8a25a] shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-stone-800">Dica sobre a espessura das lentes:</p>
-                <p className="mt-0.5 leading-relaxed">
-                  A principal diferença entre os índices está na espessura e peso final. Lentes mais finas (1.67 e 1.74) proporcionam maior conforto, leveza e não distorcem o tamanho dos olhos. Em caso de dúvidas, envie sua receita no WhatsApp que nosso consultor óptico analisa na hora!
+                <p className="font-semibold text-stone-800">Dica sobre a espessura das lentes:</p>
+                <p className="mt-0.5 leading-relaxed text-stone-600">
+                  A principal diferença entre os índices está na espessura e peso final. Lentes mais finas (1.67 e 1.74) proporcionam maior conforto, leveza e reduzem o efeito de distorção dos olhos. Em caso de dúvidas, envie sua receita no WhatsApp que nosso consultor óptico analisa na hora!
                 </p>
               </div>
             </div>
@@ -206,28 +209,28 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
 
         {/* Modal Footer / Checkout Bar - Sticky at bottom */}
         <div className="sticky bottom-0 z-20 bg-stone-50 border-t border-stone-200 p-4 sm:px-8 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg shrink-0 pb-safe">
-          <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start sm:flex-col gap-2">
+          <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start sm:flex-col gap-1">
             <div>
-              <span className="text-[10px] sm:text-xs text-stone-500 block">Total do Pedido:</span>
+              <span className="text-xs text-stone-500 block">Total estimado:</span>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xl sm:text-3xl font-extrabold text-[#0c251d]">
                   R$ {pixPrice.toFixed(2)}
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                   no PIX
                 </span>
               </div>
             </div>
-            <span className="text-[10px] sm:text-xs text-stone-400 text-right sm:text-left">ou até 12x no cartão</span>
+            <span className="text-xs text-stone-400 text-right sm:text-left">ou até 12x no cartão</span>
           </div>
 
           <div className="w-full sm:w-auto">
             <button
               onClick={handleWhatsAppCheckout}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl shadow-xl shadow-[#25D366]/25 active:scale-95 text-center"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl shadow-xl shadow-[#25D366]/25 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
-              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white shrink-0" />
-              <span>Concluir no WhatsApp com Receita</span>
+              <WhatsAppIcon className="w-5 h-5 text-white shrink-0" />
+              <span>Concluir no WhatsApp com receita</span>
             </button>
           </div>
         </div>

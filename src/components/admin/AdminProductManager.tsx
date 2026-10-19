@@ -9,18 +9,17 @@ import {
 import {
   X,
   Plus,
-  Edit2,
-  Trash2,
+  PencilSimple,
+  Trash,
   Check,
-  AlertCircle,
   Copy,
-  LogOut,
-  Sparkles,
+  SignOut,
+  Sparkle,
   Database,
-  RefreshCw,
-  Search,
-  ExternalLink,
-} from 'lucide-react';
+  ArrowsClockwise,
+  MagnifyingGlass,
+  ArrowSquareOut,
+} from '@phosphor-icons/react';
 
 interface AdminProductManagerProps {
   products: Product[];
@@ -271,7 +270,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
               className="hidden sm:inline-flex items-center gap-1.5 text-xs text-rose-300 hover:text-white bg-white/10 hover:bg-rose-600/30 px-3 py-1.5 rounded-lg transition"
               title="Encerrar sessão"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <SignOut className="w-3.5 h-3.5" />
               <span>Sair</span>
             </button>
             <button
@@ -354,7 +353,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
               {/* Filter and Actions Bar */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <MagnifyingGlass className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={searchTerm}
@@ -370,7 +369,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
                     className="text-stone-500 hover:text-stone-800 text-xs font-semibold px-2.5 py-2 rounded-lg hover:bg-stone-100 transition flex items-center gap-1"
                     title="Restaurar produtos padrão"
                   >
-                    <RefreshCw className="w-3.5 h-3.5" />
+                    <ArrowsClockwise className="w-3.5 h-3.5" />
                     <span>Restaurar Padrão</span>
                   </button>
                   <button
@@ -444,14 +443,14 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
                             className="p-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition"
                             title="Ver detalhes na loja"
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ArrowSquareOut className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleOpenEdit(product)}
                             className="p-2 text-[#0c251d] hover:bg-stone-100 rounded-lg transition flex items-center gap-1 text-xs font-bold"
                             title="Editar produto"
                           >
-                            <Edit2 className="w-4 h-4" />
+                            <PencilSimple className="w-4 h-4" />
                             <span className="hidden sm:inline">Editar</span>
                           </button>
                           <button
@@ -459,7 +458,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
                             className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center gap-1 text-xs font-bold"
                             title="Excluir produto"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash className="w-4 h-4" />
                             <span className="hidden sm:inline">Excluir</span>
                           </button>
                         </div>
@@ -739,7 +738,7 @@ export const AdminProductManager: React.FC<AdminProductManagerProps> = ({
           {activeTab === 'sql' && (
             <div className="space-y-4 max-w-3xl mx-auto">
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                <Sparkle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
                 <div className="text-xs text-amber-900 space-y-1">
                   <strong className="block font-bold">
                     Sincronização em Nuvem com o Banco de Dados Supabase

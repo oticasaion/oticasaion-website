@@ -36,6 +36,12 @@
   font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+.font-brand-name,
+.font-cormorant {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: 0.04em;
+}
+
 /* Safe area padding for mobile notches and bottom bars */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 16px);
@@ -62,4 +68,30 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #ad8940;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

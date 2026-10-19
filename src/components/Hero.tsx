@@ -1,5 +1,7 @@
 import React from 'react';
-import { ShieldCheck, Truck, Clock, Sparkles, MessageCircle, ArrowRight, Check } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Check } from '@phosphor-icons/react';
+import { ImageWithFade } from './ImageWithFade';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface HeroProps {
   onWhatsAppClick: (customText?: string) => void;
@@ -7,141 +9,131 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#0c251d] via-[#091d17] to-[#061410] text-white pt-8 pb-14 sm:pt-16 sm:pb-24">
-      {/* Background Decorative Gold Light Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] bg-[#c8a25a]/10 rounded-full blur-[90px] sm:blur-[120px] pointer-events-none" />
-      <div className="absolute -top-24 -left-24 w-60 sm:w-96 h-60 sm:h-96 bg-[#1a4a3b]/30 rounded-full blur-[80px] pointer-events-none" />
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#0c251d] via-[#091d17] to-[#061410] text-white pt-4 pb-14 sm:pt-8 sm:pb-20 lg:py-28 min-h-[540px] lg:min-h-[660px] xl:min-h-[720px] flex items-center">
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+      {/* Background Decorative Ambient Gold Glow */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[600px] h-[340px] sm:h-[600px] bg-[#c8a25a]/10 rounded-full blur-[110px] sm:blur-[150px] pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-60 sm:w-96 h-60 sm:h-96 bg-[#1a4a3b]/25 rounded-full blur-[90px] pointer-events-none" />
+
+      {/* Desktop Expansive Image Layer with Progressive Left Fade */}
+      <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[52%] xl:w-[56%] 2xl:w-[58%] h-full pointer-events-none select-none z-0 overflow-hidden">
+        
+        {/* Physical Gradient Mask on the Image Container */}
+        <div 
+          className="w-full h-full relative"
+          style={{
+            maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 10%, rgba(0,0,0,0.65) 24%, rgba(0,0,0,0.95) 38%, black 50%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 10%, rgba(0,0,0,0.65) 24%, rgba(0,0,0,0.95) 38%, black 50%)'
+          }}
+        >
+          <ImageWithFade
+            src="./branding/hero-conexao-aion.jpeg"
+            alt="Casal sorrindo com óculos de grau da Óticas Aion"
+            loading="eager"
+            containerClassName="w-full h-full"
+            className="w-full h-full object-cover object-[35%_center] lg:object-[38%_center] xl:object-[40%_center]"
+          />
+        </div>
+
+        {/* Left Fade Gradient Overlays for Maximum Contrast & Smooth Blend */}
+        <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#0c251d] via-[#0c251d]/85 to-transparent pointer-events-none" />
+        
+        {/* Top and Bottom soft edge blend */}
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#0c251d] to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#061410] to-transparent pointer-events-none" />
+      </div>
+
+      {/* Content Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
           
-          {/* Left Column: Value Proposition */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
-            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.15] font-sans-brand">
+          {/* Left Column: Value Proposition & CTAs */}
+          <div className="lg:col-span-6 xl:col-span-5 space-y-6 text-center lg:text-left max-w-xl lg:max-w-md xl:max-w-lg mx-auto lg:mx-0">
+            
+            {/* Mobile View: Hero Image directly below Header with 360° soft feather/fade on all edges & corners */}
+            <div className="block lg:hidden -mx-4 xs:-mx-6 sm:mx-0 mb-4 sm:mb-6 relative">
+              <div 
+                className="relative overflow-hidden w-full aspect-[16/10] sm:aspect-[16/9]"
+                style={{
+                  maskImage: 'radial-gradient(ellipse 92% 86% at 50% 50%, black 45%, rgba(0,0,0,0.85) 62%, rgba(0,0,0,0.3) 82%, transparent 98%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 92% 86% at 50% 50%, black 45%, rgba(0,0,0,0.85) 62%, rgba(0,0,0,0.3) 82%, transparent 98%)',
+                }}
+              >
+                <ImageWithFade
+                  src="./branding/hero-conexao-aion.jpeg"
+                  alt="Casal sorrindo com óculos de grau da Óticas Aion"
+                  loading="eager"
+                  containerClassName="w-full h-full"
+                  className="w-full h-full object-cover object-center"
+                />
+
+                {/* Quad-directional soft vignette overlays for seamless blend into emerald backdrop */}
+                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#0c251d] via-[#0c251d]/50 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0c251d] via-[#0c251d]/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-[#0c251d] to-transparent pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[#0c251d] to-transparent pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-5xl xl:text-[3.35rem] font-extrabold tracking-tight leading-[1.14] font-sans-brand text-balance">
               Seu óculos de grau completo sem sair de casa e com{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5e48e] via-[#c8a25a] to-[#e5c77a]">
                 até 50% de economia
               </span>.
             </h1>
 
-            <p className="text-sm sm:text-base md:text-lg text-stone-300 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-              Armações em titânio e acetato nobre com lentes oftálmicas de laboratório. Escolha seu modelo, envie a receita pelo WhatsApp e receba em até 7 dias úteis com <strong>garantia de adaptação de 7 dias</strong>.
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-stone-300 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed text-pretty">
+              Armações em titânio e acetato nobre com lentes oftálmicas de laboratório. Escolha seu modelo, envie a receita pelo WhatsApp e receba em casa com total segurança.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 pt-1 sm:pt-2">
-              <a
-                href="#catalogo"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl shadow-xl shadow-[#c8a25a]/20 transition-all active:scale-95 text-center"
-              >
-                <span>Escolher Minha Armação</span>
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-              </a>
+            {/* CTAs & Price Anchor */}
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
+                <a
+                  href="#catalogo"
+                  className="inline-flex items-center justify-center gap-2 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#c8a25a]/20 transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c8a25a]"
+                >
+                  <span>Escolher minha armação</span>
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </a>
 
-              <button
-                onClick={() =>
-                  onWhatsAppClick(
-                    'Olá! Tenho minha receita oftálmica e gostaria de um orçamento para óculos de grau completo.'
-                  )
-                }
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm sm:text-base px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#25D366]/25 transition-all active:scale-95 text-center"
-              >
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white shrink-0" />
-                <span>Enviar Receita no WhatsApp</span>
-              </button>
+                <button
+                  onClick={() =>
+                    onWhatsAppClick(
+                      'Olá! Tenho minha receita oftálmica e gostaria de um orçamento para óculos de grau completo.'
+                    )
+                  }
+                  className="inline-flex items-center justify-center gap-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/50 font-semibold text-sm sm:text-base px-6 py-3.5 sm:py-4 rounded-xl backdrop-blur-sm transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-400"
+                >
+                  <WhatsAppIcon className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <span>Enviar receita no WhatsApp</span>
+                </button>
+              </div>
+
+              <p className="text-xs text-stone-400 pt-0.5">
+                Armação + lentes com grau completo a partir de{' '}
+                <span className="text-[#c8a25a] font-semibold">R$ 75,05 no PIX</span>
+              </p>
             </div>
 
             {/* Quick Benefits Bullet List */}
-            <div className="pt-4 sm:pt-6 grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4 border-t border-white/10 text-xs sm:text-sm text-stone-300 text-left">
+            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5 border-t border-white/10 text-xs sm:text-sm text-stone-300">
               <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
+                <Check className="w-4 h-4 text-[#c8a25a] shrink-0" />
                 <span>Medição DNP guiada</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
-                <span>Sem custo de loja física</span>
+                <ShieldCheck className="w-4 h-4 text-[#c8a25a] shrink-0" />
+                <span>Garantia de 7 dias de adaptação</span>
               </div>
-              <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
-                <div className="p-1 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-[#c8a25a] shrink-0" />
                 <span>Entrega em até 7 dias úteis</span>
               </div>
             </div>
-          </div>
 
-          {/* Right Column: Hero Visual Card Showcase */}
-          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
-            <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
-              
-              {/* Main Card */}
-              <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 bg-[#c8a25a] text-[#0c251d] font-bold text-[10px] sm:text-xs uppercase px-3.5 py-1 rounded-bl-xl tracking-wider shadow">
-                  Mais Vendido
-                </div>
-
-                <div className="pt-2 sm:pt-4 pb-2 text-center">
-                  <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#c8a25a] font-semibold">
-                    Modelo em Destaque
-                  </span>
-                  <h3 className="text-lg sm:text-xl font-sans-brand font-bold text-white mt-0.5">
-                    Aion Balgriff Sem Aro JC9477
-                  </h3>
-                  <p className="text-[11px] sm:text-xs text-stone-300">
-                    Titânio & Prata • Apenas 11 gramas • Sem Aro Frontal
-                  </p>
-                </div>
-
-                <div className="relative my-3 sm:my-4 aspect-[4/3] rounded-2xl overflow-hidden bg-stone-900/60 border border-white/10 flex items-center justify-center p-3">
-                  <img
-                    src="./produtos-reais/02-jc9477-balgriff-sem-aro-prata.jpeg"
-                    alt="Óculos Balgriff Sem Aro JC9477"
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                  <div className="absolute bottom-2 left-2 right-2 bg-[#0c251d]/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium text-emerald-300 border border-emerald-500/30 flex items-center justify-center gap-1.5 truncate">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
-                    <span className="truncate">Lentes Antirreflexo + Antirrisco inclusas</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                  <div>
-                    <span className="text-[11px] text-stone-400 line-through">De R$ 209,00</span>
-                    <div className="text-xl sm:text-2xl font-bold text-white flex items-baseline gap-1">
-                      <span>R$ 90,15</span>
-                      <span className="text-[10px] sm:text-xs text-[#c8a25a] font-semibold">no PIX</span>
-                    </div>
-                  </div>
-                  <a
-                    href="#catalogo"
-                    className="inline-flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3.5 py-2 rounded-xl border border-white/20 transition"
-                  >
-                    <span>Ver no Catálogo</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </div>
-
-              {/* Floating Guarantee Badge */}
-              <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-5 sm:-left-5 bg-[#0c251d] border-2 border-[#c8a25a] rounded-2xl p-3 sm:p-3.5 shadow-xl flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#c8a25a]/20 flex items-center justify-center text-[#c8a25a] shrink-0">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-bold text-white leading-tight">
-                    Garantia de 7 Dias de Adaptação
-                  </h4>
-                  <p className="text-[10px] sm:text-[11px] text-stone-300 leading-tight mt-0.5">
-                    Não adaptou? Devolução ou troca sem complicação.
-                  </p>
-                </div>
-              </div>
-
-            </div>
           </div>
 
         </div>

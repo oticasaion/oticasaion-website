@@ -1,20 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { Product } from '../types';
 import {
-  Search,
-  Filter,
+  MagnifyingGlass,
+  Funnel,
   SlidersHorizontal,
   X,
   Star,
-  Sparkles,
-  ArrowRight,
   Eye,
-  MessageCircle,
-  Truck,
   ArrowLeft,
   Check,
-  Layers,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { ImageWithFade } from './ImageWithFade';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface CatalogViewProps {
   products: Product[];
@@ -103,30 +100,26 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
   return (
     <div className="bg-[#faf8f5] text-stone-900 min-h-screen pb-24 animate-fadeIn">
-      {/* Header Banner */}
-      <div className="bg-[#0c251d] text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-b border-[#c8a25a]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 mb-3">
-            <button
-              onClick={onBackToHome}
-              className="inline-flex items-center gap-1.5 text-xs text-[#c8a25a] hover:underline font-semibold"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Voltar ao Início</span>
-            </button>
-            <span className="text-stone-500">•</span>
-            <span className="text-xs text-stone-300">Catálogo Completo</span>
-          </div>
+      {/* Top Breadcrumb & Header Banner */}
+      <div className="bg-[#0c251d] text-white py-10 sm:py-14 border-b border-[#c8a25a]/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={onBackToHome}
+            className="inline-flex items-center gap-1.5 text-xs text-[#c8a25a] hover:underline font-semibold mb-4 focus-visible:ring-2 focus-visible:ring-[#c8a25a]"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Voltar ao início</span>
+          </button>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#c8a25a]">
-                Coleção Exclusiva Óticas Aion
+              <span className="text-xs font-semibold text-[#c8a25a] block mb-1">
+                Coleção de armações e lentes
               </span>
-              <h1 className="text-2xl sm:text-4xl font-extrabold font-serif-brand mt-1">
-                Catálogo de Armações & Lentes
+              <h1 className="text-3xl sm:text-4xl font-extrabold font-serif-brand text-balance">
+                Catálogo de armações & lentes
               </h1>
-              <p className="mt-2 text-xs sm:text-sm text-stone-300 max-w-xl">
+              <p className="mt-2 text-sm text-stone-300 max-w-xl text-pretty leading-relaxed">
                 Armações de alta durabilidade em titânio e TR-90 com montagem laboratorial digital. Escolha seu modelo e monte no WhatsApp com sua receita.
               </p>
             </div>
@@ -136,23 +129,23 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
               onClick={() =>
                 onWhatsAppClick('Olá! Gostaria de ajuda para escolher a armação ideal para o meu grau e formato de rosto.')
               }
-              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-full shadow-md transition self-start md:self-auto"
+              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-semibold px-5 py-3 rounded-full shadow-md transition self-start md:self-auto active:scale-95 focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
-              <MessageCircle className="w-4 h-4 fill-white" />
-              <span>Ajuda para Escolher no WhatsApp</span>
+              <WhatsAppIcon className="w-4 h-4 text-white shrink-0" />
+              <span>Ajuda para escolher no WhatsApp</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Catalog Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
         
         {/* Search Bar & Controls */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 mb-6 sm:mb-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
           {/* Search Input */}
           <div className="relative w-full md:w-96">
-            <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <MagnifyingGlass className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
@@ -164,6 +157,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
               <button
                 onClick={() => setSearchTerm('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                aria-label="Limpar busca"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -175,71 +169,59 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
             {/* Filter Toggle Mobile */}
             <button
               onClick={() => setIsMobileFilterOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 bg-[#0c251d] text-[#c8a25a] font-bold text-xs px-3.5 py-2.5 rounded-xl active:scale-95"
+              className="lg:hidden flex items-center gap-1.5 bg-[#0c251d] text-[#c8a25a] font-semibold text-xs px-3.5 py-2.5 rounded-xl active:scale-95 focus-visible:ring-2 focus-visible:ring-[#c8a25a]"
             >
-              <Filter className="w-3.5 h-3.5" />
+              <Funnel className="w-3.5 h-3.5" />
               <span>Filtros {hasActiveFilters && '• (Ativo)'}</span>
             </button>
 
-            <span className="text-xs font-semibold text-stone-500 whitespace-nowrap">
-              <strong className="text-stone-900">{filteredProducts.length}</strong> modelo(s)
+            <span className="text-xs sm:text-sm font-medium text-stone-500 whitespace-nowrap">
+              <strong className="text-stone-900 font-bold">{filteredProducts.length}</strong> modelo(s)
             </span>
 
             {/* Sort Select */}
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-stone-400 hidden sm:inline">Ordenar:</span>
+              <span className="text-xs text-stone-500 hidden sm:inline">Ordenar:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                aria-label="Ordenar produtos"
-                className="bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-stone-700 focus:outline-none focus:border-[#0c251d]"
+                className="bg-stone-50 border border-stone-200 text-stone-800 text-xs rounded-xl px-3 py-2 font-medium focus:outline-none focus:border-[#0c251d]"
               >
-                <option value="relevance">Mais Populares</option>
-                <option value="price-asc">Menor Preço</option>
-                <option value="price-desc">Maior Preço</option>
-                <option value="rating">Melhor Avaliação</option>
+                <option value="relevance">Mais relevantes</option>
+                <option value="price-asc">Menor preço</option>
+                <option value="price-desc">Maior preço</option>
+                <option value="rating">Melhor avaliação</option>
               </select>
             </div>
-
-            {hasActiveFilters && (
-              <button
-                onClick={clearAllFilters}
-                className="text-xs font-bold text-rose-600 hover:underline flex items-center gap-1 whitespace-nowrap ml-1"
-              >
-                <X className="w-3 h-3" />
-                <span>Limpar</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Content with Sidebar Filters (Desktop) + Product Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Content Layout: Sidebar + Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
-          {/* Desktop Filter Sidebar */}
+          {/* Desktop Filters Sidebar */}
           <div className="hidden lg:block lg:col-span-3 space-y-5">
-            <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-6">
+            <div className="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm space-y-6">
+              
               <div className="flex items-center justify-between pb-3 border-b border-stone-100">
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-[#0c251d]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-stone-800">
-                    Filtros Avançados
-                  </span>
-                </div>
+                <span className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#c8a25a]" />
+                  <span>Filtros aplicados</span>
+                </span>
                 {hasActiveFilters && (
                   <button
                     onClick={clearAllFilters}
-                    className="text-[11px] font-semibold text-rose-600 hover:underline"
+                    className="text-xs text-stone-500 hover:text-stone-900 underline"
                   >
-                    Limpar
+                    Limpar todos
                   </button>
                 )}
               </div>
 
               {/* Formato */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
-                  Formato da Armação
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Formato da armação
                 </label>
                 <div className="space-y-1">
                   {[
@@ -250,18 +232,18 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     { id: 'gatinho', label: 'Gatinho' },
                     { id: 'aviador', label: 'Aviador' },
                     { id: 'oval', label: 'Oval' },
-                  ].map((item) => (
+                  ].map((f) => (
                     <button
-                      key={item.id}
-                      onClick={() => setSelectedFormat(item.id)}
+                      key={f.id}
+                      onClick={() => setSelectedFormat(f.id)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition flex items-center justify-between ${
-                        selectedFormat === item.id
+                        selectedFormat === f.id
                           ? 'bg-[#0c251d] text-[#c8a25a] font-bold'
                           : 'text-stone-600 hover:bg-stone-50'
                       }`}
                     >
-                      <span>{item.label}</span>
-                      {selectedFormat === item.id && <Check className="w-3.5 h-3.5 text-[#c8a25a]" />}
+                      <span>{f.label}</span>
+                      {selectedFormat === f.id && <Check className="w-3.5 h-3.5 text-[#c8a25a]" />}
                     </button>
                   ))}
                 </div>
@@ -269,7 +251,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Gênero */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
                   Gênero
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -282,10 +264,10 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     <button
                       key={g.id}
                       onClick={() => setSelectedGender(g.id)}
-                      className={`px-3 py-2 rounded-lg text-xs font-medium transition text-center ${
+                      className={`px-3 py-2 rounded-lg text-xs font-medium text-center transition ${
                         selectedGender === g.id
                           ? 'bg-[#0c251d] text-[#c8a25a] font-bold'
-                          : 'bg-stone-50 text-stone-700 hover:bg-stone-100 border border-stone-200'
+                          : 'bg-stone-50 text-stone-700 hover:bg-stone-100'
                       }`}
                     >
                       {g.label}
@@ -296,15 +278,15 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Tipo de Aro */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
-                  Tipo de Aro
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Tipo de aro
                 </label>
                 <div className="space-y-1">
                   {[
                     { id: 'todos', label: 'Todos os aros' },
-                    { id: 'fechado', label: 'Aro Fechado (Clássico)' },
-                    { id: 'balgriff', label: 'Balgriff (Sem Aro)' },
-                    { id: 'meio-aro', label: 'Meio Aro (Fio de Nylon)' },
+                    { id: 'fechado', label: 'Aro fechado (Clássico)' },
+                    { id: 'balgriff', label: 'Balgriff (Sem aro)' },
+                    { id: 'meio-aro', label: 'Meio aro (Fio de nylon)' },
                   ].map((r) => (
                     <button
                       key={r.id}
@@ -324,8 +306,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Faixa de Preço */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2.5">
-                  Faixa de Preço
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Faixa de preço
                 </label>
                 <div className="space-y-1">
                   {[
@@ -357,7 +339,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
             {filteredProducts.length === 0 ? (
               <div className="bg-white rounded-3xl p-10 sm:p-16 border border-stone-200 text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-stone-100 text-stone-400 mx-auto flex items-center justify-center">
-                  <Search className="w-8 h-8" />
+                  <MagnifyingGlass className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold font-serif-brand text-stone-900">
                   Nenhuma armação encontrada com esses filtros
@@ -368,9 +350,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 <div className="pt-2 flex flex-wrap gap-3 justify-center">
                   <button
                     onClick={clearAllFilters}
-                    className="bg-[#0c251d] text-[#c8a25a] text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm"
+                    className="bg-[#0c251d] text-[#c8a25a] text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm"
                   >
-                    Limpar Todos os Filtros
+                    Limpar todos os filtros
                   </button>
                   <button
                     onClick={() =>
@@ -378,10 +360,10 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                         `Olá! Procurei no catálogo por "${searchTerm || 'um modelo específico'}" e não encontrei. Vocês conseguem sob encomenda?`
                       )
                     }
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-sm"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Consultar Encomenda no Zap</span>
+                    <WhatsAppIcon className="w-4 h-4 text-white" />
+                    <span>Consultar encomenda no WhatsApp</span>
                   </button>
                 </div>
               </div>
@@ -398,31 +380,30 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     >
                       {/* Product Image & Badges */}
                       <div className="relative bg-stone-50 p-4 sm:p-5 flex items-center justify-center overflow-hidden border-b border-stone-100">
-                        {/* Badges */}
+                        {/* Badges in normalcase */}
                         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                           {product.isBestseller && (
-                            <span className="bg-[#0c251d] text-[#c8a25a] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
-                              <Sparkles className="w-3 h-3 text-[#c8a25a]" />
-                              Mais Vendido
+                            <span className="bg-[#0c251d] text-[#c8a25a] text-xs font-medium px-2.5 py-0.5 rounded-full shadow-sm">
+                              Mais vendido
                             </span>
                           )}
                           {product.isPromo && (
-                            <span className="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                            <span className="bg-rose-600 text-white text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">
                               Promoção
                             </span>
                           )}
                         </div>
 
-                        {/* Image */}
+                        {/* Image with gentle fade-in */}
                         <div
                           onClick={() => onOpenProductDetail(product)}
                           className="w-full h-48 sm:h-52 cursor-pointer flex items-center justify-center overflow-hidden rounded-xl"
                         >
-                          <img
+                          <ImageWithFade
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl"
-                            loading="lazy"
+                            containerClassName="w-full h-full flex items-center justify-center"
+                            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 rounded-xl"
                           />
                         </div>
 
@@ -431,6 +412,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                           onClick={() => onOpenProductDetail(product)}
                           className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md hover:bg-white text-stone-800 p-2 rounded-xl shadow-md transition active:scale-90"
                           title="Ver detalhes da armação"
+                          aria-label={`Ver detalhes da armação ${product.name}`}
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -443,10 +425,10 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                           <div className="flex items-center justify-between text-xs text-stone-500 mb-1.5">
                             <div className="flex items-center gap-1 text-amber-500">
                               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                              <span className="font-bold text-stone-700">{product.rating}</span>
-                              <span className="text-[11px] text-stone-400">({product.reviewsCount})</span>
+                              <span className="font-semibold text-stone-700">{product.rating}</span>
+                              <span className="text-xs text-stone-400">({product.reviewsCount})</span>
                             </div>
-                            <span className="text-[11px] font-medium uppercase tracking-wider bg-stone-100 text-stone-600 px-2 py-0.5 rounded-md">
+                            <span className="text-xs font-medium capitalize bg-stone-100 text-stone-600 px-2 py-0.5 rounded-md">
                               {product.gender}
                             </span>
                           </div>
@@ -459,13 +441,13 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                             {product.name}
                           </h3>
 
-                          {/* Material & Dimension Mini Pill */}
+                          {/* Material */}
                           <p className="text-xs text-stone-500 line-clamp-1 mt-0.5">
                             {product.material}
                           </p>
 
                           {/* Technical dimensions preview */}
-                          <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
+                          <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
                             <span>Aro: <strong>{product.dimensions.lensWidth}mm</strong></span>
                             <span>Ponte: <strong>{product.dimensions.bridgeWidth}mm</strong></span>
                             <span>Haste: <strong>{product.dimensions.templeLength}mm</strong></span>
@@ -482,11 +464,11 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                               <span className="text-lg sm:text-xl font-black text-[#0c251d]">
                                 R$ {pixPrice.toFixed(2)}
                               </span>
-                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
                                 no PIX
                               </span>
                             </div>
-                            <span className="text-[11px] text-stone-500 block">
+                            <span className="text-xs text-stone-500 block mt-0.5">
                               ou 12x de R$ {installmentVal} sem juros
                             </span>
                           </div>
@@ -495,16 +477,16 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                           <div className="grid grid-cols-2 gap-2">
                             <button
                               onClick={() => onOpenProductDetail(product)}
-                              className="w-full flex items-center justify-center gap-1 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-bold py-2.5 px-2 rounded-xl transition active:scale-95 text-center"
+                              className="w-full flex items-center justify-center gap-1 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold py-2.5 px-2 rounded-xl transition active:scale-95 text-center"
                             >
-                              <span>Ver Detalhes</span>
+                              <span>Ver detalhes</span>
                             </button>
 
                             <button
                               onClick={() => onOpenLensModal(product)}
-                              className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white text-xs font-bold py-2.5 px-2 rounded-xl transition shadow-md shadow-amber-700/20 active:scale-95 text-center"
+                              className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white text-xs font-semibold py-2.5 px-2 rounded-xl transition shadow-md shadow-amber-700/20 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500"
                             >
-                              <Layers className="w-3.5 h-3.5" />
+                              <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
                               <span>Pedir no Zap</span>
                             </button>
                           </div>
@@ -527,13 +509,14 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
               <div className="flex items-center justify-between pb-3 border-b border-stone-200">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="w-4 h-4 text-[#0c251d]" />
-                  <span className="text-sm font-bold uppercase tracking-wider text-stone-900">
-                    Filtrar Catálogo
+                  <span className="text-sm font-bold text-stone-900">
+                    Filtrar catálogo
                   </span>
                 </div>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
                   className="p-1 rounded-full text-stone-400 hover:text-stone-800"
+                  aria-label="Fechar filtros"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -541,8 +524,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Formato */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  Formato da Armação
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Formato da armação
                 </label>
                 <div className="space-y-1">
                   {[
@@ -557,9 +540,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     <button
                       key={item.id}
                       onClick={() => setSelectedFormat(item.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between ${
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between ${
                         selectedFormat === item.id
-                          ? 'bg-[#0c251d] text-[#c8a25a]'
+                          ? 'bg-[#0c251d] text-[#c8a25a] font-bold'
                           : 'text-stone-600 hover:bg-stone-50'
                       }`}
                     >
@@ -572,7 +555,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Gênero */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
                   Gênero
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -599,8 +582,8 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
 
               {/* Faixa de Preço */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                  Faixa de Preço
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Faixa de preço
                 </label>
                 <div className="space-y-1">
                   {[
@@ -612,9 +595,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     <button
                       key={p.id}
                       onClick={() => setSelectedPriceRange(p.id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between ${
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between ${
                         selectedPriceRange === p.id
-                          ? 'bg-[#0c251d] text-[#c8a25a]'
+                          ? 'bg-[#0c251d] text-[#c8a25a] font-bold'
                           : 'text-stone-600 hover:bg-stone-50'
                       }`}
                     >
@@ -631,7 +614,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 onClick={() => setIsMobileFilterOpen(false)}
                 className="w-full bg-[#0c251d] text-[#c8a25a] font-bold text-xs py-3 rounded-xl shadow-md text-center"
               >
-                Ver {filteredProducts.length} Resultados
+                Ver {filteredProducts.length} resultados
               </button>
               {hasActiveFilters && (
                 <button
@@ -639,9 +622,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                     clearAllFilters();
                     setIsMobileFilterOpen(false);
                   }}
-                  className="w-full text-center text-xs font-bold text-rose-600 py-2 hover:underline"
+                  className="w-full text-center text-xs font-medium text-rose-600 py-2 hover:underline"
                 >
-                  Limpar Filtros
+                  Limpar filtros
                 </button>
               )}
             </div>

@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import { Product } from '../types';
 import { PRODUCTS } from '../data/products';
 import {
-  ChevronLeft,
-  ChevronRight,
+  CaretLeft,
+  CaretRight,
   Star,
   ShieldCheck,
   Truck,
   Clock,
-  Sparkles,
-  Layers,
+  Sparkle,
+  Stack,
   Check,
   Package,
   Ruler,
-  HelpCircle,
+  Question,
   ArrowLeft,
-  MessageCircle,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { ImageWithFade } from './ImageWithFade';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface ProductDetailViewProps {
   product: Product;
@@ -78,12 +79,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   };
 
   return (
-    <div className="bg-[#fcfbf9] text-stone-900 pb-28 sm:pb-24 animate-fadeIn">
+    <div className="bg-[#fcfbf9] text-stone-900 pb-28 sm:pb-32 animate-fadeIn">
       
       {/* Breadcrumb Bar */}
-      <div className="bg-white border-b border-stone-200 py-3 px-3 sm:px-6 lg:px-8">
+      <div className="bg-white border-b border-stone-200 py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm text-stone-500">
-          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
             <button
               onClick={onBackToCatalog}
               className="text-[#0c251d] font-bold hover:underline flex items-center gap-1 shrink-0"
@@ -92,7 +93,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <span>Catálogo</span>
             </button>
             <span>/</span>
-            <span className="text-stone-900 font-bold truncate max-w-[150px] sm:max-w-none">
+            <span className="text-stone-900 font-semibold truncate max-w-[150px] sm:max-w-none">
               {product.name}
             </span>
           </div>
@@ -100,49 +101,51 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <div className="flex items-center gap-3 text-xs font-semibold shrink-0">
             <button
               onClick={() => onSelectProduct(prevProduct)}
-              className="hover:text-[#0c251d] flex items-center gap-0.5"
+              className="hover:text-stone-900 flex items-center gap-0.5"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span className="hidden xs:inline">Anterior</span>
+              <CaretLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Anterior</span>
             </button>
-            <span className="text-stone-300">|</span>
+            <span>•</span>
             <button
               onClick={() => onSelectProduct(nextProduct)}
-              className="hover:text-[#0c251d] flex items-center gap-0.5"
+              className="hover:text-stone-900 flex items-center gap-0.5"
             >
-              <span className="hidden xs:inline">Seguinte</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Próximo</span>
+              <CaretRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Product Container */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-5 sm:pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
+        
+        {/* Main Grid: Gallery (Left) & Buy Box (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* Left Column: Image Gallery */}
-          <div className="lg:col-span-7 space-y-3 sm:space-y-4">
-            
-            {/* Main Stage Image */}
-            <div className="relative bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-4 sm:p-8 shadow-sm flex items-center justify-center min-h-[260px] xs:min-h-[300px] sm:min-h-[440px] overflow-hidden group">
-              {/* Badges */}
+          {/* Left Column: Interactive Photo Gallery */}
+          <div className="lg:col-span-7 space-y-4">
+            {/* Main Image Frame with Smooth Fade-in */}
+            <div className="relative aspect-square sm:aspect-[4/3] bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-4 sm:p-8 flex items-center justify-center shadow-sm overflow-hidden">
+              {/* Badges in normalcase */}
               <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
                 {discountPercent > 0 && (
-                  <span className="bg-rose-600 text-white font-bold text-[10px] sm:text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
+                  <span className="bg-rose-600 text-white font-medium text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
                     {discountPercent}% OFF
                   </span>
                 )}
                 {product.isBestseller && (
-                  <span className="bg-[#0c251d] text-[#c8a25a] font-bold text-[10px] sm:text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
-                    Mais Vendido
+                  <span className="bg-[#0c251d] text-[#c8a25a] font-medium text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
+                    Mais vendido
                   </span>
                 )}
               </div>
 
-              <img
+              <ImageWithFade
                 src={product.images[selectedImageIndex] || product.images[0]}
                 alt={product.name}
+                loading="eager"
+                containerClassName="w-full h-full flex items-center justify-center"
                 className="w-full max-h-[220px] xs:max-h-[260px] sm:max-h-[360px] object-contain transition-transform duration-500"
               />
 
@@ -158,7 +161,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow-md border border-stone-200 flex items-center justify-center text-stone-700 active:scale-95 transition"
                     aria-label="Imagem anterior"
                   >
-                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <CaretLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() =>
@@ -167,7 +170,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow-md border border-stone-200 flex items-center justify-center text-stone-700 active:scale-95 transition"
                     aria-label="Próxima imagem"
                   >
-                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <CaretRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </>
               )}
@@ -182,8 +185,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-white border-2 p-1 shrink-0 overflow-hidden transition-all ${
                     selectedImageIndex === idx
                       ? 'border-[#0c251d] ring-2 ring-[#c8a25a]/40 shadow-sm'
-                      : 'border-stone-200 opacity-70'
+                      : 'border-stone-200 opacity-70 hover:opacity-100'
                   }`}
+                  aria-label={`Selecionar foto ${idx + 1}`}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover rounded-lg" />
                 </button>
@@ -196,7 +200,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-stone-100 border border-stone-200 p-1 shrink-0 overflow-hidden relative"
                 >
                   <img src={clientImg} alt="" className="w-full h-full object-cover rounded-lg" />
-                  <span className="absolute bottom-1 right-1 bg-black/75 text-[8px] sm:text-[9px] text-white px-1 rounded font-bold">
+                  <span className="absolute bottom-1 right-1 bg-black/75 text-[9px] text-white px-1 rounded font-medium">
                     Real
                   </span>
                 </div>
@@ -217,7 +221,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       />
                     ))}
                   </div>
-                  <div className="text-[11px] sm:text-xs">
+                  <div className="text-xs">
                     <strong className="text-stone-900 block font-bold">
                       Fotos reais de clientes
                     </strong>
@@ -230,27 +234,27 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                       `Olá! Gostaria de ver mais fotos reais de clientes usando o ${product.name}.`
                     )
                   }
-                  className="text-[11px] sm:text-xs font-bold text-[#0c251d] underline shrink-0"
+                  className="text-xs font-semibold text-[#0c251d] underline shrink-0"
                 >
-                  Ver no Zap
+                  Ver no WhatsApp
                 </button>
               </div>
             )}
           </div>
 
           {/* Right Column: Buy Box & Actions */}
-          <div className="lg:col-span-5 space-y-4 sm:space-y-6 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-stone-200 shadow-sm">
+          <div className="lg:col-span-5 space-y-5 sm:space-y-6 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-stone-200 shadow-sm">
             
             {/* Title & Rating */}
             <div>
-              <div className="flex items-center gap-2 mb-1 sm:mb-2">
+              <div className="flex items-center gap-2 mb-2">
                 <div className="flex items-center gap-0.5 text-amber-500">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <Star key={i} weight="fill" className="w-3.5 h-3.5 text-amber-400" />
                   ))}
                 </div>
                 <span className="text-xs font-bold text-stone-700">
-                  {product.rating} ({product.reviewsCount})
+                  {product.rating} ({product.reviewsCount} avaliações)
                 </span>
                 <span className="text-stone-300">•</span>
                 <span className="text-xs text-stone-500 font-medium capitalize">
@@ -258,10 +262,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </span>
               </div>
 
-              <h1 className="text-xl sm:text-3xl font-extrabold text-[#0c251d] font-serif-brand leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0c251d] font-serif-brand leading-tight">
                 {product.name}
               </h1>
-              <p className="text-xs text-stone-500 mt-0.5">{product.material}</p>
+              <p className="text-xs sm:text-sm text-stone-500 mt-1">{product.material}</p>
             </div>
 
             {/* Price Box */}
@@ -269,26 +273,26 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <span className="text-xs text-stone-400 line-through">
                 De R$ {product.originalPrice.toFixed(2)}
               </span>
-              <div className="flex items-baseline gap-2 mt-0.5">
+              <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-2xl sm:text-4xl font-black text-[#0c251d]">
                   R$ {product.currentPrice.toFixed(2)}
                 </span>
-                <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                   No PIX (5% OFF)
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/80 pt-2">
+              <div className="mt-2.5 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/80 pt-2.5">
                 <span>ou até <strong>12x de R$ {(product.currentPrice / 12 * 1.08).toFixed(2)}</strong></span>
-                <span className="text-stone-400">no Cartão</span>
+                <span className="text-stone-400">no cartão</span>
               </div>
             </div>
 
             {/* Color Selector */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-                Cor:{' '}
-                <span className="text-stone-900 font-semibold normal-case">
+              <label className="block text-xs font-semibold text-stone-700 mb-2">
+                Cor selecionada:{' '}
+                <span className="text-stone-900 font-bold">
                   {product.colors[selectedColorIndex]?.name}
                 </span>
               </label>
@@ -318,10 +322,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <div className="space-y-2.5 pt-1">
               <button
                 onClick={() => onOpenLensModal(product)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-extrabold text-sm sm:text-base py-3.5 sm:py-4 px-4 sm:px-6 rounded-2xl shadow-xl shadow-amber-700/25 active:scale-98 tracking-wide uppercase text-center"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-sm sm:text-base py-3.5 sm:py-4 px-4 sm:px-6 rounded-2xl shadow-xl shadow-amber-700/20 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500"
               >
-                <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Personalizar Lentes & Pedir no WhatsApp</span>
+                <Stack className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Personalizar lentes & pedir no WhatsApp</span>
               </button>
 
               <button
@@ -332,10 +336,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     `*Olá, Óticas Aion!* 👋\n\nGostaria de pedir apenas a *armação sem lentes de grau*:\n\n👓 *Modelo:* ${product.name}\n🎨 *Cor:* ${colorName}\n💰 *Valor com desconto PIX:* R$ ${pixVal.toFixed(2)} (ou R$ ${product.currentPrice.toFixed(2)} normal)\n\nQual o procedimento para envio e entrega?`
                   );
                 }}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition active:scale-98 text-center shadow-md shadow-emerald-700/20"
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm py-3 px-4 rounded-xl transition active:scale-95 text-center shadow-md shadow-emerald-700/20"
               >
-                <MessageCircle className="w-4 h-4 fill-white shrink-0" />
-                <span>Pedir Apenas a Armação no WhatsApp</span>
+                <WhatsAppIcon className="w-4 h-4 text-white shrink-0" />
+                <span>Pedir apenas a armação no WhatsApp</span>
               </button>
 
               <button
@@ -344,26 +348,26 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     `Olá! Gostaria de tirar dúvidas sobre a armação *${product.name}* na cor *${product.colors[selectedColorIndex]?.name}*. Tenho minha receita em mãos!`
                   )
                 }
-                className="w-full flex items-center justify-center gap-2 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 font-semibold text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl transition active:scale-98 text-center"
+                className="w-full flex items-center justify-center gap-2 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 font-medium text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl transition active:scale-95 text-center"
               >
-                <HelpCircle className="w-4 h-4 text-stone-500 shrink-0" />
+                <Question className="w-4 h-4 text-stone-500 shrink-0" />
                 <span>Dúvidas sobre o modelo? Falar com consultor</span>
               </button>
             </div>
 
-            {/* Delivery Alert notice */}
+            {/* Delivery Alert Box */}
             <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-xs text-amber-900 flex items-start gap-2">
               <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
               <span>
-                <strong>Prazo de laboratório:</strong> Para lentes com grau, o prazo de confecção e conferência técnica é de até <strong>7 dias úteis</strong>.
+                <strong>Prazo laboratorial:</strong> Para lentes com grau, o prazo de confecção e conferência técnica é de até <strong>7 dias úteis</strong>.
               </span>
             </div>
 
             {/* Freight Simulator */}
             <div className="pt-2 border-t border-stone-200">
               <form onSubmit={handleCalculateShipping} className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700">
-                  Calcular Frete e Prazo:
+                <label className="block text-xs font-semibold text-stone-700">
+                  Calcular frete e prazo:
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -372,12 +376,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     value={cep}
                     onChange={(e) => setCep(e.target.value)}
                     maxLength={9}
-                    className="flex-1 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-base sm:text-xs font-medium focus:outline-none focus:border-[#0c251d]"
+                    className="flex-1 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:border-[#0c251d]"
                   />
                   <button
                     type="submit"
                     disabled={isCalculatingShipping}
-                    className="bg-[#0c251d] text-[#c8a25a] font-bold text-xs px-4 py-2.5 rounded-xl shrink-0 disabled:opacity-50"
+                    className="bg-[#0c251d] text-[#c8a25a] font-semibold text-xs px-4 py-2.5 rounded-xl shrink-0 disabled:opacity-50"
                   >
                     {isCalculatingShipping ? '...' : 'Calcular'}
                   </button>
@@ -391,7 +395,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     <span>{shippingResult.pac}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-stone-700 pt-1 border-t border-stone-200">
-                    <Sparkles className="w-3.5 h-3.5 text-[#c8a25a] shrink-0" />
+                    <Sparkle className="w-3.5 h-3.5 text-[#c8a25a] shrink-0" />
                     <span>{shippingResult.sedex}</span>
                   </div>
                 </div>
@@ -402,7 +406,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100 text-xs text-stone-600">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Garantia de 7 Dias</span>
+                <span>Garantia de 7 dias</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -421,10 +425,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <div className="flex border-b border-stone-200 bg-stone-50 text-xs sm:text-sm font-bold">
             <button
               onClick={() => setActiveTab('medidas')}
-              className={`flex-1 py-3 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'medidas'
                   ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500'
+                  : 'border-transparent text-stone-500 hover:text-stone-800'
               }`}
             >
               <Ruler className="w-3.5 h-3.5" />
@@ -432,37 +436,37 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('descricao')}
-              className={`flex-1 py-3 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'descricao'
                   ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500'
+                  : 'border-transparent text-stone-500 hover:text-stone-800'
               }`}
             >
-              <HelpCircle className="w-3.5 h-3.5" />
+              <Question className="w-3.5 h-3.5" />
               <span>Descrição</span>
             </button>
             <button
               onClick={() => setActiveTab('inclusos')}
-              className={`flex-1 py-3 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
                 activeTab === 'inclusos'
                   ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500'
+                  : 'border-transparent text-stone-500 hover:text-stone-800'
               }`}
             >
               <Package className="w-3.5 h-3.5" />
-              <span>Inclusos</span>
+              <span>Itens inclusos</span>
             </button>
           </div>
 
           {/* Tab 1: Medidas */}
           {activeTab === 'medidas' && (
-            <div className="p-4 sm:p-10 space-y-6 sm:space-y-10">
+            <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
                 
                 {/* Visual Technical Diagram */}
                 <div className="lg:col-span-6 bg-[#faf8f5] rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-stone-200 flex flex-col items-center justify-center">
-                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-2 sm:mb-4 block text-center">
-                    Diagrama Técnico de Medidas (em milímetros)
+                  <span className="text-xs font-semibold text-stone-500 mb-2 sm:mb-4 block text-center">
+                    Diagrama técnico de medidas (em milímetros)
                   </span>
 
                   <div className="w-full max-w-sm sm:max-w-md py-2">
@@ -490,7 +494,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
                       <line x1="50" y1="160" x2="350" y2="160" stroke="#c8a25a" strokeWidth="2" strokeDasharray="4 2" />
                       <text x="200" y="180" textAnchor="middle" fill="#0c251d" fontSize="13" fontWeight="bold">
-                        {product.dimensions.totalFront} mm (Frente Total)
+                        {product.dimensions.totalFront} mm (Frente total)
                       </text>
                     </svg>
 
@@ -506,28 +510,28 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     <table className="w-full text-xs sm:text-sm text-left">
                       <tbody className="divide-y divide-stone-100">
                         <tr className="bg-stone-50/50">
-                          <td className="p-3 font-bold text-stone-600 w-1/2">Material Frente</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.materialFront}</td>
+                          <td className="p-3 font-semibold text-stone-600 w-1/2">Material da frente</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.materialFront}</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-bold text-stone-600">Material Haste</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.materialTemple}</td>
+                          <td className="p-3 font-semibold text-stone-600">Material da haste</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.materialTemple}</td>
                         </tr>
                         <tr className="bg-stone-50/50">
-                          <td className="p-3 font-bold text-stone-600">Tipo do Aro</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.rimType}</td>
+                          <td className="p-3 font-semibold text-stone-600">Tipo de aro</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.rimType}</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-bold text-stone-600">Plaquetas Nasais</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.nosePads}</td>
+                          <td className="p-3 font-semibold text-stone-600">Plaquetas nasais</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.nosePads}</td>
                         </tr>
                         <tr className="bg-stone-50/50">
-                          <td className="p-3 font-bold text-stone-600">Mola na Haste</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.springHinges}</td>
+                          <td className="p-3 font-semibold text-stone-600">Mola na haste</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.springHinges}</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-bold text-stone-600">Estilo</td>
-                          <td className="p-3 text-stone-900 font-semibold">{product.specs.style}</td>
+                          <td className="p-3 font-semibold text-stone-600">Estilo</td>
+                          <td className="p-3 text-stone-900 font-medium">{product.specs.style}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -540,9 +544,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
           {/* Tab 2: Descrição */}
           {activeTab === 'descricao' && (
-            <div className="p-4 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
+            <div className="p-5 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
               <h3 className="text-lg sm:text-xl font-bold font-serif-brand text-[#0c251d]">
-                Detalhes de Construção & Ergonomia
+                Detalhes de construção & ergonomia
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
                 {product.description}
@@ -552,7 +556,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
           {/* Tab 3: Itens Inclusos */}
           {activeTab === 'inclusos' && (
-            <div className="p-4 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
+            <div className="p-5 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
               <h3 className="text-lg sm:text-xl font-bold font-serif-brand text-[#0c251d]">
                 O que você recebe no estojo:
               </h3>
@@ -577,12 +581,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
         {/* You May Also Like */}
         <div className="mt-12 sm:mt-20">
           <div className="flex items-center justify-between mb-4 sm:mb-8">
-            <h3 className="text-xl sm:text-3xl font-extrabold text-[#0c251d] font-serif-brand">
-              Você Pode Gostar
+            <h3 className="text-xl sm:text-2xl font-bold text-[#0c251d] font-serif-brand">
+              Modelos similares
             </h3>
             <button
               onClick={onBackToCatalog}
-              className="text-xs sm:text-sm font-bold text-[#0c251d] hover:underline"
+              className="text-xs sm:text-sm font-semibold text-[#0c251d] hover:underline"
             >
               Ver todos →
             </button>
@@ -599,14 +603,15 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 className="cursor-pointer bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-3 shadow-sm hover:shadow-lg transition-all"
               >
                 <div className="aspect-square bg-stone-50 rounded-xl overflow-hidden p-2 flex items-center justify-center">
-                  <img
+                  <ImageWithFade
                     src={rel.images[0]}
                     alt={rel.name}
+                    containerClassName="w-full h-full flex items-center justify-center"
                     className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="mt-2">
-                  <h4 className="font-bold text-stone-900 text-xs sm:text-sm truncate">
+                  <h4 className="font-semibold text-stone-900 text-xs sm:text-sm truncate">
                     {rel.name}
                   </h4>
                   <span className="text-sm sm:text-base font-extrabold text-[#0c251d] block mt-0.5">
@@ -630,14 +635,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-stone-200 shrink-0"
             />
             <div className="min-w-0">
-              <span className="font-bold text-stone-900 text-xs sm:text-sm block truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
+              <span className="font-semibold text-stone-900 text-xs sm:text-sm block truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
                 {product.name}
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="text-sm sm:text-base font-black text-[#0c251d]">
                   R$ {product.currentPrice.toFixed(2)}
                 </span>
-                <span className="text-[9px] text-emerald-800 font-bold bg-emerald-50 px-1 rounded">
+                <span className="text-[10px] text-emerald-800 font-semibold bg-emerald-50 px-1 rounded">
                   no PIX
                 </span>
               </div>
@@ -647,9 +652,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <div className="shrink-0">
             <button
               onClick={() => onOpenLensModal(product)}
-              className="bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-extrabold text-xs sm:text-sm py-2.5 sm:py-3 px-4 sm:px-8 rounded-xl shadow-md transition active:scale-95 whitespace-nowrap uppercase tracking-tight sm:tracking-wider"
+              className="bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-4 sm:px-8 rounded-xl shadow-md transition active:scale-95 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-amber-500"
             >
-              Comprar c/ Lentes
+              Comprar com lentes
             </button>
           </div>
         </div>

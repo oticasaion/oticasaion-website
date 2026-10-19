@@ -1,9 +1,9 @@
 export interface ProductSpecs {
   materialFront: string;
   materialTemple: string;
-  rimType: 'Aro Fechado' | 'Meio Aro' | 'Sem Aro (Balgriff)';
-  nosePads: 'Sim (Silicone Anatômico)' | 'Não (Injetada)';
-  springHinges: 'Sim (Mola 180°)' | 'Sim (Flexível)' | 'Não';
+  rimType: string;
+  nosePads: string;
+  springHinges: string;
   style: string;
 }
 

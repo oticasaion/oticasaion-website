@@ -11,9 +11,9 @@
     "deploy": "gh-pages -d dist --dotfiles -b gh-pages"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.117.2",
     "firebase": "^12.19.0",
-    "lucide-react": "^1.48.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

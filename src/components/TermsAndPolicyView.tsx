@@ -3,15 +3,13 @@ import {
   ShieldCheck,
   FileText,
   Lock,
-  RefreshCw,
+  ArrowsClockwise,
   Eye,
-  MessageCircle,
   ArrowLeft,
-  CheckCircle2,
-  AlertCircle,
+  CheckCircle,
   Clock,
-  HelpCircle,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface TermsAndPolicyViewProps {
   onBackToHome: () => void;
@@ -55,11 +53,11 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
               <ShieldCheck className="w-6 h-6 text-[#c8a25a]" />
             </div>
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#c8a25a]">
-                Transparência e Conformidade Jurídica
+              <span className="text-xs font-semibold text-[#c8a25a] block mb-0.5">
+                Transparência e conformidade jurídica
               </span>
               <h1 className="text-2xl sm:text-3xl font-extrabold font-serif-brand">
-                Políticas, Termos & Garantias
+                Políticas, termos & garantias
               </h1>
             </div>
           </div>
@@ -76,8 +74,8 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
           {/* Sidebar Tabs */}
           <div className="md:col-span-4 space-y-2">
             <div className="bg-white rounded-2xl p-3 border border-stone-200 shadow-sm sticky top-24">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 px-3 py-1 block">
-                Selecione o Documento
+              <span className="text-xs font-semibold text-stone-500 px-3 py-1.5 block">
+                Selecione o documento
               </span>
 
               <button
@@ -92,7 +90,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                   <Lock className="w-4 h-4 shrink-0" />
                   <span>Política de Privacidade (LGPD)</span>
                 </div>
-                {activeTab === 'privacidade' && <CheckCircle2 className="w-4 h-4 text-[#c8a25a]" />}
+                {activeTab === 'privacidade' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
               </button>
 
               <button
@@ -107,7 +105,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                   <FileText className="w-4 h-4 shrink-0" />
                   <span>Termos de Uso do Site</span>
                 </div>
-                {activeTab === 'termos' && <CheckCircle2 className="w-4 h-4 text-[#c8a25a]" />}
+                {activeTab === 'termos' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
               </button>
 
               <button
@@ -122,7 +120,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                   <ShieldCheck className="w-4 h-4 shrink-0" />
                   <span>Garantia & Adaptação (7 Dias)</span>
                 </div>
-                {activeTab === 'garantia' && <CheckCircle2 className="w-4 h-4 text-[#c8a25a]" />}
+                {activeTab === 'garantia' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
               </button>
 
               <button
@@ -134,10 +132,10 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <RefreshCw className="w-4 h-4 shrink-0" />
+                  <ArrowsClockwise className="w-4 h-4 shrink-0" />
                   <span>Trocas e Devoluções (CDC)</span>
                 </div>
-                {activeTab === 'trocas' && <CheckCircle2 className="w-4 h-4 text-[#c8a25a]" />}
+                {activeTab === 'trocas' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
               </button>
 
               <button
@@ -152,7 +150,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                   <Eye className="w-4 h-4 shrink-0" />
                   <span>Envio de Receitas & DNP</span>
                 </div>
-                {activeTab === 'receita' && <CheckCircle2 className="w-4 h-4 text-[#c8a25a]" />}
+                {activeTab === 'receita' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
               </button>
 
               {/* WhatsApp Support Callout */}
@@ -164,7 +162,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
                   }
                   className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold py-2.5 px-3 rounded-xl transition shadow-sm"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <WhatsAppIcon className="w-4 h-4 text-white" />
                   <span>Atendimento WhatsApp</span>
                 </button>
               </div>
@@ -280,7 +278,7 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
 
                 <div className="space-y-4 text-xs sm:text-sm">
                   <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-emerald-900 block font-bold">
                         Garantia de 7 Dias de Adaptação Incondicional

@@ -1,15 +1,20 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface WhatsAppButtonProps {
   onClick: (customText?: string) => void;
   isDetailView?: boolean;
+  isHome?: boolean;
 }
 
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   onClick,
   isDetailView = false,
+  isHome = false,
 }) => {
+  // Ocultar na primeira página (Home)
+  if (isHome) return null;
+
   // On detail view, hide on mobile to prevent overlapping with sticky buy bar
   return (
     <div
@@ -29,7 +34,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
         title="Fale no WhatsApp"
       >
         <span className="absolute -inset-1 rounded-full bg-[#25D366]/30 animate-ping pointer-events-none" />
-        <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-white relative z-10" />
+        <WhatsAppIcon className="w-7 h-7 sm:w-8 sm:h-8 text-white relative z-10" />
       </button>
     </div>
   );

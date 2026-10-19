@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo';
-import { MessageCircle, Menu, X, ShieldCheck, Truck, Sparkles, CheckCircle2, FileText } from 'lucide-react';
+import { List, X, ShieldCheck, Truck, Sparkle, CheckCircle } from '@phosphor-icons/react';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface HeaderProps {
   onWhatsAppClick: (customText?: string) => void;
@@ -69,11 +70,11 @@ export const Header: React.FC<HeaderProps> = ({
             <span><strong>7 Dias de Garantia</strong></span>
           </div>
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-[#c8a25a]" />
+            <Sparkle className="w-3.5 h-3.5 text-[#c8a25a]" />
             <span>Até <strong>50% mais econômico</strong></span>
           </div>
           <div className="hidden lg:flex items-center gap-1.5 shrink-0">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
             <span>5% OFF no PIX</span>
           </div>
         </div>
@@ -155,7 +156,7 @@ export const Header: React.FC<HeaderProps> = ({
               }
               className="hidden sm:inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-md transition-all active:scale-95"
             >
-              <MessageCircle className="w-4 h-4 fill-white" />
+              <WhatsAppIcon className="w-4 h-4 text-white" />
               <span>Enviar Receita</span>
             </button>
 
@@ -165,7 +166,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="lg:hidden p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-xl transition min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <List className="w-6 h-6" />}
             </button>
           </div>
         </div>
@@ -239,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg active:scale-95 text-sm"
               >
-                <MessageCircle className="w-5 h-5 fill-white" />
+                <WhatsAppIcon className="w-5 h-5 text-white" />
                 <span>Chamar no WhatsApp com Receita</span>
               </button>
 

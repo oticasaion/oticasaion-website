@@ -21,9 +21,9 @@ export const Logo: React.FC<LogoProps> = ({
   };
 
   const titleSizes = {
-    sm: 'text-lg',
-    md: 'text-xl md:text-2xl',
-    lg: 'text-3xl md:text-4xl',
+    sm: 'text-xl sm:text-2xl',
+    md: 'text-2xl md:text-3xl',
+    lg: 'text-3xl md:text-5xl',
   };
 
   const sloganSizes = {
@@ -46,15 +46,15 @@ export const Logo: React.FC<LogoProps> = ({
       {/* Brand Name & Slogan */}
       <div className="flex flex-col leading-none">
         <span
-          className={`font-sans-brand font-bold tracking-[0.14em] ${titleSizes[size]} ${
+          className={`font-brand-name font-bold tracking-[0.04em] ${titleSizes[size]} ${
             isDark ? 'text-stone-900' : 'text-[#f5f1e8]'
           }`}
         >
-          ÓTICAS <span className="text-[#c8a25a]">AION</span>
+          Óticas <span className="text-[#c8a25a]">Aion</span>
         </span>
         {showSlogan && (
           <span
-            className={`font-sans-brand uppercase tracking-[0.22em] font-medium mt-1 ${sloganSizes[size]} ${
+            className={`font-sans-brand tracking-[0.14em] font-medium mt-0.5 ${sloganSizes[size]} ${
               isDark ? 'text-[#0C251D]/70' : 'text-[#c8a25a]'
             }`}
           >
