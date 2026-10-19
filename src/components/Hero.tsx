@@ -1,13 +1,12 @@
 import React from 'react';
 import { ShieldCheck, ArrowRight, Check } from '@phosphor-icons/react';
 import { ImageWithFade } from './ImageWithFade';
-import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface HeroProps {
-  onWhatsAppClick: (customText?: string) => void;
+  onWhatsAppClick?: (customText?: string) => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
+export const Hero: React.FC<HeroProps> = () => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#0c251d] via-[#091d17] to-[#061410] text-white pt-4 pb-14 sm:pt-8 sm:pb-20 lg:py-28 min-h-[540px] lg:min-h-[660px] xl:min-h-[720px] flex items-center">
       
@@ -93,23 +92,11 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
                 <a
                   href="#catalogo"
-                  className="inline-flex items-center justify-center gap-2 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#c8a25a]/20 transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c8a25a]"
+                  className="inline-flex items-center justify-center gap-2.5 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-8 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#c8a25a]/20 transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c8a25a]"
                 >
                   <span>Escolher minha armação</span>
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
-
-                <button
-                  onClick={() =>
-                    onWhatsAppClick(
-                      'Olá! Tenho minha receita oftálmica e gostaria de um orçamento para óculos de grau completo.'
-                    )
-                  }
-                  className="inline-flex items-center justify-center gap-2.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/50 font-semibold text-sm sm:text-base px-6 py-3.5 sm:py-4 rounded-xl backdrop-blur-sm transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-400"
-                >
-                  <WhatsAppIcon className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>Enviar receita no WhatsApp</span>
-                </button>
               </div>
 
               <p className="text-xs text-stone-400 pt-0.5">

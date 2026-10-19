@@ -57,31 +57,40 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full shadow-md">
-      {/* Top Notification Announcement Bar */}
-      <div className="bg-[#081a14] text-[#e7d7b5] text-[11px] sm:text-xs font-medium py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#c8a25a]/20">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto whitespace-nowrap gap-4 sm:gap-6 scrollbar-none">
-          <div className="flex items-center gap-1.5 shrink-0">
-            <Truck className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span>Envio Nacional • <strong>Entrega em até 7 dias</strong></span>
+    <>
+      {/* Top Notification Announcement Bar - Sits at page top and scrolls up naturally on scroll */}
+      <div className="bg-[#081a14] text-[#e7d7b5] text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#c8a25a]/20 relative z-30">
+        <div className="max-w-7xl mx-auto">
+          {/* Mobile Display: Consolidated high-converting message */}
+          <div className="flex sm:hidden items-center justify-center text-center font-bold tracking-tight text-[11px] text-[#e7d7b5]">
+            <span>Envio Nacional, 7 dias de garantia e 5% Off no Pix</span>
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span><strong>7 Dias de Garantia</strong></span>
-          </div>
-          <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-            <Sparkle className="w-3.5 h-3.5 text-[#c8a25a]" />
-            <span>Até <strong>50% mais econômico</strong></span>
-          </div>
-          <div className="hidden lg:flex items-center gap-1.5 shrink-0">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-            <span>5% OFF no PIX</span>
+
+          {/* Tablet/Desktop Display: Distributed items */}
+          <div className="hidden sm:flex items-center justify-between overflow-x-auto whitespace-nowrap gap-4 sm:gap-6 font-bold scrollbar-none">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Truck className="w-3.5 h-3.5 text-[#c8a25a]" />
+              <span>Envio Nacional • <strong>Entrega em até 7 dias</strong></span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#c8a25a]" />
+              <span><strong>7 Dias de Garantia</strong></span>
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+              <Sparkle className="w-3.5 h-3.5 text-[#c8a25a]" />
+              <span>Até <strong>50% mais econômico</strong></span>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5 shrink-0">
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+              <span>5% OFF no PIX</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar */}
-      <div className="bg-[#0c251d] text-white backdrop-blur-md bg-opacity-95 border-b border-[#c8a25a]/30">
+      {/* Main Sticky Navbar */}
+      <header className="sticky top-0 z-40 w-full shadow-md">
+        <div className="bg-[#0c251d] text-white backdrop-blur-md bg-opacity-95 border-b border-[#c8a25a]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <button
             onClick={() => onNavigate('home')}
@@ -97,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-medium text-stone-200">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 text-xs xl:text-sm font-bold text-stone-200">
             <button
               onClick={() => onNavigate('home')}
               className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
@@ -174,13 +183,13 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 top-[100px] z-50 lg:hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-6 max-h-[calc(100vh-100px)] overflow-y-auto">
+        <div className="fixed inset-0 top-16 sm:top-20 z-50 lg:hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-6 max-h-[calc(100vh-64px)] overflow-y-auto">
             <nav className="flex flex-col space-y-1">
               <button
                 onClick={() => handleLinkClick(() => onNavigate('home'))}
-                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
-                  currentView === 'home' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'home' ? 'text-[#c8a25a]' : 'text-stone-200'
                 }`}
               >
                 <span>Início</span>
@@ -189,8 +198,8 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => handleLinkClick(() => onNavigate('catalog'))}
-                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
-                  currentView === 'catalog' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'catalog' ? 'text-[#c8a25a]' : 'text-stone-200'
                 }`}
               >
                 <span>Catálogo Completo</span>
@@ -199,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => handleSectionClick('#como-funciona')}
-                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
               >
                 <span>Como Funciona o Envio da Receita</span>
                 <span className="text-stone-500 text-xs">→</span>
@@ -207,7 +216,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => handleSectionClick('#comparativo')}
-                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
               >
                 <span>Por Que a Aion?</span>
                 <span className="text-stone-500 text-xs">→</span>
@@ -215,8 +224,8 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => handleLinkClick(() => onNavigate('terms-policy'))}
-                className={`text-left text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
-                  currentView === 'terms-policy' ? 'text-[#c8a25a] font-bold' : 'text-stone-200'
+                className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'terms-policy' ? 'text-[#c8a25a]' : 'text-stone-200'
                 }`}
               >
                 <span>Políticas de Privacidade & Termos</span>
@@ -225,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => handleSectionClick('#faq')}
-                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-semibold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
               >
                 <span>Perguntas Frequentes (FAQ)</span>
                 <span className="text-stone-500 text-xs">→</span>
@@ -252,5 +261,6 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
     </header>
+    </>
   );
 };

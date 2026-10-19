@@ -15,7 +15,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenAdminLogin,
 }) => {
   return (
-    <footer className="bg-[#081a14] text-stone-300 pt-16 pb-12 border-t border-[#c8a25a]/30">
+    <footer className="bg-[#081a14] text-stone-300 pt-16 pb-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Main Footer Content */}
@@ -24,18 +24,18 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Info */}
           <div className="lg:col-span-5 space-y-4">
             <div onClick={() => onNavigate('home')} className="cursor-pointer inline-block">
-              <Logo variant="light" size="md" />
+              <Logo variant="monochrome" size="md" />
             </div>
-            <p className="text-xs text-stone-400 max-w-sm leading-relaxed mt-2">
+            <p className="text-xs text-stone-300 max-w-sm leading-relaxed mt-2">
               A Óticas Aion nasceu com a missão de tornar a saúde visual e o conforto estético acessíveis a todos, unindo armações nobres e lentes oftálmicas laboratoriais com atendimento consultivo no WhatsApp.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <span className="text-xs text-stone-400">Atendimento humanizado:</span>
               <button
                 onClick={() => onWhatsAppClick('Olá! Gostaria de falar com o atendimento da Óticas Aion.')}
-                className="inline-flex items-center gap-1.5 text-xs text-[#c8a25a] hover:underline font-semibold"
+                className="inline-flex items-center gap-1.5 text-xs text-stone-300 hover:text-white hover:underline font-semibold"
               >
-                <WhatsAppIcon className="w-4 h-4 text-emerald-400" />
+                <WhatsAppIcon className="w-4 h-4 text-stone-300" />
                 <span>WhatsApp Oficial</span>
               </button>
             </div>
@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Quick Links */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="text-xs font-bold text-[#c8a25a]">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
               Navegação
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
@@ -58,7 +58,7 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button
                   onClick={() => onNavigate('catalog')}
-                  className="hover:text-white transition text-left font-semibold text-[#c8a25a]"
+                  className="hover:text-white transition text-left font-semibold text-stone-200"
                 >
                   Catálogo completo de armações
                 </button>
@@ -78,7 +78,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => onNavigate('terms-policy')}
                   className="hover:text-white transition text-left flex items-center gap-1"
                 >
-                  <FileText className="w-3.5 h-3.5 text-[#c8a25a]" />
+                  <FileText className="w-3.5 h-3.5 text-stone-400" />
                   <span>Políticas & Termos de Uso (LGPD)</span>
                 </button>
               </li>
@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Security & Benefits Badges */}
           <div className="lg:col-span-4 space-y-4">
-            <h4 className="text-xs font-bold text-[#c8a25a]">
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
               Segurança & Compromisso
             </h4>
             <div className="grid grid-cols-2 gap-3 text-xs">
@@ -100,22 +100,22 @@ export const Footer: React.FC<FooterProps> = ({
                 onClick={() => onNavigate('terms-policy')}
                 className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
               >
-                <ShieldCheck className="w-5 h-5 text-[#c8a25a] shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-stone-300 shrink-0" />
                 <span>Garantia de 7 dias de adaptação</span>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
-                <Truck className="w-5 h-5 text-emerald-400 shrink-0" />
+                <Truck className="w-5 h-5 text-stone-300 shrink-0" />
                 <span>Entrega em até 7 dias úteis</span>
               </div>
               <div
                 onClick={() => onNavigate('terms-policy')}
                 className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"
               >
-                <Lock className="w-5 h-5 text-[#c8a25a] shrink-0" />
+                <Lock className="w-5 h-5 text-stone-300 shrink-0" />
                 <span>Compra segura & dados protegidos</span>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5">
-                <CreditCard className="w-5 h-5 text-emerald-400 shrink-0" />
+                <CreditCard className="w-5 h-5 text-stone-300 shrink-0" />
                 <span>PIX 5% OFF ou 12x no cartão</span>
               </div>
             </div>
@@ -135,7 +135,7 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="flex items-center gap-4 text-stone-400">
             <button
               onClick={() => onNavigate('terms-policy')}
-              className="text-stone-400 hover:text-[#c8a25a] transition"
+              className="text-stone-400 hover:text-white transition"
             >
               Termos e privacidade
             </button>
@@ -146,7 +146,7 @@ export const Footer: React.FC<FooterProps> = ({
               className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-200 transition py-1 px-2.5 rounded-lg border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10"
               title="Acesso Lojista / Gerenciar Produtos (Supabase)"
             >
-              <Lock className="w-3 h-3 text-[#c8a25a]" />
+              <Lock className="w-3 h-3 text-stone-400" />
               <span>Acesso lojista</span>
             </button>
           </div>
