@@ -27,7 +27,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
           }}
         >
           <ImageWithFade
-            src="./branding/hero-conexao-aion.jpeg"
+            src="./branding/hero-conexao-aion.webp"
             alt="Casal sorrindo com óculos de grau da Óticas Aion"
             loading="eager"
             containerClassName="w-full h-full"
@@ -44,14 +44,14 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
       </div>
 
       {/* Content Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
           
           {/* Left Column: Value Proposition & CTAs */}
-          <div className="lg:col-span-6 xl:col-span-5 space-y-6 text-center lg:text-left max-w-xl lg:max-w-md xl:max-w-lg mx-auto lg:mx-0">
+          <div className="lg:col-span-7 xl:col-span-7 space-y-6 text-center lg:text-left w-full max-w-full lg:max-w-2xl xl:max-w-3xl mx-auto lg:mx-0">
             
             {/* Mobile View: Hero Image directly below Header with 360° soft feather/fade on all edges & corners */}
-            <div className="block lg:hidden -mx-4 xs:-mx-6 sm:mx-0 mb-4 sm:mb-6 relative">
+            <div className="block lg:hidden -mx-3.5 xs:-mx-4 sm:mx-0 mb-4 sm:mb-6 relative">
               <div 
                 className="relative overflow-hidden w-full aspect-[16/10] sm:aspect-[16/9]"
                 style={{
@@ -60,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
                 }}
               >
                 <ImageWithFade
-                  src="./branding/hero-conexao-aion.jpeg"
+                  src="./branding/hero-conexao-aion.webp"
                   alt="Casal sorrindo com óculos de grau da Óticas Aion"
                   loading="eager"
                   containerClassName="w-full h-full"
@@ -76,15 +76,15 @@ export const Hero: React.FC<HeroProps> = ({ onWhatsAppClick }) => {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-5xl xl:text-[3.35rem] font-extrabold tracking-tight leading-[1.14] font-sans-brand text-balance">
-              Seu óculos de grau completo sem sair de casa e com{' '}
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-extrabold tracking-tight leading-[1.12] font-sans-brand">
+              A beleza de enxergar com nitidez e a alegria de{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5e48e] via-[#c8a25a] to-[#e5c77a]">
-                até 50% de economia
+                viver cada conexão
               </span>.
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-stone-300 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed text-pretty">
+            <p className="text-base sm:text-lg text-stone-300 max-w-xl lg:max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed text-pretty">
               Armações em titânio e acetato nobre com lentes oftálmicas de laboratório. Escolha seu modelo, envie a receita pelo WhatsApp e receba em casa com total segurança.
             </p>
 
