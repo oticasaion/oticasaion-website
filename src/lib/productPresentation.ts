@@ -1,11 +1,11 @@
-import type { Product } from '../types';
+import type { LensOption, Product } from '../types';
 import { LENS_OPTIONS } from '../data/lenses';
 
 export const currency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-export function productPricing(product: Product) {
+export function productPricing(product: Product, lensOptions: LensOption[] = LENS_OPTIONS) {
   const frame = Math.max(0, Number.isFinite(product.currentPrice) ? product.currentPrice : 0);
   const discount = Math.min(100, Math.max(0, Number.isFinite(product.pixDiscountPercent) ? product.pixDiscountPercent : 0));
-  const lenses = LENS_OPTIONS.filter(lens => lens.price > 0).map(lens => lens.price);
+  const lenses = lensOptions.filter(lens => lens.id !== 'only-frame' && Number.isFinite(lens.price) && lens.price >= 0).map(lens => lens.price);
   const lens = lenses.length ? Math.min(...lenses) : null;
   return {
     frame, discount, pix: frame * (1 - discount / 100),

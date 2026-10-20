@@ -14,6 +14,7 @@ try {
     colors: [{ name: 'Preto', hex: '#000000' },{ name: 'Azul', hex: '#0000ff' }] }, ['/photo-1.webp','/photo-2.webp'], 'product-test');
   const price = productPricing(product);
   assert.equal(price.pix,95);
+  assert.equal(productPricing(product, [{id:'only-frame',price:0},{id:'custom',price:100}]).completePix,190);
   assert.equal(price.previous,null);
   assert.ok(price.completePix > price.pix);
   assert.equal(productPricing({...product,pixDiscountPercent:0}).pix,100);
@@ -49,6 +50,7 @@ try {
   const modalHtml = renderToStaticMarkup(React.createElement(LensSelectorModal, { product, initialColorIndex:1, isOpen:true, analyticsEnabled:false, onClose:noop, onConfirmWhatsApp:noop }));
   assert.match(modalHtml, /aria-pressed="true"[^>]*>[\s\S]*?Azul/);
   assert.ok(modalHtml.includes('<dialog'));
-  assert.ok(modalHtml.includes('Sem adicional'));
+  assert.ok(modalHtml.includes('Carregando preços das lentes'));
+  assert.ok(!modalHtml.includes('Total estimado:'));
   console.log('PASS: product prices, complete-lens estimate, CEP inquiry, empty content, real gallery controls and selected color in lens dialog.');
 } finally { await server.close(); }

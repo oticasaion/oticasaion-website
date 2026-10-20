@@ -12,8 +12,9 @@ import { AdminDashboardView } from './AdminDashboardView';
 import { AdminAccessView } from './AdminAccessView';
 import { AdminBulkImportView } from './AdminBulkImportView';
 import { AdminHomeSettingsView } from './AdminHomeSettingsView';
+import { AdminLensSettingsView } from './AdminLensSettingsView';
 import type { HomeSettings } from '../../services/homeSettings';
-import { ArrowUpRight, House, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
+import { ArrowUpRight, Eyeglasses, House, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
 
 interface AdminViewProps {
   products: Product[];
@@ -125,10 +126,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
   const isBulkImport = path === 'admin/produtos/importar';
   const isDashboard = path === 'admin/dashboard';
   const isHomeSettings = path === 'admin/pagina-inicial';
+  const isLensSettings = path === 'admin/lentes';
   const navItems = [
     { href: '#/admin/dashboard', label: 'Visão geral', icon: SquaresFour, active: isDashboard },
     { href: '#/admin/pagina-inicial', label: 'Página inicial', icon: House, active: isHomeSettings },
     { href: '#/admin/produtos', label: 'Catálogo', icon: Package, active: isCatalog || !!editingMatch },
+    { href: '#/admin/lentes', label: 'Lentes', icon: Eyeglasses, active: isLensSettings },
     { href: '#/admin/produtos/novo', label: 'Nova armação', icon: Plus, active: isNew },
     { href: '#/admin/produtos/importar', label: 'Importar em lote', icon: UploadSimple, active: isBulkImport },
     { href: '#/admin/acesso', label: 'Regras e acesso', icon: ShieldCheck, active: isAccess },
@@ -147,7 +150,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
     </aside>
     <main id="admin-content">
       {notice && <p role="alert" className="m-6 bg-red-50 text-red-800 rounded-xl p-4 text-sm">{notice}</p>}
-      {isDashboard ? <AdminDashboardView /> : isHomeSettings ? <AdminHomeSettingsView onSaved={onHomeSettingsUpdated} /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (isNew ? <AdminEditorView key="new" productToEdit={null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
+      {isDashboard ? <AdminDashboardView /> : isHomeSettings ? <AdminHomeSettingsView onSaved={onHomeSettingsUpdated} /> : isLensSettings ? <AdminLensSettingsView /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (isNew ? <AdminEditorView key="new" productToEdit={null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
         const exists = products.some(p => p.id === product.id);
         onProductsUpdated(exists ? products.map(p => p.id === product.id ? product : p) : [product, ...products]);
         navigate('#/admin/produtos');

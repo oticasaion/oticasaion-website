@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import type { Product } from '../types';
+import type { LensOption, Product } from '../types';
 import { PRODUCTS } from '../data/products';
 import { ArrowLeft, ArrowRight, Check, CreditCard, Eyeglasses, Package, Ruler, ShieldCheck, Star, Truck } from '@phosphor-icons/react';
 import { ProductGallery } from './ProductGallery';
@@ -8,6 +8,7 @@ import { currency, formatCep, normalizeCep, productInquiry, productPricing } fro
 
 interface ProductDetailViewProps {
   product: Product;
+  lensOptions?: LensOption[];
   allProducts?: Product[];
   onBackToCatalog: () => void;
   onSelectProduct: (product: Product) => void;
@@ -16,13 +17,13 @@ interface ProductDetailViewProps {
 }
 const plainClick = (event: React.MouseEvent) => !event.defaultPrevented && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
-export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, allProducts = PRODUCTS, onBackToCatalog, onSelectProduct, onOpenLensModal, onWhatsAppClick }) => {
+export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, lensOptions, allProducts = PRODUCTS, onBackToCatalog, onSelectProduct, onOpenLensModal, onWhatsAppClick }) => {
   const [colorIndex, setColorIndex] = useState(0);
   const [cep, setCep] = useState('');
   const [cepError, setCepError] = useState('');
   const cepInput = useRef<HTMLInputElement>(null);
   const uid = useId();
-  const price = productPricing(product);
+  const price = productPricing(product, lensOptions);
   const selectedColorIndex = product.colors[colorIndex] ? colorIndex : 0;
   const selectedColor = product.colors[selectedColorIndex];
   const related = allProducts.filter(p => p.id !== product.id)

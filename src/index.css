@@ -284,7 +284,7 @@
 .lens-config-dialog {
   width: min(768px, calc(100vw - 32px));
   max-width: none;
-  max-height: 94dvh;
+  max-height: 92dvh;
   border: 0;
   padding: 0;
   border-radius: 24px;
@@ -298,5 +298,5 @@
   body:has(.product-mobile-buy) footer { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 639px) {
-  .lens-config-dialog { position: fixed; inset: auto 0 0; width: 100%; margin: 0; border-radius: 24px 24px 0 0; }
+  .lens-config-dialog { position: fixed; inset: auto 0 0; width: 100%; max-height: 100dvh; margin: 0; border-radius: 24px 24px 0 0; }
 }

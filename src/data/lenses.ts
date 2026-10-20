@@ -4,6 +4,7 @@ export const LENS_OPTIONS: LensOption[] = [
   {
     id: 'only-frame',
     name: 'Somente a Armação (Sem Grau)',
+    description: 'Armação com lentes de demonstração, sem correção visual.',
     subtitle: 'Vem com lentes de acrílico padrão de demonstração',
     material: 'Lentes padrão sem correção',
     features: ['Para colocar grau na sua ótica de confiança', 'Acompanha estojo e flanela Aion'],
@@ -14,6 +15,7 @@ export const LENS_OPTIONS: LensOption[] = [
   {
     id: 'fina-poly',
     name: 'Lente Anti-Reflexo Fina',
+    description: 'Lente de policarbonato com tratamento antirreflexo e proteção UV.',
     subtitle: 'Policarbonato 1.59',
     material: 'Policarbonato 1.59 de alta resistência',
     features: [
@@ -30,6 +32,7 @@ export const LENS_OPTIONS: LensOption[] = [
   {
     id: 'super-fina-167',
     name: 'Lente Anti-Reflexo Super Fina',
+    description: 'Lente de alto índice para reduzir a espessura em graus moderados e altos.',
     subtitle: 'Resina 1.67 Estendido',
     material: 'Resina de Alto Índice 1.67',
     features: [
@@ -45,6 +48,7 @@ export const LENS_OPTIONS: LensOption[] = [
   {
     id: 'ultra-fina-174',
     name: 'Lente Anti-Reflexo Ultra Fina',
+    description: 'Lente de índice 1.74 para receitas que pedem espessura reduzida.',
     subtitle: 'Resina 1.74 Surfaçada',
     material: 'Resina de Índice Máximo 1.74',
     features: [

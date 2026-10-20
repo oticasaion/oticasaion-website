@@ -41,6 +41,7 @@ export interface Product {
 export interface LensOption {
   id: string;
   name: string;
+  description: string;
   subtitle: string;
   material: string;
   features: string[];

@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect } from 'react';
-import { Product } from './types';
+import { LensOption, Product } from './types';
 import { getPage, pageHashes, type AppView } from './lib/navigation';
 export type { AppView } from './lib/navigation';
 import { getLocalStoredProducts, fetchProducts } from './services/productService';
@@ -18,6 +18,7 @@ import { LensSelectorModal } from './components/LensSelectorModal';
 import { trackWhatsAppLead, trackProductView } from './firebase';
 import { defaultHomeSettings, fetchHomeSettings } from './services/homeSettings';
 import type { HomeSettings } from './services/homeSettings';
+import { fetchLensOptions } from './services/lensSettings';
 
 const AdminView = lazy(() => import('./components/admin/AdminView').then(module => ({ default: module.AdminView })));
 
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
   // Dynamic products state (synced with Supabase & localStorage fallback)
   const [products, setProducts] = useState<Product[]>(() => getPage(window.location.hash) === 'admin' ? [] : getLocalStoredProducts());
   const [homeSettings, setHomeSettings] = useState<HomeSettings>(defaultHomeSettings);
+  const [lensOptions, setLensOptions] = useState<LensOption[]>([]);
   
   // Navigation view state
   const [currentView, setCurrentView] = useState<AppView>(() => getPage(window.location.hash));
@@ -59,6 +61,11 @@ export const App: React.FC = () => {
   useEffect(() => {
     fetchHomeSettings().then(setHomeSettings).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (isAdminView) return;
+    fetchLensOptions().then(setLensOptions).catch(() => {});
+  }, [isAdminView]);
 
   // Dedicated hash pages remain compatible with static hosting.
   useEffect(() => {
@@ -163,6 +170,7 @@ export const App: React.FC = () => {
           <ProductDetailView
             key={activeProductDetail.id}
             product={activeProductDetail}
+            lensOptions={lensOptions}
             allProducts={products}
             onBackToCatalog={() => navigateTo('catalog')}
             onSelectProduct={handleOpenProductDetail}
