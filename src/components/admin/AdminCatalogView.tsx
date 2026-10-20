@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Product } from '../../types';
-import { MagnifyingGlass, Plus, PencilSimple, Trash, Eye, Package, Tag, Star, ArrowRight } from '@phosphor-icons/react';
+import { MagnifyingGlass, Plus, PencilSimple, Trash, Eye, ArrowRight, UploadSimple, Package } from '@phosphor-icons/react';
 
 interface Props {
   products: Product[];
@@ -47,16 +47,9 @@ export const AdminCatalogView: React.FC<Props> = ({ products, onAddNewProduct, o
 
   return <div className="max-w-7xl mx-auto p-5 sm:p-8 lg:p-10">
     <div className="flex flex-wrap items-end justify-between gap-5 mb-8">
-      <div><p className="admin-eyebrow">Sua vitrine, sempre em dia</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Catálogo de armações</h1><p className="mt-2 text-sm text-stone-500">Gerencie os modelos e as ofertas que seus clientes encontram na loja.</p></div>
-      <button onClick={onAddNewProduct} className="admin-primary"><Plus size={19} /> Nova armação</button>
+      <div><p className="admin-eyebrow">Produtos cadastrados</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Armações</h1><p className="mt-2 text-sm text-stone-500">Busque, confira e edite os produtos do site.</p></div>
+      <div className="flex flex-wrap gap-2"><a href="#/admin/produtos/importar" className="admin-input !w-auto inline-flex items-center gap-2"><UploadSimple size={19} /> Importar ou exportar</a><button onClick={onAddNewProduct} className="admin-primary"><Plus size={19} /> Nova armação</button></div>
     </div>
-    <section aria-label="Resumo do catálogo" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-      {[
-        { label: 'Modelos no catálogo', value: products.length, icon: Package, caption: 'Armações disponíveis na vitrine' },
-        { label: 'Em promoção', value: products.filter(p => p.isPromo).length, icon: Tag, caption: 'Ofertas sinalizadas para o cliente' },
-        { label: 'Destaques', value: products.filter(p => p.isBestseller).length, icon: Star, caption: 'Modelos com selo de mais vendido' },
-      ].map(item => <div key={item.label} className="admin-card p-5"><div className="flex justify-between text-sm text-stone-500">{item.label}<item.icon size={20} className="text-[#78927b]" /></div><div className="text-3xl font-semibold mt-4 tabular-nums">{item.value}</div><p className="text-xs text-stone-500 mt-2">{item.caption}</p></div>)}
-    </section>
     <section className="admin-card overflow-hidden" aria-label="Produtos">
       <div className="p-5 border-b border-stone-200 space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">

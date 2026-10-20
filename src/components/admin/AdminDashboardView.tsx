@@ -1,25 +1,20 @@
 import React from 'react';
 import type { Product } from '../../types';
-import { ArrowRight, ArrowUpRight, ImageSquare, Package, Plus, Star, Tag } from '@phosphor-icons/react';
+import { ArrowRight, ImageSquare, Package, Plus, UploadSimple } from '@phosphor-icons/react';
 
-export const AdminDashboardView: React.FC<{ products: Product[]; email?: string }> = ({ products, email }) => {
-  const total = products.length;
-  const photoCount = products.reduce((count,p) => count + p.images.length,0);
-  const noPhoto = products.filter(p => !p.images.length);
-  const offers = products.filter(p => p.isPromo).length;
-  const highlights = products.filter(p => p.isBestseller).length;
+export const AdminDashboardView: React.FC<{ products: Product[]; email?: string }> = ({ products }) => {
+  const noPhoto = products.filter(product => !product.images.length).length;
   return <div className="max-w-7xl mx-auto p-5 sm:p-8 lg:p-10 space-y-7">
-    <header className="flex flex-wrap items-center justify-between gap-5"><div><p className="admin-eyebrow">Visão geral da loja</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Tudo pronto para um novo olhar.</h1><p className="text-sm text-stone-500 mt-3">Acompanhe seu catálogo e prepare os próximos produtos da Óticas Aion.</p></div><a href="#/admin/produtos/novo" className="admin-primary"><Plus size={19} /> Criar produto</a></header>
-    <section className="rounded-2xl bg-[#153c2b] text-white p-6 sm:p-8 relative overflow-hidden"><div className="relative z-10 max-w-lg"><span className="text-xs text-[#d8bd83] uppercase tracking-[0.16em]">Sua próxima novidade começa aqui</span><h2 className="text-2xl font-semibold mt-4">Fotos reais. Informações claras.<br />Uma vitrine com a sua identidade.</h2><p className="text-sm text-stone-300 leading-relaxed mt-4">Importe as imagens, cadastre os detalhes e veja a página do produto antes de publicar.</p><a href="#/admin/produtos/novo" className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-[#e1c58b]">Cadastrar uma armação <ArrowRight size={18} /></a></div><div aria-hidden="true" className="absolute w-80 h-80 rounded-full border border-white/10 -right-10 -bottom-40" /></section>
-    <section aria-label="Indicadores do catálogo" className="grid grid-cols-2 xl:grid-cols-4 gap-4">{[
-      { label: 'Produtos', value: total, icon: Package, caption: 'Modelos cadastrados' },
-      { label: 'Fotos', value: photoCount, icon: ImageSquare, caption: 'Imagens no catálogo' },
-      { label: 'Promoções', value: offers, icon: Tag, caption: 'Modelos com selo de oferta' },
-      { label: 'Destaques', value: highlights, icon: Star, caption: 'Selos de mais vendido' },
-    ].map(item => <div key={item.label} className="admin-card p-5"><div className="flex justify-between gap-2 text-xs text-stone-500">{item.label}<item.icon size={19} className="text-[#78927b]" /></div><p className="text-3xl font-semibold mt-4 tabular-nums">{item.value}</p><p className="text-[11px] text-stone-500 mt-2">{item.caption}</p></div>)}</section>
-    <div className="grid xl:grid-cols-[1.5fr_1fr] gap-6">
-      <section className="admin-card overflow-hidden"><div className="p-5 flex justify-between items-center border-b border-stone-100"><h2 className="font-semibold">Produtos na vitrine</h2><a href="#/admin/produtos" className="text-xs font-medium flex items-center gap-2">Ver catálogo <ArrowUpRight size={16} /></a></div>{total ? <div className="divide-y divide-stone-100 px-5">{products.slice(0,4).map(p => <a key={p.id} href={'#/admin/produtos/' + encodeURIComponent(p.id) + '/editar'} className="flex items-center gap-4 py-4 hover:bg-stone-50 rounded-lg"><div className="w-14 h-14 rounded-xl bg-stone-50 overflow-hidden shrink-0">{p.images[0] ? <img src={p.images[0]} width={56} height={56} alt="" className="object-contain w-full h-full" /> : <ImageSquare className="m-4 text-stone-400" size={24} />}</div><div className="min-w-0 flex-1"><h3 className="font-medium text-sm truncate">{p.name}</h3><p className="text-xs text-stone-500 mt-1">{new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(p.currentPrice)}</p></div><ArrowRight size={17} className="text-stone-400" /></a>)}</div> : <div className="p-10 text-center"><Package size={32} className="mx-auto text-stone-400" /><p className="text-sm text-stone-500 mt-4">Seu catálogo está pronto para receber o primeiro produto.</p><a href="#/admin/produtos/novo" className="inline-flex mt-5 text-sm font-semibold">Criar primeiro produto →</a></div>}</section>
-      <section className="admin-card p-6"><p className="admin-eyebrow">Cuidados com a vitrine</p><h2 className="font-semibold text-lg mt-3">Cada detalhe conta.</h2><ul className="mt-5 space-y-4 text-sm text-stone-500"><li className="flex gap-3"><ImageSquare size={20} className="shrink-0 text-[#78927b]" /><span>{noPhoto.length ? noPhoto.length + ' produto(s) ainda sem foto.' : 'Todos os produtos cadastrados têm fotos.'}</span></li><li className="flex gap-3"><Package size={20} className="shrink-0 text-[#78927b]" /><span>Revise medidas e valores antes de publicar uma nova armação.</span></li></ul><a href="#/admin/produtos" className="text-sm font-medium inline-flex gap-2 items-center mt-6">Revisar catálogo <ArrowRight size={16} /></a><div className="mt-7 pt-5 border-t border-stone-100"><p className="text-xs text-stone-400">Conta administrativa</p><p className="text-xs text-stone-600 mt-2 break-all">{email}</p></div></section>
-    </div>
+    <header><p className="admin-eyebrow">Painel da loja</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Visão geral</h1><p className="text-sm text-stone-500 mt-3">Acesso rápido aos produtos cadastrados.</p></header>
+    <section aria-label="Resumo do catálogo" className="grid sm:grid-cols-2 gap-4">
+      <div className="admin-card p-5"><Package size={22} className="text-[#78927b]" /><p className="text-3xl font-semibold mt-3 tabular-nums">{products.length}</p><p className="text-sm text-stone-500 mt-1">Produtos cadastrados</p></div>
+      <div className="admin-card p-5"><ImageSquare size={22} className="text-[#78927b]" /><p className="text-3xl font-semibold mt-3 tabular-nums">{noPhoto}</p><p className="text-sm text-stone-500 mt-1">Produtos sem foto</p></div>
+    </section>
+    <section className="admin-card p-5 sm:p-6"><h2 className="font-semibold">O que deseja fazer?</h2><div className="grid sm:grid-cols-3 gap-3 mt-4">
+      <a href="#/admin/produtos" className="admin-input flex items-center justify-between gap-2">Ver catálogo <ArrowRight size={18} /></a>
+      <a href="#/admin/produtos/novo" className="admin-input flex items-center justify-between gap-2">Nova armação <Plus size={18} /></a>
+      <a href="#/admin/produtos/importar" className="admin-input flex items-center justify-between gap-2">Importar ou exportar <UploadSimple size={18} /></a>
+    </div></section>
+    {noPhoto > 0 && <p role="status" className="text-sm text-amber-800 bg-amber-50 rounded-xl p-4">{noPhoto} produto(s) estão cadastrados sem foto. Revise esses itens no catálogo.</p>}
   </div>;
 };

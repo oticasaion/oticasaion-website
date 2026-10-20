@@ -10,6 +10,12 @@ Não foi possível aplicar ou testar essa configuração no projeto remoto nesta
 
 ## Funcionamento
 
+- Em `#/admin/produtos/importar`, o administrador pode carregar `FOTOS OCULOS WEBP/catalogo-para-importacao.json`, completar material, público, cinco medidas e preço, e salvar os produtos selecionados em uma ação.
+- O mesmo painel exporta o catálogo atual como CSV UTF-8 para Excel/LibreOffice e importa o arquivo editado. A coluna `id` identifica atualizações; mantenha-a para editar produtos existentes. Separe várias URLs de fotos, cores ou itens inclusos por `|`. A importação exige links HTTPS públicos e valida todos os registros antes de habilitar o salvamento.
+- Ao carregar o JSON das novas fotos, **Baixar planilha para completar** gera um CSV com as referências e URLs já preenchidas. Complete os campos vazios localmente e importe esse CSV.
+- A importação usa as URLs públicas já registradas no JSON; não reenvia as imagens. As referências `sol-avulsas` e `sol-09` começam desmarcadas porque as fotos precisam ser separadas ou conferidas.
+- Entradas incompletas bloqueiam a importação. O botão **Baixar JSON preenchido** salva as alterações para continuar depois. Uma tentativa repetida usa os mesmos IDs e atualiza os produtos já importados.
+
 - `#/admin/dashboard` é a página inicial após o login.
 - Novos cadastros começam em branco. Editar preserva os dados reais existentes.
 - Escolha de 1 a 8 fotos JPG, PNG ou WebP, de até 8 MB por arquivo.

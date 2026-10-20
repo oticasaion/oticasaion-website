@@ -10,7 +10,8 @@ import { AdminCatalogView } from './AdminCatalogView';
 import { AdminEditorView } from './AdminEditorView';
 import { AdminDashboardView } from './AdminDashboardView';
 import { AdminAccessView } from './AdminAccessView';
-import { ArrowUpRight, Package, Plus, ShieldCheck, SignOut, SquaresFour } from '@phosphor-icons/react';
+import { AdminBulkImportView } from './AdminBulkImportView';
+import { ArrowUpRight, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
 
 interface AdminViewProps {
   products: Product[];
@@ -88,11 +89,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
   const isEditor = isNew || !!editingMatch;
   const isAccess = path === 'admin/acesso';
   const isCatalog = path === 'admin/produtos';
+  const isBulkImport = path === 'admin/produtos/importar';
   const isDashboard = path === 'admin/dashboard';
   const navItems = [
     { href: '#/admin/dashboard', label: 'Visão geral', icon: SquaresFour, active: isDashboard },
     { href: '#/admin/produtos', label: 'Catálogo', icon: Package, active: isCatalog || !!editingMatch },
     { href: '#/admin/produtos/novo', label: 'Nova armação', icon: Plus, active: isNew },
+    { href: '#/admin/produtos/importar', label: 'Importar em lote', icon: UploadSimple, active: isBulkImport },
     { href: '#/admin/acesso', label: 'Regras e acesso', icon: ShieldCheck, active: isAccess },
   ];
 
@@ -113,7 +116,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
         const exists = products.some(p => p.id === product.id);
         onProductsUpdated(exists ? products.map(p => p.id === product.id ? product : p) : [product, ...products]);
         navigate('#/admin/produtos');
-      }} />) : isCatalog ? <AdminCatalogView products={products} onAddNewProduct={() => navigate('#/admin/produtos/novo')} onEditProduct={p => navigate('#/admin/produtos/' + encodeURIComponent(p.id) + '/editar')} onDeleteProduct={async id => {
+      }} />) : isBulkImport ? <AdminBulkImportView products={products} onComplete={saved => onProductsUpdated([...saved, ...products.filter(p => !saved.some(item => item.id === p.id))])} /> : isCatalog ? <AdminCatalogView products={products} onAddNewProduct={() => navigate('#/admin/produtos/novo')} onEditProduct={p => navigate('#/admin/produtos/' + encodeURIComponent(p.id) + '/editar')} onDeleteProduct={async id => {
         const result = await deleteProduct(id);
         if (!result.success) throw new Error(result.error || 'Não foi possível excluir o produto.');
         onProductsUpdated(products.filter(p => p.id !== id));

@@ -54,6 +54,16 @@ assert.equal(draftFromProduct(product).lensHeight,'38');
 assert.equal(buildDraftProduct(draft,product.images,'test',product).dimensions.totalFront,135);
 console.log('PASS: new products are blank, required data and numeric ranges are validated, no fabricated ratings/specs/items.');
 
+const {exportProductsCsv,importProductsCsv} = await load('src/lib/productSpreadsheet.ts');
+const exported = exportProductsCsv([{...product,name:'Modelo "A"',description:'Linha 1\nLinha 2',images:['https://example.test/photo.webp']}]);
+const [imported] = importProductsCsv(exported);
+assert.equal(imported.name,'Modelo "A"');
+assert.equal(imported.description,'Linha 1\nLinha 2');
+assert.deepEqual(imported.images,['https://example.test/photo.webp']);
+assert.equal(imported.dimensions.lensWidth,51);
+assert.throws(() => importProductsCsv(exported.replace('https://example.test/photo.webp','javascript:alert(1)')),/links HTTPS/);
+console.log('PASS: CSV export/import preserves product fields and rejects unsafe image URLs.');
+
 const {validateImageFile,uploadProductImage,removeUnpublishedImages,MAX_IMAGE_BYTES} = await load('src/services/productImages.ts');
 assert.ok(validateImageFile({type:'image/svg+xml',size:100}));
 assert.ok(validateImageFile({type:'image/jpeg',size:MAX_IMAGE_BYTES + 1}));
