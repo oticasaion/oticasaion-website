@@ -100,7 +100,9 @@ export const App: React.FC = () => {
 
   const handleOpenProductDetail = (product: Product) => {
     trackProductView(product.id, product.name, product.currentPrice);
-    setProducts(current => current.some(item => item.id === product.id) ? current : [product, ...current]);
+    setProducts(current => current.some(item => item.id === product.id)
+      ? current.map(item => item.id === product.id ? product : item)
+      : [product, ...current]);
     navigateTo('product-detail', product);
   };
 
