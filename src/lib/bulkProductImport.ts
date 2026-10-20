@@ -2,6 +2,9 @@ import type { Product } from '../types';
 
 export interface ImportEntry {
   reference: string;
+  status?: string;
+  estimated_fields?: string[];
+  estimation_note?: string;
   name: string;
   description: string;
   shape: Product['shape'] | null;
