@@ -1,6 +1,7 @@
 import React from 'react';
 import { Product } from '../../types';
 import { AdminView } from './AdminView';
+import type { HomeSettings } from '../../services/homeSettings';
 
 // Compatibility entry point: all access goes through the same protected panel.
 interface Props {
@@ -8,7 +9,8 @@ interface Props {
   onClose: () => void;
   products: Product[];
   onProductsUpdated: (products: Product[]) => void;
+  onHomeSettingsUpdated?: (settings: HomeSettings) => void;
   onPreviewProduct: (product: Product) => void;
 }
-export const AdminAuthModal: React.FC<Props> = ({ isOpen, onClose, products, onProductsUpdated, onPreviewProduct }) =>
-  isOpen ? <AdminView products={products} onProductsUpdated={onProductsUpdated} onBackToStore={onClose} onPreviewProduct={onPreviewProduct} /> : null;
+export const AdminAuthModal: React.FC<Props> = ({ isOpen, onClose, products, onProductsUpdated, onHomeSettingsUpdated, onPreviewProduct }) =>
+  isOpen ? <AdminView products={products} onProductsUpdated={onProductsUpdated} onHomeSettingsUpdated={onHomeSettingsUpdated || (() => {})} onBackToStore={onClose} onPreviewProduct={onPreviewProduct} /> : null;

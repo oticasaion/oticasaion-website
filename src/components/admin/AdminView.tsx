@@ -11,16 +11,19 @@ import { AdminEditorView } from './AdminEditorView';
 import { AdminDashboardView } from './AdminDashboardView';
 import { AdminAccessView } from './AdminAccessView';
 import { AdminBulkImportView } from './AdminBulkImportView';
-import { ArrowUpRight, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
+import { AdminHomeSettingsView } from './AdminHomeSettingsView';
+import type { HomeSettings } from '../../services/homeSettings';
+import { ArrowUpRight, House, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
 
 interface AdminViewProps {
   products: Product[];
   onProductsUpdated: (products: Product[]) => void;
+  onHomeSettingsUpdated: (settings: HomeSettings) => void;
   onBackToStore: () => void;
   onPreviewProduct: (product: Product) => void;
 }
 
-export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdated, onBackToStore, onPreviewProduct }) => {
+export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdated, onHomeSettingsUpdated, onBackToStore, onPreviewProduct }) => {
   const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
   const [hash, setHash] = useState(window.location.hash);
@@ -91,8 +94,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
   const isCatalog = path === 'admin/produtos';
   const isBulkImport = path === 'admin/produtos/importar';
   const isDashboard = path === 'admin/dashboard';
+  const isHomeSettings = path === 'admin/pagina-inicial';
   const navItems = [
     { href: '#/admin/dashboard', label: 'Visão geral', icon: SquaresFour, active: isDashboard },
+    { href: '#/admin/pagina-inicial', label: 'Página inicial', icon: House, active: isHomeSettings },
     { href: '#/admin/produtos', label: 'Catálogo', icon: Package, active: isCatalog || !!editingMatch },
     { href: '#/admin/produtos/novo', label: 'Nova armação', icon: Plus, active: isNew },
     { href: '#/admin/produtos/importar', label: 'Importar em lote', icon: UploadSimple, active: isBulkImport },
@@ -112,7 +117,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
     </aside>
     <main id="admin-content">
       {notice && <p role="alert" className="m-6 bg-red-50 text-red-800 rounded-xl p-4 text-sm">{notice}</p>}
-      {isDashboard ? <AdminDashboardView products={products} email={user.email} /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (!isNew && !editingProduct ? <div className="p-10"><h1 className="text-2xl font-semibold">Armação não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div> : <AdminEditorView key={editingId || 'new'} productToEdit={editingProduct || null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
+      {isDashboard ? <AdminDashboardView products={products} email={user.email} /> : isHomeSettings ? <AdminHomeSettingsView onSaved={onHomeSettingsUpdated} /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (!isNew && !editingProduct ? <div className="p-10"><h1 className="text-2xl font-semibold">Armação não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div> : <AdminEditorView key={editingId || 'new'} productToEdit={editingProduct || null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
         const exists = products.some(p => p.id === product.id);
         onProductsUpdated(exists ? products.map(p => p.id === product.id ? product : p) : [product, ...products]);
         navigate('#/admin/produtos');

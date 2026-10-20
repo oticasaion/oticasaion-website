@@ -18,6 +18,8 @@ interface CatalogProps {
   onOpenProductDetail: (product: Product) => void;
   onOpenLensModal: (product: Product) => void;
   onWhatsAppQuickAsk: (productName: string) => void;
+  title?: string;
+  subtitle?: string;
 }
 
 export const Catalog: React.FC<CatalogProps> = ({
@@ -25,6 +27,8 @@ export const Catalog: React.FC<CatalogProps> = ({
   onOpenProductDetail,
   onOpenLensModal,
   onWhatsAppQuickAsk,
+  title = 'Óculos de grau completo',
+  subtitle = 'Selecione um modelo para ver fotos e medidas.',
 }) => {
   const [selectedFormat, setSelectedFormat] = useState<string>('todos');
   const [selectedGender, setSelectedGender] = useState<string>('todos');
@@ -83,10 +87,10 @@ export const Catalog: React.FC<CatalogProps> = ({
         {/* Section Header: Clean, editorial, without redundant AI badge */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand tracking-tight text-balance">
-            Óculos de grau completo
+            {title}
           </h2>
           <p className="mt-3 text-sm sm:text-base text-stone-600 px-2 text-pretty leading-relaxed">
-            Armações anatômicas com lentes oftálmicas digitais. Selecione um modelo para ver fotos e medidas ou monte suas lentes direto no WhatsApp.
+            {subtitle}
           </p>
         </div>
 

@@ -1,19 +1,21 @@
 import type { AppView } from '../lib/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 import { Logo } from './Logo';
-import { List, X, ShieldCheck, Truck, Sparkle, CheckCircle } from '@phosphor-icons/react';
+import { List, X } from '@phosphor-icons/react';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface HeaderProps {
   onWhatsAppClick: (customText?: string) => void;
   onNavigate: (view: AppView) => void;
   currentView?: AppView;
+  announcement?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onWhatsAppClick,
   onNavigate,
   currentView = 'home',
+  announcement = '',
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -53,34 +55,11 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       {/* Top Notification Announcement Bar - Sits at page top and scrolls up naturally on scroll */}
-      <div className="bg-[#081a14] text-[#e7d7b5] text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#c8a25a]/20 relative z-30">
+      {announcement && <div className="bg-[#081a14] text-[#e7d7b5] text-[11px] sm:text-xs font-bold py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#c8a25a]/20 relative z-30">
         <div className="max-w-7xl mx-auto">
-          {/* Mobile Display: Consolidated high-converting message */}
-          <div className="flex sm:hidden items-center justify-center text-center font-bold tracking-tight text-[11px] text-[#e7d7b5]">
-            <span>Envio Nacional, 7 dias de garantia e 5% Off no Pix</span>
-          </div>
-
-          {/* Tablet/Desktop Display: Distributed items */}
-          <div className="hidden sm:flex items-center justify-between overflow-x-auto whitespace-nowrap gap-4 sm:gap-6 font-bold scrollbar-none">
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Truck className="w-3.5 h-3.5 text-[#c8a25a]" />
-              <span>Envio Nacional • <strong>Entrega em até 7 dias</strong></span>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#c8a25a]" />
-              <span><strong>7 Dias de Garantia</strong></span>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-              <Sparkle className="w-3.5 h-3.5 text-[#c8a25a]" />
-              <span>Até <strong>50% mais econômico</strong></span>
-            </div>
-            <div className="hidden lg:flex items-center gap-1.5 shrink-0">
-              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-              <span>5% OFF no PIX</span>
-            </div>
-          </div>
+          <p className="text-center">{announcement}</p>
         </div>
-      </div>
+      </div>}
 
       {/* Main Sticky Navbar */}
       <header ref={headerRef} className="sticky top-0 z-40 w-full shadow-md">

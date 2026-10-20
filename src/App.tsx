@@ -11,12 +11,13 @@ import { ProductDetailView } from './components/ProductDetailView';
 import { TermsAndPolicyView } from './components/TermsAndPolicyView';
 import { HowItWorks } from './components/HowItWorks';
 import { Comparison } from './components/Comparison';
-import { Testimonials } from './components/Testimonials';
 import { Faq } from './components/Faq';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { LensSelectorModal } from './components/LensSelectorModal';
 import { trackWhatsAppLead, trackProductView } from './firebase';
+import { defaultHomeSettings, fetchHomeSettings } from './services/homeSettings';
+import type { HomeSettings } from './services/homeSettings';
 
 const AdminView = lazy(() => import('./components/admin/AdminView').then(module => ({ default: module.AdminView })));
 
@@ -27,6 +28,7 @@ export const WHATSAPP_PHONE_NUMBER = '5511988176072';
 export const App: React.FC = () => {
   // Dynamic products state (synced with Supabase & localStorage fallback)
   const [products, setProducts] = useState<Product[]>(() => getLocalStoredProducts());
+  const [homeSettings, setHomeSettings] = useState<HomeSettings>(defaultHomeSettings);
   
   // Navigation view state
   const [currentView, setCurrentView] = useState<AppView>(() => getPage(window.location.hash));
@@ -50,6 +52,10 @@ export const App: React.FC = () => {
         setProducts(loaded);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    fetchHomeSettings().then(setHomeSettings).catch(() => {});
   }, []);
 
   // Dedicated hash pages remain compatible with static hosting.
@@ -114,6 +120,7 @@ export const App: React.FC = () => {
       <AdminView
         products={products}
         onProductsUpdated={(updated) => setProducts(updated)}
+        onHomeSettingsUpdated={setHomeSettings}
         onBackToStore={() => navigateTo('home')}
         onPreviewProduct={handleOpenProductDetail}
       />
@@ -128,12 +135,13 @@ export const App: React.FC = () => {
         onWhatsAppClick={handleOpenWhatsApp}
         onNavigate={navigateTo}
         currentView={currentView}
+        announcement={homeSettings.announcement}
       />
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-1" tabIndex={-1}>
         {currentView === 'how-it-works' && <HowItWorks onWhatsAppClick={handleOpenWhatsApp} />}
-        {currentView === 'about' && <><Comparison /><Testimonials /></>}
+        {currentView === 'about' && <Comparison />}
         {currentView === 'faq' && <Faq onWhatsAppClick={handleOpenWhatsApp} />}
         {currentView === 'product-detail' && !activeProductDetail && <div className="max-w-5xl mx-auto p-12"><h1 className="text-2xl font-bold">Armação não encontrada</h1><a href="#/catalogo" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
         {/* TELA 1: POLÍTICA E TERMOS */}
@@ -172,15 +180,16 @@ export const App: React.FC = () => {
         {/* HOME LANDING PAGE */}
         {currentView === 'home' && (
           <>
-            <Hero onWhatsAppClick={handleOpenWhatsApp} />
+            <Hero onWhatsAppClick={handleOpenWhatsApp} settings={homeSettings} />
 
             <Catalog
               products={products}
               onOpenProductDetail={handleOpenProductDetail}
               onOpenLensModal={handleOpenLensModal}
               onWhatsAppQuickAsk={handleQuickAskProduct}
+              title={homeSettings.catalogTitle}
+              subtitle={homeSettings.catalogSubtitle}
             />
-            <Testimonials />
           </>
         )}
       </main>

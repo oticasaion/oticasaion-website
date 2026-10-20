@@ -1,12 +1,14 @@
 import React from 'react';
-import { ShieldCheck, ArrowRight, Check } from '@phosphor-icons/react';
+import { ArrowRight } from '@phosphor-icons/react';
 import { ImageWithFade } from './ImageWithFade';
+import type { HomeSettings } from '../services/homeSettings';
 
 interface HeroProps {
   onWhatsAppClick?: (customText?: string) => void;
+  settings: HomeSettings;
 }
 
-export const Hero: React.FC<HeroProps> = () => {
+export const Hero: React.FC<HeroProps> = ({ settings }) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#0c251d] via-[#091d17] to-[#061410] text-white pt-4 pb-14 sm:pt-8 sm:pb-20 lg:py-28 min-h-[540px] lg:min-h-[660px] xl:min-h-[720px] flex items-center">
       
@@ -26,8 +28,8 @@ export const Hero: React.FC<HeroProps> = () => {
           }}
         >
           <ImageWithFade
-            src="./branding/hero-conexao-aion.webp"
-            alt="Casal sorrindo com óculos de grau da Óticas Aion"
+            src={settings.heroImageUrl}
+            alt={settings.heroImageAlt}
             loading="eager"
             containerClassName="w-full h-full"
             className="w-full h-full object-cover object-[35%_center] lg:object-[38%_center] xl:object-[40%_center]"
@@ -59,8 +61,8 @@ export const Hero: React.FC<HeroProps> = () => {
                 }}
               >
                 <ImageWithFade
-                  src="./branding/hero-conexao-aion.webp"
-                  alt="Casal sorrindo com óculos de grau da Óticas Aion"
+                  src={settings.heroImageUrl}
+                  alt={settings.heroImageAlt}
                   loading="eager"
                   containerClassName="w-full h-full"
                   className="w-full h-full object-cover object-center"
@@ -76,15 +78,12 @@ export const Hero: React.FC<HeroProps> = () => {
 
             {/* Headline */}
             <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-[2.75rem] xl:text-[3.25rem] font-extrabold tracking-tight leading-[1.12] font-sans-brand">
-              A beleza de enxergar com nitidez e a alegria de{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5e48e] via-[#c8a25a] to-[#e5c77a]">
-                viver cada conexão
-              </span>.
+              {settings.heroTitle}
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-stone-300 max-w-xl lg:max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed text-pretty">
-              Armações em titânio e acetato nobre com lentes oftálmicas de laboratório. Escolha seu modelo, envie a receita pelo WhatsApp e receba em casa com total segurança.
+              {settings.heroSubtitle}
             </p>
 
             {/* CTAs & Price Anchor */}
@@ -94,31 +93,11 @@ export const Hero: React.FC<HeroProps> = () => {
                   href="#/catalogo"
                   className="inline-flex items-center justify-center gap-2.5 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-8 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#c8a25a]/20 transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c8a25a]"
                 >
-                  <span>Escolher minha armação</span>
+                  <span>{settings.heroButtonText}</span>
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
               </div>
 
-              <p className="text-xs text-stone-400 pt-0.5">
-                Armação + lentes com grau completo a partir de{' '}
-                <span className="text-[#c8a25a] font-semibold">R$ 75,05 no PIX</span>
-              </p>
-            </div>
-
-            {/* Quick Benefits Bullet List */}
-            <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2.5 border-t border-white/10 text-xs sm:text-sm text-stone-300">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#c8a25a] shrink-0" />
-                <span>Medição DNP guiada</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#c8a25a] shrink-0" />
-                <span>Garantia de 7 dias de adaptação</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-[#c8a25a] shrink-0" />
-                <span>Entrega em até 7 dias úteis</span>
-              </div>
             </div>
 
           </div>
