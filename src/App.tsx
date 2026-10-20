@@ -114,6 +114,7 @@ export const App: React.FC = () => {
   };
 
   const handleOpenLensModal = (product: Product, colorIndex = 0) => {
+    if (product.lensesEnabled === false) return;
     setInitialLensColor(colorIndex);
     setSelectedProductForLenses(product);
     setIsLensModalOpen(true);

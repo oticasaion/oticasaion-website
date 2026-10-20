@@ -474,7 +474,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                           </div>
 
                           {/* Card Action Buttons (Direct to WhatsApp or Details) */}
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className={product.lensesEnabled === false ? 'grid grid-cols-1' : 'grid grid-cols-2 gap-2'}>
                             <button
                               onClick={() => onOpenProductDetail(product)}
                               className="w-full flex items-center justify-center gap-1 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 text-xs font-semibold py-2.5 px-2 rounded-xl transition active:scale-95 text-center"
@@ -482,13 +482,13 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                               <span>Ver detalhes</span>
                             </button>
 
-                            <button
+                            {product.lensesEnabled !== false && <button
                               onClick={() => onOpenLensModal(product)}
                               className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white text-xs font-semibold py-2.5 px-2 rounded-xl transition shadow-md shadow-amber-700/20 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500"
                             >
                               <WhatsAppIcon className="w-3.5 h-3.5 text-white" />
                               <span>Pedir no Zap</span>
-                            </button>
+                            </button>}
                           </div>
                         </div>
                       </div>

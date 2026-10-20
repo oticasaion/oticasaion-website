@@ -22,6 +22,7 @@ create table if not exists public.products (
   reviews_count integer default 10,
   is_bestseller boolean default false,
   is_promo boolean default false,
+  lenses_enabled boolean not null default true,
   images text[] not null,
   client_photos text[],
   colors jsonb not null,
@@ -51,6 +52,7 @@ function mapSupabaseRowToProduct(row: any): Product {
     reviewsCount: Number(row.reviews_count ?? row.reviewsCount ?? 1),
     isBestseller: Boolean(row.is_bestseller ?? row.isBestseller),
     isPromo: Boolean(row.is_promo ?? row.isPromo),
+    lensesEnabled: row.lenses_enabled ?? row.lensesEnabled ?? true,
     images: Array.isArray(row.images) ? row.images : [],
     clientPhotos: Array.isArray(row.client_photos) ? row.client_photos : [],
     colors: typeof row.colors === 'string' ? JSON.parse(row.colors) : (row.colors || []),
@@ -83,6 +85,7 @@ export interface AdminProductListItem {
   pixDiscountPercent: number;
   isPromo: boolean;
   isBestseller: boolean;
+  lensesEnabled: boolean;
   image: string;
 }
 
@@ -104,7 +107,7 @@ export async function fetchAdminProductPage({ page, pageSize, query, filter, sor
   const safePage = Math.max(1, Math.trunc(page));
   const safeSize = Math.min(50, Math.max(1, Math.trunc(pageSize)));
   let request = supabase.from('products')
-    .select('id,name,material,gender,current_price,pix_discount_percent,is_promo,is_bestseller,images', { count: 'exact' });
+    .select('id,name,material,gender,current_price,pix_discount_percent,is_promo,is_bestseller,lenses_enabled,images', { count: 'exact' });
   const term = query.trim().replace(/[^\p{L}\p{N} -]/gu, '').slice(0, 80);
   if (term) request = request.or(`name.ilike.%${term}%,id.ilike.%${term}%,material.ilike.%${term}%`);
   if (filter === 'promocoes') request = request.eq('is_promo', true);
@@ -120,6 +123,7 @@ export async function fetchAdminProductPage({ page, pageSize, query, filter, sor
     id: row.id, name: row.name, material: row.material, gender: row.gender,
     currentPrice: Number(row.current_price || 0), pixDiscountPercent: Number(row.pix_discount_percent || 0),
     isPromo: !!row.is_promo, isBestseller: !!row.is_bestseller,
+    lensesEnabled: row.lenses_enabled !== false,
     image: Array.isArray(row.images) ? row.images[0] || '' : '',
   })) };
 }
@@ -159,6 +163,7 @@ function mapProductToSupabaseRow(product: Product) {
     reviews_count: product.reviewsCount,
     is_bestseller: product.isBestseller ?? false,
     is_promo: product.isPromo ?? false,
+    lenses_enabled: product.lensesEnabled !== false,
     images: product.images,
     client_photos: product.clientPhotos || [],
     colors: product.colors,
@@ -167,6 +172,21 @@ function mapProductToSupabaseRow(product: Product) {
     description: product.description,
     included_items: product.includedItems,
   };
+}
+
+export async function updateProductLenses(id: string, enabled: boolean): Promise<void> {
+  await requireAdmin();
+  const { data, error } = await supabase.from('products').update({ lenses_enabled: enabled }).eq('id', id).select('id').single();
+  if (error || !data) throw new Error(error?.message || 'Não foi possível atualizar esta armação.');
+  saveLocalStoredProducts(getLocalStoredProducts().map(product => product.id === id ? { ...product, lensesEnabled: enabled } : product));
+}
+
+export async function updateAllProductsLenses(enabled: boolean): Promise<number> {
+  await requireAdmin();
+  const { data, error, count } = await supabase.from('products').update({ lenses_enabled: enabled }, { count: 'exact' }).neq('id', '').select('id');
+  if (error) throw new Error(error.message);
+  saveLocalStoredProducts(getLocalStoredProducts().map(product => ({ ...product, lensesEnabled: enabled })));
+  return count ?? data?.length ?? 0;
 }
 
 // Carregar produtos locais como fallback

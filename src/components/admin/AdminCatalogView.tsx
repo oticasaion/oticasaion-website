@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { fetchAdminProductPage, type AdminProductListItem } from '../../services/productService';
+import { fetchAdminProductPage, updateAllProductsLenses, updateProductLenses, type AdminProductListItem } from '../../services/productService';
 import { MagnifyingGlass, Plus, PencilSimple, Trash, Eye, ArrowRight, UploadSimple, Package } from '@phosphor-icons/react';
 
 interface Props {
@@ -7,12 +7,13 @@ interface Props {
   onEditProduct: (id: string) => void;
   onDeleteProduct: (id: string) => Promise<void>;
   onPreviewProduct: (id: string) => Promise<void>;
+  onLensesChanged: (id: string | null, enabled: boolean) => void;
 }
 
 const PAGE_SIZE = 12;
 const currency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProduct, onDeleteProduct, onPreviewProduct }) => {
+export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProduct, onDeleteProduct, onPreviewProduct, onLensesChanged }) => {
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('todos');
@@ -23,6 +24,7 @@ export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProdu
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [lensBusy, setLensBusy] = useState<string | null>(null);
   const [feedback, setFeedback] = useState('');
   const [failed, setFailed] = useState(false);
   const requestId = useRef(0);
@@ -68,6 +70,30 @@ export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProdu
     try { await onPreviewProduct(id); }
     catch (cause) { setFailed(true); setFeedback(cause instanceof Error ? cause.message : 'Não foi possível abrir a armação.'); }
   };
+  const toggleLenses = async (product: AdminProductListItem) => {
+    if (lensBusy) return;
+    const enabled = product.lensesEnabled === false;
+    setLensBusy(product.id); setFeedback(''); setFailed(false);
+    try {
+      await updateProductLenses(product.id, enabled);
+      onLensesChanged(product.id, enabled);
+      setItems(current => current.map(item => item.id === product.id ? { ...item, lensesEnabled: enabled } : item));
+      setFeedback(`Lentes ${enabled ? 'ativadas' : 'desativadas'} em “${product.name}”.`);
+    } catch (cause) { setFailed(true); setFeedback(cause instanceof Error ? cause.message : 'Não foi possível atualizar as lentes.'); }
+    finally { setLensBusy(null); }
+  };
+  const toggleAllLenses = async (enabled: boolean) => {
+    if (lensBusy || !window.confirm(`${enabled ? 'Ativar' : 'Desativar'} lentes em todas as armações do catálogo?`)) return;
+    setLensBusy('all'); setFeedback(''); setFailed(false);
+    try {
+      const count = await updateAllProductsLenses(enabled);
+      onLensesChanged(null, enabled);
+      setItems(current => current.map(item => ({ ...item, lensesEnabled: enabled })));
+      setRefresh(value => value + 1);
+      setFeedback(`Lentes ${enabled ? 'ativadas' : 'desativadas'} em ${count} armação(ões).`);
+    } catch (cause) { setFailed(true); setFeedback(cause instanceof Error ? cause.message : 'Não foi possível atualizar o catálogo.'); }
+    finally { setLensBusy(null); }
+  };
   const changeFilter = (value: string) => { setFilter(value); setPage(1); };
   const changeSort = (value: string) => { setSort(value); setPage(1); };
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -77,6 +103,7 @@ export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProdu
       <div><p className="admin-eyebrow">Produtos cadastrados</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Armações</h1><p className="mt-2 text-sm text-stone-500">Busque, confira e edite os produtos do site.</p></div>
       <div className="flex flex-wrap gap-2"><a href="#/admin/produtos/importar" className="admin-input !w-auto inline-flex items-center gap-2"><UploadSimple size={19} /> Importar ou exportar</a><button onClick={onAddNewProduct} className="admin-primary"><Plus size={19} /> Nova armação</button></div>
     </div>
+    <section className="admin-card p-4 sm:p-5 mb-5 flex flex-wrap items-center justify-between gap-4" aria-label="Lentes no catálogo"><div><h2 className="text-sm font-semibold">Lentes no catálogo</h2><p className="text-xs text-stone-600 mt-1">Ative ou desative em todas as armações. Também é possível alterar cada modelo abaixo.</p></div><div className="flex flex-wrap gap-2"><button type="button" disabled={!!lensBusy || loading} onClick={() => { void toggleAllLenses(true); }} className="admin-input !w-auto text-xs disabled:opacity-50">Ativar em todos</button><button type="button" disabled={!!lensBusy || loading} onClick={() => { void toggleAllLenses(false); }} className="admin-input !w-auto text-xs disabled:opacity-50">Desativar em todos</button></div></section>
     <section className="admin-card overflow-hidden" aria-label="Produtos">
       <div className="p-5 border-b border-stone-200 space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
@@ -89,7 +116,7 @@ export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProdu
       <p className="px-5 pt-4 text-xs text-stone-500" aria-live="polite">{loading ? 'Carregando armações…' : `${total} modelo(s) encontrados · ${items.length} nesta página`}</p>
       {!loading && !!items.length && <div className="divide-y divide-stone-100 px-5">{items.map(product => <article key={product.id} className="grid grid-cols-[72px_1fr] md:grid-cols-[80px_1fr_auto_auto] items-center gap-4 py-5">
         <div className="rounded-xl bg-[#f5f5f1] overflow-hidden">{product.image ? <img src={product.image} alt={product.name} width={80} height={80} loading="lazy" className="w-20 h-20 object-contain" /> : <div className="w-20 h-20 flex items-center justify-center text-xs text-stone-400">Sem foto</div>}</div>
-        <div className="min-w-0"><h2 className="font-semibold text-sm break-words">{product.name}</h2><p className="text-xs text-stone-500 mt-1 truncate">{product.material}</p><div className="flex gap-2 mt-2"><span className="admin-badge capitalize">{product.gender}</span>{product.isPromo && <span className="admin-badge bg-amber-50 text-amber-800">Promoção</span>}{product.isBestseller && <span className="admin-badge">Destaque</span>}</div></div>
+        <div className="min-w-0"><h2 className="font-semibold text-sm break-words">{product.name}</h2><p className="text-xs text-stone-500 mt-1 truncate">{product.material}</p><div className="flex gap-2 mt-2"><span className="admin-badge capitalize">{product.gender}</span>{product.isPromo && <span className="admin-badge bg-amber-50 text-amber-800">Promoção</span>}{product.isBestseller && <span className="admin-badge">Destaque</span>}</div><button type="button" disabled={!!lensBusy} onClick={() => { void toggleLenses(product); }} aria-label={`${product.lensesEnabled ? 'Desativar' : 'Ativar'} lentes em ${product.name}`} aria-pressed={product.lensesEnabled} className={'mt-2 rounded-full px-3 py-1.5 text-xs font-medium disabled:opacity-50 ' + (product.lensesEnabled ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'bg-stone-100 text-stone-600 hover:bg-stone-200')}>{lensBusy === product.id ? 'Salvando…' : product.lensesEnabled ? 'Lentes ativas · desativar' : 'Lentes desativadas · ativar'}</button></div>
         <div className="md:text-right"><p className="text-sm font-semibold tabular-nums">{currency(product.currentPrice)}</p><p className="text-xs text-stone-500 mt-1">{currency(product.currentPrice * (1 - product.pixDiscountPercent / 100))} no Pix</p></div>
         <div className="flex items-center justify-end gap-1">
           <button className="admin-icon" aria-label={'Visualizar ' + product.name} onClick={() => { void preview(product.id); }}><Eye size={19} /></button>
@@ -100,6 +127,5 @@ export const AdminCatalogView: React.FC<Props> = ({ onAddNewProduct, onEditProdu
       {!loading && !items.length && !failed && <div className="text-center py-16 px-6"><Package size={36} className="mx-auto text-stone-400" /><h2 className="font-semibold mt-4">Nenhuma armação encontrada</h2><p className="text-sm text-stone-500 mt-2">Ajuste os filtros ou adicione um modelo ao catálogo.</p><button className="inline-flex items-center gap-2 text-sm font-semibold mt-5" onClick={() => { setQuery(''); setSearch(''); changeFilter('todos'); }}>Limpar filtros <ArrowRight size={16} /></button></div>}
       {!loading && total > PAGE_SIZE && <nav aria-label="Páginas do catálogo" className="flex items-center justify-between gap-3 border-t border-stone-200 p-5"><button className="admin-input !w-auto disabled:opacity-40" disabled={page <= 1} onClick={() => setPage(value => value - 1)}>Anterior</button><span className="text-sm text-stone-600 tabular-nums">Página {page} de {pages}</span><button className="admin-input !w-auto disabled:opacity-40" disabled={page >= pages} onClick={() => setPage(value => value + 1)}>Próxima</button></nav>}
     </section>
-    <p className="text-xs text-stone-500 mt-5 leading-relaxed">O catálogo carrega apenas 12 armações por página. A importação em lote carrega todos os itens somente quando você abre essa função.</p>
   </div>;
 };

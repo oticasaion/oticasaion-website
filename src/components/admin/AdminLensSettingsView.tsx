@@ -35,7 +35,7 @@ export const AdminLensSettingsView: React.FC = () => {
   };
 
   return <div className="max-w-5xl mx-auto p-5 sm:p-8 lg:p-10 space-y-6">
-    <header><p className="admin-eyebrow">Catálogo</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Lentes</h1><p className="text-sm text-stone-600 mt-3">Edite o adicional de cada lente e os textos exibidos na escolha das lentes. O valor da armação é somado ao adicional escolhido.</p></header>
+    <header><p className="admin-eyebrow">Catálogo</p><h1 className="text-3xl font-semibold tracking-tight mt-2">Lentes</h1><p className="text-sm text-stone-600 mt-3">Edite preços e descrições. Essas opções aparecem apenas nas armações com lentes ativadas. <a className="underline" href="#/admin/produtos">Escolher modelos no catálogo</a>.</p></header>
     {loading ? <p role="status">Carregando lentes…</p> : <form onSubmit={save} className="space-y-5">
       {options.map(option => <section key={option.id} className="admin-card p-5 sm:p-6 space-y-4" aria-label={option.name}>
         <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold">{option.name}</h2><span className="text-sm font-bold text-[#18392d]">{option.price === 0 ? 'Sem adicional' : `+ ${currency(option.price)}`}</span></div>

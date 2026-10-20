@@ -14,7 +14,7 @@ import { AdminBulkImportView } from './AdminBulkImportView';
 import { AdminHomeSettingsView } from './AdminHomeSettingsView';
 import { AdminLensSettingsView } from './AdminLensSettingsView';
 import type { HomeSettings } from '../../services/homeSettings';
-import { ArrowUpRight, Eyeglasses, House, Package, Plus, ShieldCheck, SignOut, SquaresFour, UploadSimple } from '@phosphor-icons/react';
+import { ArrowUpRight, Eyeglasses, House, Package, ShieldCheck, SignOut, SquaresFour } from '@phosphor-icons/react';
 
 interface AdminViewProps {
   products: Product[];
@@ -130,10 +130,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
   const navItems = [
     { href: '#/admin/dashboard', label: 'Visão geral', icon: SquaresFour, active: isDashboard },
     { href: '#/admin/pagina-inicial', label: 'Página inicial', icon: House, active: isHomeSettings },
-    { href: '#/admin/produtos', label: 'Catálogo', icon: Package, active: isCatalog || !!editingMatch },
+    { href: '#/admin/produtos', label: 'Catálogo', icon: Package, active: isCatalog || isNew || isBulkImport || !!editingMatch },
     { href: '#/admin/lentes', label: 'Lentes', icon: Eyeglasses, active: isLensSettings },
-    { href: '#/admin/produtos/novo', label: 'Nova armação', icon: Plus, active: isNew },
-    { href: '#/admin/produtos/importar', label: 'Importar em lote', icon: UploadSimple, active: isBulkImport },
     { href: '#/admin/acesso', label: 'Regras e acesso', icon: ShieldCheck, active: isAccess },
   ];
 
@@ -158,7 +156,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
         const result = await deleteProduct(id);
         if (!result.success) throw new Error(result.error || 'Não foi possível excluir o produto.');
         onProductsUpdated(products.filter(p => p.id !== id));
-      }} onPreviewProduct={async id => onPreviewProduct(await fetchAdminProductById(id))} /> : <div className="p-10"><h1 className="text-2xl font-semibold">Página não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
+      }} onPreviewProduct={async id => onPreviewProduct(await fetchAdminProductById(id))} onLensesChanged={(id, enabled) => onProductsUpdated(products.map(product => id === null || product.id === id ? { ...product, lensesEnabled: enabled } : product))} /> : <div className="p-10"><h1 className="text-2xl font-semibold">Página não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
     </main>
   </div>;
 };

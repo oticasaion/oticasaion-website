@@ -29,6 +29,7 @@ export interface Product {
   reviewsCount: number;
   isBestseller?: boolean;
   isPromo?: boolean;
+  lensesEnabled?: boolean;
   images: string[];
   clientPhotos?: string[];
   colors: { name: string; hex: string }[];

@@ -1,7 +1,7 @@
 import type { Product } from '../types';
 import { requiredImportIssues, type ImportEntry } from './bulkProductImport';
 
-export const columns = ['id','nome','descricao','material_frente','formato','publico','tipo_aro','preco','preco_anterior','desconto_pix','largura_lente_mm','altura_lente_mm','ponte_mm','largura_frontal_mm','haste_mm','material_hastes','plaquetas','molas_hastes','estilo','cores','itens_inclusos','imagens','promocao','mais_vendido'] as const;
+export const columns = ['id','nome','descricao','material_frente','formato','publico','tipo_aro','preco','preco_anterior','desconto_pix','largura_lente_mm','altura_lente_mm','ponte_mm','largura_frontal_mm','haste_mm','material_hastes','plaquetas','molas_hastes','estilo','cores','itens_inclusos','imagens','promocao','mais_vendido','lentes_ativas'] as const;
 type Column = typeof columns[number];
 type Row = Record<Column,string>;
 const clean = (value: unknown) => String(value ?? '');
@@ -11,12 +11,12 @@ const safeCell = (value: string) => /^[=+\-@]/.test(value) ? "'" + value : value
 const quote = (value: string) => '"' + safeCell(value).replace(/"/g,'""') + '"';
 
 export function exportProductsCsv(products: Product[], siteBase?: string): string {
-  const rows = products.map(p => [p.id,p.name,p.description,p.material,p.shape,p.gender,p.rimType,p.currentPrice,p.originalPrice,p.pixDiscountPercent,p.dimensions.lensWidth,p.dimensions.lensHeight,p.dimensions.bridgeWidth,p.dimensions.totalFront,p.dimensions.templeLength,p.specs.materialTemple,p.specs.nosePads,p.specs.springHinges,p.specs.style,p.colors.map(c => `${c.name}:${c.hex}`).join('|'),p.includedItems.join('|'),p.images.map(image => siteBase ? new URL(image,siteBase).href : image).join('|'),p.isPromo?'sim':'não',p.isBestseller?'sim':'não'].map(clean));
+  const rows = products.map(p => [p.id,p.name,p.description,p.material,p.shape,p.gender,p.rimType,p.currentPrice,p.originalPrice,p.pixDiscountPercent,p.dimensions.lensWidth,p.dimensions.lensHeight,p.dimensions.bridgeWidth,p.dimensions.totalFront,p.dimensions.templeLength,p.specs.materialTemple,p.specs.nosePads,p.specs.springHinges,p.specs.style,p.colors.map(c => `${c.name}:${c.hex}`).join('|'),p.includedItems.join('|'),p.images.map(image => siteBase ? new URL(image,siteBase).href : image).join('|'),p.isPromo?'sim':'não',p.isBestseller?'sim':'não',p.lensesEnabled===false?'não':'sim'].map(clean));
   return '\ufeff' + [columns.map(quote).join(';'),...rows.map(row => row.map(quote).join(';'))].join('\r\n') + '\r\n';
 }
 
 export function exportPreparedCsv(entries: ImportEntry[]): string {
-  const rows=entries.map(e=>[ `aion-import-${e.reference}`,e.name,e.description,e.required_to_confirm.material_front||'',e.shape||'',e.gender||'',e.rim_type,e.required_to_confirm.current_price??'',e.optional_to_confirm?.original_price??'',e.optional_to_confirm?.pix_discount_percent??'',e.required_to_confirm.lens_width_mm??'',e.required_to_confirm.lens_height_mm??'',e.required_to_confirm.bridge_width_mm??'',e.required_to_confirm.total_front_mm??'',e.required_to_confirm.temple_length_mm??'',e.optional_to_confirm?.material_temple||'',e.optional_to_confirm?.nose_pads||'',e.optional_to_confirm?.spring_hinges||'','',e.optional_to_confirm?.colors?.map(c=>`${c.name}:${c.hex}`).join('|')||'',e.optional_to_confirm?.included_items?.join('|')||'',e.images.join('|'),'não','não'].map(clean));
+  const rows=entries.map(e=>[ `aion-import-${e.reference}`,e.name,e.description,e.required_to_confirm.material_front||'',e.shape||'',e.gender||'',e.rim_type,e.required_to_confirm.current_price??'',e.optional_to_confirm?.original_price??'',e.optional_to_confirm?.pix_discount_percent??'',e.required_to_confirm.lens_width_mm??'',e.required_to_confirm.lens_height_mm??'',e.required_to_confirm.bridge_width_mm??'',e.required_to_confirm.total_front_mm??'',e.required_to_confirm.temple_length_mm??'',e.optional_to_confirm?.material_temple||'',e.optional_to_confirm?.nose_pads||'',e.optional_to_confirm?.spring_hinges||'','',e.optional_to_confirm?.colors?.map(c=>`${c.name}:${c.hex}`).join('|')||'',e.optional_to_confirm?.included_items?.join('|')||'',e.images.join('|'),'não','não',e.optional_to_confirm?.lenses_enabled===false?'não':'sim'].map(clean));
   return '\ufeff'+[columns.map(quote).join(';'),...rows.map(row=>row.map(quote).join(';'))].join('\r\n')+'\r\n';
 }
 
@@ -44,11 +44,13 @@ function parseDelimited(text: string): string[][] {
 
 export function importProductsCsv(text: string): Product[] {
   const rows=parseDelimited(text);
-  if (!rows.length || columns.some((column,index)=>rows[0][index]!==column) || rows[0].length!==columns.length) throw new Error('Cabeçalhos diferentes do modelo exportado pelo painel.');
+  const legacy = columns.slice(0, -1);
+  const activeColumns = rows[0]?.length === legacy.length ? legacy : columns;
+  if (!rows.length || activeColumns.some((column,index)=>rows[0][index]!==column) || rows[0].length!==activeColumns.length) throw new Error('Cabeçalhos diferentes do modelo exportado pelo painel.');
   const ids=new Set<string>();
   return rows.slice(1).map((cells,index) => {
-    if(cells.length!==columns.length) throw new Error(`Linha ${index+2}: número de colunas incorreto.`);
-    const r=Object.fromEntries(columns.map((key,i)=>[key,cells[i].replace(/^'(?=[=+\-@])/,'')])) as Row;
+    if(cells.length!==activeColumns.length) throw new Error(`Linha ${index+2}: número de colunas incorreto.`);
+    const r=Object.fromEntries(activeColumns.map((key,i)=>[key,cells[i].replace(/^'(?=[=+\-@])/,'')])) as Row;
     const line=index+2;
     if(!/^[a-zA-Z0-9_-]+$/.test(r.id) || ids.has(r.id)) throw new Error(`Linha ${line}: ID inválido ou repetido.`);
     ids.add(r.id);
@@ -63,6 +65,7 @@ export function importProductsCsv(text: string): Product[] {
     if(!Number.isFinite(previous) || previous<num(r.preco) || !Number.isFinite(discount) || discount<0 || discount>100) throw new Error(`Linha ${line}: preço anterior ou desconto Pix inválido.`);
     const colors=r.cores ? r.cores.split('|').map(value=>{const at=value.lastIndexOf(':');return {name:value.slice(0,at).trim(),hex:value.slice(at+1).trim()};}) : [];
     if(colors.some(c=>!c.name || !/^#[0-9a-f]{6}$/i.test(c.hex))) throw new Error(`Linha ${line}: use cores no formato Nome:#aabbcc, separadas por |.`);
-    return { id:r.id,name:r.nome,description:r.descricao,material:r.material_frente,shape:r.formato as Product['shape'],gender:r.publico as Product['gender'],rimType:r.tipo_aro as Product['rimType'],currentPrice:num(r.preco),originalPrice:previous,pixDiscountPercent:discount,rating:0,reviewsCount:0,isPromo:yes(r.promocao),isBestseller:yes(r.mais_vendido),images,clientPhotos:[],colors,includedItems:r.itens_inclusos?r.itens_inclusos.split('|').map(v=>v.trim()).filter(Boolean):[],dimensions:{lensWidth:num(r.largura_lente_mm),lensHeight:num(r.altura_lente_mm),bridgeWidth:num(r.ponte_mm),totalFront:num(r.largura_frontal_mm),templeLength:num(r.haste_mm)},specs:{materialFront:r.material_frente,materialTemple:r.material_hastes,rimType:r.tipo_aro,nosePads:r.plaquetas,springHinges:r.molas_hastes,style:r.estilo} };
+    if (r.lentes_ativas && !['sim','não','nao','true','false','1','0'].includes(r.lentes_ativas.trim().toLowerCase())) throw new Error(`Linha ${line}: lentes_ativas deve ser sim ou não.`);
+    return { id:r.id,name:r.nome,description:r.descricao,material:r.material_frente,shape:r.formato as Product['shape'],gender:r.publico as Product['gender'],rimType:r.tipo_aro as Product['rimType'],currentPrice:num(r.preco),originalPrice:previous,pixDiscountPercent:discount,rating:0,reviewsCount:0,isPromo:yes(r.promocao),isBestseller:yes(r.mais_vendido),lensesEnabled:r.lentes_ativas ? yes(r.lentes_ativas) : undefined,images,clientPhotos:[],colors,includedItems:r.itens_inclusos?r.itens_inclusos.split('|').map(v=>v.trim()).filter(Boolean):[],dimensions:{lensWidth:num(r.largura_lente_mm),lensHeight:num(r.altura_lente_mm),bridgeWidth:num(r.ponte_mm),totalFront:num(r.largura_frontal_mm),templeLength:num(r.haste_mm)},specs:{materialFront:r.material_frente,materialTemple:r.material_hastes,rimType:r.tipo_aro,nosePads:r.plaquetas,springHinges:r.molas_hastes,style:r.estilo} };
   });
 }

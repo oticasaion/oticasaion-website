@@ -23,7 +23,7 @@ export interface ImportEntry {
   optional_to_confirm?: {
     material_temple?: string | null; nose_pads?: string | null; spring_hinges?: string | null;
     colors?: { name: string; hex: string }[]; included_items?: string[];
-    original_price?: number | null; pix_discount_percent?: number | null;
+    original_price?: number | null; pix_discount_percent?: number | null; lenses_enabled?: boolean;
   };
 }
 
@@ -77,6 +77,7 @@ export function fillFromExisting(entry: ImportEntry, product?: Product): ImportE
       included_items: optional.included_items?.length ? optional.included_items : product.includedItems,
       original_price: optional.original_price ?? product.originalPrice,
       pix_discount_percent: optional.pix_discount_percent ?? product.pixDiscountPercent,
+      lenses_enabled: optional.lenses_enabled ?? (product.lensesEnabled !== false),
     },
   };
 }
@@ -116,7 +117,7 @@ export function productFromImport(entry: ImportEntry): Product {
     material: data.material_front!.trim(), shape: entry.shape!, gender: entry.gender!, rimType: entry.rim_type,
     currentPrice: data.current_price!, originalPrice: opt.original_price ?? data.current_price!,
     pixDiscountPercent: opt.pix_discount_percent ?? 0, rating: 0, reviewsCount: 0,
-    isBestseller: false, isPromo: false, images: entry.images, clientPhotos: [],
+    isBestseller: false, isPromo: false, lensesEnabled: opt.lenses_enabled, images: entry.images, clientPhotos: [],
     colors: opt.colors || [], includedItems: opt.included_items || [],
     dimensions: { lensWidth: data.lens_width_mm!, lensHeight: data.lens_height_mm!, bridgeWidth: data.bridge_width_mm!, totalFront: data.total_front_mm!, templeLength: data.temple_length_mm! },
     specs: { materialFront: data.material_front!.trim(), materialTemple: opt.material_temple || '', rimType: entry.rim_type, nosePads: opt.nose_pads || '', springHinges: opt.spring_hinges || '', style: '' },

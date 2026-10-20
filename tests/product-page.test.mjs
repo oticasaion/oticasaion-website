@@ -44,6 +44,11 @@ try {
   assert.ok(html.includes('postal-code'));
   assert.ok(!html.includes('Frete Econômico:'));
   assert.ok(!html.includes('12x de'));
+  const disabledHtml = renderToStaticMarkup(React.createElement(ProductDetailView, { ...props, product: { ...product, lensesEnabled:false } }));
+  assert.ok(!disabledHtml.includes('Escolher lentes'));
+  assert.ok(!disabledHtml.includes('Armação + lentes'));
+  assert.ok(disabledHtml.includes('Pedir armação'));
+  assert.ok(disabledHtml.includes('Precisa de ajuda com o modelo?'));
   const emptyHtml = renderToStaticMarkup(React.createElement(ProductDetailView, { ...props, product:{...product,images:[],colors:[],includedItems:[]} }));
   assert.ok(emptyHtml.includes('Fotos em breve'));
   assert.ok(!emptyHtml.includes('undefined'));

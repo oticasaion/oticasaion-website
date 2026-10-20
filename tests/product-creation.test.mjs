@@ -30,7 +30,8 @@ async function load(path) {
 }
 const {blankProductDraft,validateProductDraft,buildDraftProduct,draftFromProduct} = await load('src/lib/productDraft.ts');
 const draft = blankProductDraft();
-for (const value of Object.values(draft)) assert.ok(value === '' || value === false || (Array.isArray(value) && value.length === 0));
+assert.equal(draft.lensesEnabled,true);
+for (const [key,value] of Object.entries(draft)) if (key !== 'lensesEnabled') assert.ok(value === '' || value === false || (Array.isArray(value) && value.length === 0));
 assert.equal(validateProductDraft(draft,0).step,1);
 Object.assign(draft,{ name:'Modelo real',material:'Metal',shape:'oval',gender:'unissex',rimType:'Meio Aro',description:'Descrição real' });
 assert.equal(validateProductDraft(draft,0).step,2);
@@ -52,6 +53,8 @@ assert.equal(product.reviewsCount,0);
 assert.deepEqual(product.includedItems,[]);
 assert.equal(product.specs.nosePads,'');
 assert.equal(draftFromProduct(product).lensHeight,'38');
+assert.equal(product.lensesEnabled,true);
+assert.equal(buildDraftProduct({...draft,lensesEnabled:false},product.images,'disabled').lensesEnabled,false);
 assert.equal(buildDraftProduct(draft,product.images,'test',product).dimensions.totalFront,135);
 console.log('PASS: new products are blank, required data and numeric ranges are validated, no fabricated ratings/specs/items.');
 
@@ -62,6 +65,12 @@ assert.equal(imported.name,'Modelo "A"');
 assert.equal(imported.description,'Linha 1\nLinha 2');
 assert.deepEqual(imported.images,['https://example.test/photo.webp']);
 assert.equal(imported.dimensions.lensWidth,51);
+assert.equal(imported.lensesEnabled,true);
+const disabledCsv=exportProductsCsv([{...product,lensesEnabled:false}]);
+assert.equal(importProductsCsv(disabledCsv)[0].lensesEnabled,false);
+const legacyCsv=exported.split('\r\n').map(line=>line.replace(/;"(?:lentes_ativas|sim)"$/, '')).join('\r\n');
+assert.equal(importProductsCsv(legacyCsv)[0].lensesEnabled,undefined);
+assert.throws(()=>importProductsCsv(disabledCsv.replace(/;"não"\r\n$/, ';"talvez"\r\n')),/lentes_ativas/);
 assert.throws(() => importProductsCsv(exported.replace('https://example.test/photo.webp','javascript:alert(1)')),/links HTTPS/);
 console.log('PASS: CSV export/import preserves product fields and rejects unsafe image URLs.');
 

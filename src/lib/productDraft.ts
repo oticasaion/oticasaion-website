@@ -6,13 +6,13 @@ export interface ProductDraft {
   lensWidth: string; lensHeight: string; bridgeWidth: string; totalFront: string; templeLength: string;
   materialTemple: string; nosePads: string; springHinges: string; style: string; includedItems: string;
   colors: { name: string; hex: string }[];
-  isPromo: boolean; isBestseller: boolean;
+  isPromo: boolean; isBestseller: boolean; lensesEnabled: boolean;
 }
 export const blankProductDraft = (): ProductDraft => ({
   name: '', material: '', shape: '', gender: '', rimType: '', description: '',
   originalPrice: '', currentPrice: '', pixDiscount: '', lensWidth: '', lensHeight: '',
   bridgeWidth: '', totalFront: '', templeLength: '', materialTemple: '', nosePads: '',
-  springHinges: '', style: '', includedItems: '', colors: [], isPromo: false, isBestseller: false,
+  springHinges: '', style: '', includedItems: '', colors: [], isPromo: false, isBestseller: false, lensesEnabled: true,
 });
 export function draftFromProduct(p: Product): ProductDraft {
   return { name: p.name, material: p.material, shape: p.shape, gender: p.gender, rimType: p.rimType,
@@ -22,7 +22,7 @@ export function draftFromProduct(p: Product): ProductDraft {
     totalFront: String(p.dimensions.totalFront), templeLength: String(p.dimensions.templeLength),
     materialTemple: p.specs.materialTemple, nosePads: p.specs.nosePads, springHinges: p.specs.springHinges,
     style: p.specs.style, includedItems: p.includedItems.join('\n'), colors: p.colors.map(c => ({ ...c })),
-    isPromo: !!p.isPromo, isBestseller: !!p.isBestseller };
+    isPromo: !!p.isPromo, isBestseller: !!p.isBestseller, lensesEnabled: p.lensesEnabled !== false };
 }
 const amount = (value: string) => Number(value.replace(',', '.'));
 export interface ProductIssue { step: number; field: keyof ProductDraft | 'photos'; message: string }
@@ -58,7 +58,7 @@ export function buildDraftProduct(d: ProductDraft, images: string[], id: string,
     originalPrice: d.originalPrice.trim() ? number(d.originalPrice) : number(d.currentPrice),
     pixDiscountPercent: number(d.pixDiscount), images, colors: d.colors.map(c => ({ ...c, name: c.name.trim() })),
     clientPhotos: existing?.clientPhotos || [], rating: existing?.rating ?? 0, reviewsCount: existing?.reviewsCount ?? 0,
-    isPromo: d.isPromo, isBestseller: d.isBestseller,
+    isPromo: d.isPromo, isBestseller: d.isBestseller, lensesEnabled: d.lensesEnabled,
     dimensions: { lensWidth: number(d.lensWidth), lensHeight: number(d.lensHeight), bridgeWidth: number(d.bridgeWidth), totalFront: number(d.totalFront), templeLength: number(d.templeLength) },
     specs: { materialFront: d.material.trim(), materialTemple: d.materialTemple.trim(), rimType: d.rimType,
       nosePads: d.nosePads, springHinges: d.springHinges, style: d.style.trim() },

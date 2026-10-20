@@ -415,13 +415,13 @@ export const Catalog: React.FC<CatalogProps> = ({
 
                       {/* Card Buttons */}
                       <div className="p-2.5 sm:p-5 pt-0 space-y-1.5 sm:space-y-2">
-                        <button
+                        {product.lensesEnabled !== false && <button
                           onClick={() => onOpenLensModal(product)}
                           className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-[11px] xs:text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-3 rounded-xl shadow-md transition active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500 whitespace-nowrap"
                         >
                           <span>Comprar com grau</span>
                           <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                        </button>
+                        </button>}
 
                         <button
                           onClick={() => onOpenProductDetail(product)}

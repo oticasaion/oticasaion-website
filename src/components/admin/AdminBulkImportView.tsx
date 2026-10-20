@@ -66,7 +66,7 @@ export const AdminBulkImportView: React.FC<Props> = ({ products, onComplete }) =
     const saved: Product[] = [];
     for (const row of rows) {
       const previous = products.find(product => product.id === row.id);
-      const product = { ...row, rating: previous?.rating ?? 0, reviewsCount: previous?.reviewsCount ?? 0, clientPhotos: previous?.clientPhotos || [] };
+      const product = { ...row, lensesEnabled: row.lensesEnabled ?? previous?.lensesEnabled ?? true, rating: previous?.rating ?? 0, reviewsCount: previous?.reviewsCount ?? 0, clientPhotos: previous?.clientPhotos || [] };
       const result = await saveProduct(product);
       if (!result.success) {
         setSavedIds(saved.map(item => item.id));
