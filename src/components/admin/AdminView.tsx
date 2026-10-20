@@ -3,7 +3,7 @@ import type { User } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 import { isAdmin } from '../../lib/adminAccess';
 import { Product } from '../../types';
-import { deleteProduct } from '../../services/productService';
+import { deleteProduct, fetchAdminProductById, fetchAllAdminProducts } from '../../services/productService';
 import { Logo } from '../Logo';
 import { AdminLoginView } from './AdminLoginView';
 import { AdminCatalogView } from './AdminCatalogView';
@@ -22,6 +22,37 @@ interface AdminViewProps {
   onBackToStore: () => void;
   onPreviewProduct: (product: Product) => void;
 }
+
+const AdminEditProductPage: React.FC<{ id: string; onBack: () => void; onSaved: (product: Product) => void }> = ({ id, onBack, onSaved }) => {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    let active = true;
+    fetchAdminProductById(id).then(value => { if (active) setProduct(value); })
+      .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível abrir a armação.'); });
+    return () => { active = false; };
+  }, [id]);
+  if (error) return <div className="p-10" role="alert">{error} <button className="underline" onClick={onBack}>Voltar ao catálogo</button></div>;
+  if (!product) return <div className="p-10" role="status">Carregando armação…</div>;
+  return <AdminEditorView productToEdit={product} onBackToCatalog={onBack} onSaveSuccess={onSaved} />;
+};
+
+const AdminBulkImportPage: React.FC<{ onComplete: (products: Product[]) => void }> = ({ onComplete }) => {
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    let active = true;
+    fetchAllAdminProducts().then(value => { if (active) setProducts(value); })
+      .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar os produtos.'); });
+    return () => { active = false; };
+  }, []);
+  if (error) return <p role="alert" className="p-10 text-red-800">{error}</p>;
+  if (!products) return <p role="status" className="p-10">Carregando catálogo para importação e exportação…</p>;
+  return <AdminBulkImportView products={products} onComplete={saved => {
+    const merged = [...saved, ...products.filter(product => !saved.some(item => item.id === product.id))];
+    setProducts(merged); onComplete(merged);
+  }} />;
+};
 
 export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdated, onHomeSettingsUpdated, onBackToStore, onPreviewProduct }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -87,7 +118,6 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
   const editingMatch = path.match(/^admin\/produtos\/([^/]+)\/editar$/);
   let editingId: string | undefined;
   try { editingId = editingMatch ? decodeURIComponent(editingMatch[1]) : undefined; } catch { editingId = undefined; }
-  const editingProduct = products.find(p => p.id === editingId);
   const isNew = path === 'admin/produtos/novo';
   const isEditor = isNew || !!editingMatch;
   const isAccess = path === 'admin/acesso';
@@ -117,15 +147,15 @@ export const AdminView: React.FC<AdminViewProps> = ({ products, onProductsUpdate
     </aside>
     <main id="admin-content">
       {notice && <p role="alert" className="m-6 bg-red-50 text-red-800 rounded-xl p-4 text-sm">{notice}</p>}
-      {isDashboard ? <AdminDashboardView products={products} email={user.email} /> : isHomeSettings ? <AdminHomeSettingsView onSaved={onHomeSettingsUpdated} /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (!isNew && !editingProduct ? <div className="p-10"><h1 className="text-2xl font-semibold">Armação não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div> : <AdminEditorView key={editingId || 'new'} productToEdit={editingProduct || null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
+      {isDashboard ? <AdminDashboardView /> : isHomeSettings ? <AdminHomeSettingsView onSaved={onHomeSettingsUpdated} /> : isAccess ? <AdminAccessView email={user.email} /> : isEditor ? (isNew ? <AdminEditorView key="new" productToEdit={null} onBackToCatalog={() => navigate('#/admin/produtos')} onSaveSuccess={product => {
         const exists = products.some(p => p.id === product.id);
         onProductsUpdated(exists ? products.map(p => p.id === product.id ? product : p) : [product, ...products]);
         navigate('#/admin/produtos');
-      }} />) : isBulkImport ? <AdminBulkImportView products={products} onComplete={saved => onProductsUpdated([...saved, ...products.filter(p => !saved.some(item => item.id === p.id))])} /> : isCatalog ? <AdminCatalogView products={products} onAddNewProduct={() => navigate('#/admin/produtos/novo')} onEditProduct={p => navigate('#/admin/produtos/' + encodeURIComponent(p.id) + '/editar')} onDeleteProduct={async id => {
+      }} /> : editingId ? <AdminEditProductPage key={editingId} id={editingId} onBack={() => navigate('#/admin/produtos')} onSaved={product => { onProductsUpdated([...products.filter(item => item.id !== product.id), product]); navigate('#/admin/produtos'); }} /> : null) : isBulkImport ? <AdminBulkImportPage onComplete={onProductsUpdated} /> : isCatalog ? <AdminCatalogView onAddNewProduct={() => navigate('#/admin/produtos/novo')} onEditProduct={id => navigate('#/admin/produtos/' + encodeURIComponent(id) + '/editar')} onDeleteProduct={async id => {
         const result = await deleteProduct(id);
         if (!result.success) throw new Error(result.error || 'Não foi possível excluir o produto.');
         onProductsUpdated(products.filter(p => p.id !== id));
-      }} onPreviewProduct={onPreviewProduct} /> : <div className="p-10"><h1 className="text-2xl font-semibold">Página não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
+      }} onPreviewProduct={async id => onPreviewProduct(await fetchAdminProductById(id))} /> : <div className="p-10"><h1 className="text-2xl font-semibold">Página não encontrada</h1><a href="#/admin/produtos" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
     </main>
   </div>;
 };

@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { requireAdmin } from '../lib/adminAccess';
+import { prepareImage, PRODUCT_IMAGE_BUCKET } from './productImages';
 
 export interface HomeSettings {
   announcement: string;
@@ -52,4 +53,14 @@ export async function saveHomeSettings(value: HomeSettings): Promise<HomeSetting
   const { error } = await supabase.from('site_settings').upsert({ key: 'home', value: normalized }, { onConflict: 'key' });
   if (error) throw new Error(error.message);
   return normalized;
+}
+
+export async function uploadHomeImage(file: File): Promise<{ url: string; size: number }> {
+  const user = await requireAdmin();
+  const optimized = await prepareImage(file);
+  const path = `${user.id}/site/home/${crypto.randomUUID()}.webp`;
+  const bucket = supabase.storage.from(PRODUCT_IMAGE_BUCKET);
+  const { error } = await bucket.upload(path, optimized, { upsert: false, contentType: 'image/webp', cacheControl: '31536000' });
+  if (error) throw new Error('Não foi possível enviar a imagem. Confira a conexão e as permissões do armazenamento.');
+  return { url: bucket.getPublicUrl(path).data.publicUrl, size: optimized.size };
 }

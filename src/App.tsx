@@ -27,11 +27,12 @@ export const WHATSAPP_PHONE_NUMBER = '5511988176072';
 
 export const App: React.FC = () => {
   // Dynamic products state (synced with Supabase & localStorage fallback)
-  const [products, setProducts] = useState<Product[]>(() => getLocalStoredProducts());
+  const [products, setProducts] = useState<Product[]>(() => getPage(window.location.hash) === 'admin' ? [] : getLocalStoredProducts());
   const [homeSettings, setHomeSettings] = useState<HomeSettings>(defaultHomeSettings);
   
   // Navigation view state
   const [currentView, setCurrentView] = useState<AppView>(() => getPage(window.location.hash));
+  const isAdminView = currentView === 'admin';
   const [routeHash, setRouteHash] = useState(window.location.hash);
   const productParams = new URLSearchParams(routeHash.split('?')[1] || '');
   let productId = productParams.get('id');
@@ -45,14 +46,15 @@ export const App: React.FC = () => {
   const [isLensModalOpen, setIsLensModalOpen] = useState(false);
   const [initialLensColor, setInitialLensColor] = useState(0);
 
-  // Load products from Supabase on mount
+  // Administrative pages query only the data they display.
   useEffect(() => {
+    if (isAdminView) return;
     fetchProducts().then(({ products: loaded }) => {
       if (loaded) {
         setProducts(loaded);
       }
     });
-  }, []);
+  }, [isAdminView]);
 
   useEffect(() => {
     fetchHomeSettings().then(setHomeSettings).catch(() => {});
@@ -98,6 +100,7 @@ export const App: React.FC = () => {
 
   const handleOpenProductDetail = (product: Product) => {
     trackProductView(product.id, product.name, product.currentPrice);
+    setProducts(current => current.some(item => item.id === product.id) ? current : [product, ...current]);
     navigateTo('product-detail', product);
   };
 

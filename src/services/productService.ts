@@ -74,6 +74,75 @@ function mapSupabaseRowToProduct(row: any): Product {
   };
 }
 
+export interface AdminProductListItem {
+  id: string;
+  name: string;
+  material: string;
+  gender: Product['gender'];
+  currentPrice: number;
+  pixDiscountPercent: number;
+  isPromo: boolean;
+  isBestseller: boolean;
+  image: string;
+}
+
+export interface AdminProductPage {
+  items: AdminProductListItem[];
+  total: number;
+}
+
+export interface AdminProductPageParams {
+  page: number;
+  pageSize: number;
+  query: string;
+  filter: string;
+  sort: string;
+}
+
+export async function fetchAdminProductPage({ page, pageSize, query, filter, sort }: AdminProductPageParams): Promise<AdminProductPage> {
+  await requireAdmin();
+  const safePage = Math.max(1, Math.trunc(page));
+  const safeSize = Math.min(50, Math.max(1, Math.trunc(pageSize)));
+  let request = supabase.from('products')
+    .select('id,name,material,gender,current_price,pix_discount_percent,is_promo,is_bestseller,images', { count: 'exact' });
+  const term = query.trim().replace(/[^\p{L}\p{N} -]/gu, '').slice(0, 80);
+  if (term) request = request.or(`name.ilike.%${term}%,id.ilike.%${term}%,material.ilike.%${term}%`);
+  if (filter === 'promocoes') request = request.eq('is_promo', true);
+  else if (filter === 'destaques') request = request.eq('is_bestseller', true);
+  else if (['feminino', 'masculino', 'unissex'].includes(filter)) request = request.eq('gender', filter);
+  if (sort === 'price') request = request.order('current_price', { ascending: true }).order('id');
+  else if (sort === 'name') request = request.order('name', { ascending: true }).order('id');
+  else request = request.order('created_at', { ascending: false }).order('id');
+  const start = (safePage - 1) * safeSize;
+  const { data, count, error } = await request.range(start, start + safeSize - 1);
+  if (error) throw new Error(error.message);
+  return { total: count ?? 0, items: (data || []).map(row => ({
+    id: row.id, name: row.name, material: row.material, gender: row.gender,
+    currentPrice: Number(row.current_price || 0), pixDiscountPercent: Number(row.pix_discount_percent || 0),
+    isPromo: !!row.is_promo, isBestseller: !!row.is_bestseller,
+    image: Array.isArray(row.images) ? row.images[0] || '' : '',
+  })) };
+}
+
+export async function fetchAdminProductById(id: string): Promise<Product> {
+  await requireAdmin();
+  const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+  if (error || !data) throw new Error('Não foi possível carregar esta armação.');
+  return mapSupabaseRowToProduct(data);
+}
+
+export async function fetchAllAdminProducts(): Promise<Product[]> {
+  await requireAdmin();
+  const result: Product[] = [];
+  for (let start = 0; ; start += 200) {
+    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false }).range(start, start + 199);
+    if (error) throw new Error(error.message);
+    result.push(...(data || []).map(mapSupabaseRowToProduct));
+    if (!data || data.length < 200) break;
+  }
+  return result;
+}
+
 // Helper para converter produto do formato Frontend para o formato do Supabase
 function mapProductToSupabaseRow(product: Product) {
   return {
