@@ -44,6 +44,40 @@ export function parseImportEntries(raw: unknown): ImportEntry[] {
   });
 }
 
+export function fillFromExisting(entry: ImportEntry, product?: Product): ImportEntry {
+  if (!product) return entry;
+  const data = entry.required_to_confirm;
+  const optional = entry.optional_to_confirm || {};
+  return {
+    ...entry,
+    name: entry.name || product.name,
+    description: entry.description || product.description,
+    shape: entry.shape || product.shape,
+    gender: entry.gender || product.gender,
+    rim_type: entry.rim_type || product.rimType,
+    images: entry.images.length ? entry.images : product.images,
+    required_to_confirm: {
+      material_front: data.material_front || product.material,
+      current_price: data.current_price ?? product.currentPrice,
+      lens_width_mm: data.lens_width_mm ?? product.dimensions.lensWidth,
+      lens_height_mm: data.lens_height_mm ?? product.dimensions.lensHeight,
+      bridge_width_mm: data.bridge_width_mm ?? product.dimensions.bridgeWidth,
+      total_front_mm: data.total_front_mm ?? product.dimensions.totalFront,
+      temple_length_mm: data.temple_length_mm ?? product.dimensions.templeLength,
+    },
+    optional_to_confirm: {
+      ...optional,
+      material_temple: optional.material_temple ?? product.specs.materialTemple,
+      nose_pads: optional.nose_pads ?? product.specs.nosePads,
+      spring_hinges: optional.spring_hinges ?? product.specs.springHinges,
+      colors: optional.colors?.length ? optional.colors : product.colors,
+      included_items: optional.included_items?.length ? optional.included_items : product.includedItems,
+      original_price: optional.original_price ?? product.originalPrice,
+      pix_discount_percent: optional.pix_discount_percent ?? product.pixDiscountPercent,
+    },
+  };
+}
+
 export function importIssues(entry: ImportEntry): string[] {
   const data = entry.required_to_confirm;
   const issues: string[] = [];
@@ -52,6 +86,7 @@ export function importIssues(entry: ImportEntry): string[] {
   if (!allowedShapes.includes(entry.shape || '')) issues.push('formato');
   if (!allowedGenders.includes(entry.gender || '')) issues.push('público');
   if (!allowedRims.includes(entry.rim_type)) issues.push('tipo de aro');
+  if (!Array.isArray(entry.images) || entry.images.length < 1 || entry.images.length > 8 || entry.images.some(url => typeof url !== 'string' || !url.startsWith(imagePrefix))) issues.push('fotos públicas (1 a 8)');
   if (!data.material_front?.trim()) issues.push('material da frente');
   if (!positive(data.current_price)) issues.push('preço');
   for (const [key,label] of [['lens_width_mm','largura da lente'],['lens_height_mm','altura da lente'],['bridge_width_mm','ponte'],['total_front_mm','largura frontal'],['temple_length_mm','haste']] as const) if (!positive(data[key])) issues.push(label);

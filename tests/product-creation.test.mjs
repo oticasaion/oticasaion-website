@@ -64,6 +64,23 @@ assert.equal(imported.dimensions.lensWidth,51);
 assert.throws(() => importProductsCsv(exported.replace('https://example.test/photo.webp','javascript:alert(1)')),/links HTTPS/);
 console.log('PASS: CSV export/import preserves product fields and rejects unsafe image URLs.');
 
+const {parseImportEntries,fillFromExisting,importIssues,productFromImport} = await load('src/lib/bulkProductImport.ts');
+const imageUrl = 'https://vdptrgqxrwugrtienktg.supabase.co/storage/v1/object/public/product-images/test.webp';
+const [prepared] = parseImportEntries([{reference:'modelo-01',name:'Modelo novo',description:'Descrição do arquivo',shape:'redondo',gender:null,rim_type:'Aro Fechado',images:[imageUrl],required_to_confirm:{material_front:null,current_price:null,lens_width_mm:null,lens_height_mm:null,bridge_width_mm:null,total_front_mm:null,temple_length_mm:null}}]);
+const existing = {...product,id:'aion-import-modelo-01',gender:'feminino',material:'Metal'};
+const filled = fillFromExisting(prepared,existing);
+assert.equal(filled.name,'Modelo novo');
+assert.equal(filled.gender,'feminino');
+assert.equal(filled.required_to_confirm.material_front,'Metal');
+assert.equal(filled.required_to_confirm.current_price,129.9);
+assert.deepEqual(filled.images,[imageUrl]);
+assert.deepEqual(importIssues(filled),[]);
+assert.equal(productFromImport(filled).images[0],imageUrl);
+assert.ok(importIssues({...filled,images:[]}).includes('fotos públicas (1 a 8)'));
+const {exportPreparedCsv} = await load('src/lib/productSpreadsheet.ts');
+assert.equal(importProductsCsv(exportPreparedCsv([filled]))[0].images[0],imageUrl);
+console.log('PASS: JSON keeps supplied content, fills missing fields from matching products and validates edited image URLs.');
+
 const {validateImageFile,uploadProductImage,removeUnpublishedImages,MAX_IMAGE_BYTES} = await load('src/services/productImages.ts');
 assert.ok(validateImageFile({type:'image/svg+xml',size:100}));
 assert.ok(validateImageFile({type:'image/jpeg',size:MAX_IMAGE_BYTES + 1}));
