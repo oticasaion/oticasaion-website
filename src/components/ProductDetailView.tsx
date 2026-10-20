@@ -372,6 +372,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 <div className="flex gap-2">
                   <input
                     type="text"
+                    inputMode="numeric"
                     placeholder="Seu CEP (00000-000)"
                     value={cep}
                     onChange={(e) => setCep(e.target.value)}
@@ -652,9 +653,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           <div className="shrink-0">
             <button
               onClick={() => onOpenLensModal(product)}
-              className="bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-4 sm:px-8 rounded-xl shadow-md transition active:scale-95 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-amber-500"
+              className="bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-3.5 sm:px-8 rounded-xl shadow-md transition active:scale-95 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-amber-500"
             >
-              Comprar com lentes
+              <span className="hidden xs:inline">Comprar com lentes</span>
+              <span className="xs:hidden">Comprar com grau</span>
             </button>
           </div>
         </div>

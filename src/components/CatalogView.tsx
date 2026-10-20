@@ -553,6 +553,34 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
                 </div>
               </div>
 
+              {/* Tipo do Aro */}
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-2">
+                  Tipo do aro
+                </label>
+                <div className="space-y-1">
+                  {[
+                    { id: 'todos', label: 'Todos os aros' },
+                    { id: 'balgriff', label: 'Sem aro (Balgriff / 3 peças)' },
+                    { id: 'fechado', label: 'Aro fechado (Clássico)' },
+                    { id: 'meio-aro', label: 'Meio aro' },
+                  ].map((rim) => (
+                    <button
+                      key={rim.id}
+                      onClick={() => setSelectedRimType(rim.id)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between ${
+                        selectedRimType === rim.id
+                          ? 'bg-[#0c251d] text-[#c8a25a] font-bold'
+                          : 'text-stone-600 hover:bg-stone-50'
+                      }`}
+                    >
+                      <span>{rim.label}</span>
+                      {selectedRimType === rim.id && <Check className="w-3.5 h-3.5 text-[#c8a25a]" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Gênero */}
               <div>
                 <label className="block text-xs font-semibold text-stone-700 mb-2">

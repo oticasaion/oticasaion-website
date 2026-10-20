@@ -354,7 +354,7 @@ export const Catalog: React.FC<CatalogProps> = ({
                           {/* Delivery info */}
                           <div className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md inline-flex mb-2 truncate max-w-full">
                             <Truck className="w-3 h-3 text-amber-600 shrink-0" />
-                            <span className="truncate">Entrega em até 7 dias úteis</span>
+                            <span className="truncate">Entrega em até 7 dias<span className="hidden sm:inline"> úteis</span></span>
                           </div>
 
                           <h3
@@ -410,20 +410,20 @@ export const Catalog: React.FC<CatalogProps> = ({
                       </div>
 
                       {/* Card Buttons */}
-                      <div className="p-3 sm:p-5 pt-0 space-y-2">
+                      <div className="p-2.5 sm:p-5 pt-0 space-y-1.5 sm:space-y-2">
                         <button
                           onClick={() => onOpenLensModal(product)}
-                          className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-3 rounded-xl shadow-md transition active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500"
+                          className="w-full flex items-center justify-center gap-1 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-[11px] xs:text-xs sm:text-sm py-2 sm:py-3 px-2 sm:px-3 rounded-xl shadow-md transition active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500 whitespace-nowrap"
                         >
                           <span>Comprar com grau</span>
-                          <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                         </button>
 
                         <button
                           onClick={() => onOpenProductDetail(product)}
-                          className="w-full flex items-center justify-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium text-xs py-2 px-3 rounded-xl transition"
+                          className="w-full flex items-center justify-center gap-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium text-[11px] xs:text-xs py-1.5 sm:py-2 px-2 sm:px-3 rounded-xl transition"
                         >
-                          <Eye className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                          <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-500 shrink-0" />
                           <span>Ver detalhes</span>
                         </button>
                       </div>
@@ -502,6 +502,59 @@ export const Catalog: React.FC<CatalogProps> = ({
                     onClick={() => setSelectedRimType(item.id)}
                     className={`w-full py-2 px-3 rounded-xl font-semibold text-left transition ${
                       selectedRimType === item.id
+                        ? 'bg-[#0c251d] text-[#c8a25a]'
+                        : 'bg-stone-100 text-stone-700'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Gender Filter */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-700 mb-2">
+                Público
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'todos', label: 'Todos' },
+                  { id: 'masculino', label: 'Masc.' },
+                  { id: 'feminino', label: 'Fem.' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedGender(item.id)}
+                    className={`py-2 px-2 rounded-xl text-xs font-semibold transition text-center ${
+                      selectedGender === item.id
+                        ? 'bg-[#0c251d] text-[#c8a25a]'
+                        : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Price Range Filter */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-700 mb-2">
+                Faixa de preço
+              </label>
+              <div className="space-y-1.5 text-xs">
+                {[
+                  { id: 'todos', label: 'Qualquer valor' },
+                  { id: 'ate-100', label: 'Até R$ 100,00' },
+                  { id: '100-140', label: 'De R$ 100 a R$ 140' },
+                  { id: 'acima-140', label: 'Acima de R$ 140' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedPriceRange(item.id)}
+                    className={`w-full py-2 px-3 rounded-xl font-semibold text-left transition ${
+                      selectedPriceRange === item.id
                         ? 'bg-[#0c251d] text-[#c8a25a]'
                         : 'bg-stone-100 text-stone-700'
                     }`}

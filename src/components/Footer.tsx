@@ -95,7 +95,7 @@ export const Footer: React.FC<FooterProps> = ({
             <h4 className="text-xs font-bold text-white uppercase tracking-wider">
               Segurança & Compromisso
             </h4>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
               <div
                 onClick={() => onNavigate('terms-policy')}
                 className="bg-white/5 rounded-xl p-3 border border-white/10 flex items-center gap-2.5 cursor-pointer hover:bg-white/10 transition"

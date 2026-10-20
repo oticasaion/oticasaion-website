@@ -69,92 +69,94 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
 
       {/* Main Container with Nav Tabs and Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
           
-          {/* Sidebar Tabs */}
-          <div className="md:col-span-4 space-y-2">
-            <div className="bg-white rounded-2xl p-3 border border-stone-200 shadow-sm sticky top-24">
-              <span className="text-xs font-semibold text-stone-500 px-3 py-1.5 block">
+          {/* Sidebar Tabs - Horizontal Scroll on Mobile, Sticky Vertical on Desktop */}
+          <div className="md:col-span-4">
+            <div className="bg-white rounded-2xl p-2.5 sm:p-3 border border-stone-200 shadow-sm md:sticky md:top-24">
+              <span className="text-xs font-semibold text-stone-500 px-2 py-1 md:px-3 md:py-1.5 hidden md:block">
                 Selecione o documento
               </span>
 
-              <button
-                onClick={() => setActiveTab('privacidade')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
-                  activeTab === 'privacidade'
-                    ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Lock className="w-4 h-4 shrink-0" />
-                  <span>Política de Privacidade (LGPD)</span>
-                </div>
-                {activeTab === 'privacidade' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
-              </button>
+              <div className="flex md:flex-col overflow-x-auto md:overflow-visible gap-1.5 md:gap-2 pb-1 md:pb-0 scrollbar-none whitespace-nowrap">
+                <button
+                  onClick={() => setActiveTab('privacidade')}
+                  className={`shrink-0 md:w-full text-left px-3 py-2 md:px-3.5 md:py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
+                    activeTab === 'privacidade'
+                      ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
+                      : 'text-stone-700 bg-stone-50 md:bg-transparent hover:bg-stone-100 md:hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span>Privacidade (LGPD)</span>
+                  </div>
+                  {activeTab === 'privacidade' && <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#c8a25a] ml-2 hidden md:block" />}
+                </button>
 
-              <button
-                onClick={() => setActiveTab('termos')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
-                  activeTab === 'termos'
-                    ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 shrink-0" />
-                  <span>Termos de Uso do Site</span>
-                </div>
-                {activeTab === 'termos' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
-              </button>
+                <button
+                  onClick={() => setActiveTab('termos')}
+                  className={`shrink-0 md:w-full text-left px-3 py-2 md:px-3.5 md:py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
+                    activeTab === 'termos'
+                      ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
+                      : 'text-stone-700 bg-stone-50 md:bg-transparent hover:bg-stone-100 md:hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span>Termos de Uso</span>
+                  </div>
+                  {activeTab === 'termos' && <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#c8a25a] ml-2 hidden md:block" />}
+                </button>
 
-              <button
-                onClick={() => setActiveTab('garantia')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
-                  activeTab === 'garantia'
-                    ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span>Garantia & Adaptação (7 Dias)</span>
-                </div>
-                {activeTab === 'garantia' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
-              </button>
+                <button
+                  onClick={() => setActiveTab('garantia')}
+                  className={`shrink-0 md:w-full text-left px-3 py-2 md:px-3.5 md:py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
+                    activeTab === 'garantia'
+                      ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
+                      : 'text-stone-700 bg-stone-50 md:bg-transparent hover:bg-stone-100 md:hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span>Garantia & Adaptação</span>
+                  </div>
+                  {activeTab === 'garantia' && <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#c8a25a] ml-2 hidden md:block" />}
+                </button>
 
-              <button
-                onClick={() => setActiveTab('trocas')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
-                  activeTab === 'trocas'
-                    ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <ArrowsClockwise className="w-4 h-4 shrink-0" />
-                  <span>Trocas e Devoluções (CDC)</span>
-                </div>
-                {activeTab === 'trocas' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
-              </button>
+                <button
+                  onClick={() => setActiveTab('trocas')}
+                  className={`shrink-0 md:w-full text-left px-3 py-2 md:px-3.5 md:py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
+                    activeTab === 'trocas'
+                      ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
+                      : 'text-stone-700 bg-stone-50 md:bg-transparent hover:bg-stone-100 md:hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <ArrowsClockwise className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span>Trocas & Devoluções</span>
+                  </div>
+                  {activeTab === 'trocas' && <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#c8a25a] ml-2 hidden md:block" />}
+                </button>
 
-              <button
-                onClick={() => setActiveTab('receita')}
-                className={`w-full text-left px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
-                  activeTab === 'receita'
-                    ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
-                    : 'text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Eye className="w-4 h-4 shrink-0" />
-                  <span>Envio de Receitas & DNP</span>
-                </div>
-                {activeTab === 'receita' && <CheckCircle className="w-4 h-4 text-[#c8a25a]" />}
-              </button>
+                <button
+                  onClick={() => setActiveTab('receita')}
+                  className={`shrink-0 md:w-full text-left px-3 py-2 md:px-3.5 md:py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-all ${
+                    activeTab === 'receita'
+                      ? 'bg-[#0c251d] text-[#c8a25a] shadow-sm'
+                      : 'text-stone-700 bg-stone-50 md:bg-transparent hover:bg-stone-100 md:hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Eye className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+                    <span>Receitas & DNP</span>
+                  </div>
+                  {activeTab === 'receita' && <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#c8a25a] ml-2 hidden md:block" />}
+                </button>
+              </div>
 
-              {/* WhatsApp Support Callout */}
-              <div className="mt-4 pt-4 border-t border-stone-100 p-2">
+              {/* WhatsApp Support Callout (Desktop only or clean discrete) */}
+              <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-stone-100 p-1 md:p-2 hidden md:block">
                 <span className="text-[11px] text-stone-500 block mb-2">Dúvidas sobre termos?</span>
                 <button
                   onClick={() =>
