@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ShieldCheck,
   FileText,
@@ -24,7 +24,17 @@ export const TermsAndPolicyView: React.FC<TermsAndPolicyViewProps> = ({
   onGoToCatalog,
   onWhatsAppClick,
 }) => {
-  const [activeTab, setActiveTab] = useState<TabKey>('privacidade');
+  const readTab = (): TabKey => {
+    const segment = window.location.hash.replace(/^#\/?/, '').split('/')[1];
+    return ['privacidade', 'termos', 'garantia', 'trocas', 'receita'].includes(segment) ? segment as TabKey : 'privacidade';
+  };
+  const [activeTab, updateTab] = useState<TabKey>(readTab);
+  useEffect(() => {
+    const update = () => updateTab(readTab());
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  const setActiveTab = (tab: TabKey) => { window.location.hash = '#/politicas/' + tab; };
 
   return (
     <div className="bg-[#faf8f5] text-stone-900 min-h-screen pb-20 animate-fadeIn">

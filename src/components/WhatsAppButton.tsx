@@ -5,22 +5,24 @@ interface WhatsAppButtonProps {
   onClick: (customText?: string) => void;
   isDetailView?: boolean;
   isHome?: boolean;
+  isAdmin?: boolean;
 }
 
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   onClick,
   isDetailView = false,
   isHome = false,
+  isAdmin = false,
 }) => {
-  // Ocultar na primeira página (Home)
-  if (isHome) return null;
+  // Ocultar na primeira página (Home) e no painel do lojista (Admin)
+  if (isHome || isAdmin) return null;
 
   // On detail view, hide on mobile to prevent overlapping with sticky buy bar
   return (
     <div
       className={`fixed ${
         isDetailView
-          ? 'hidden sm:flex bottom-6 right-6'
+          ? 'hidden lg:flex bottom-6 right-6'
           : 'flex bottom-4 right-4 sm:bottom-6 sm:right-6'
       } z-40 items-end transition-all duration-300 pb-safe`}
     >

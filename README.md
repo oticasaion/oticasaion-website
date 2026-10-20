@@ -1,5 +1,7 @@
 # Óticas Aion - Landing Page & Catálogo Digital
 
+O painel administrativo aceita somente login de contas autorizadas. Consulte [a configuração obrigatória de acesso](docs/ADMIN_ACCESS.md) para desativar cadastros no Supabase, autorizar a conta do lojista e aplicar as políticas do catálogo. Execute `npm run test:admin` para verificar os cenários locais de permissão e salvamento.
+
 Landing Page e Catálogo Virtual moderno e responsivo desenvolvido para a **Óticas Aion** (*"Visão que permanece"*), focado em conversão e atendimento direto via WhatsApp.
 
 ---
@@ -69,6 +71,5 @@ Para alterar o número que recebe os pedidos e receitas:
 1. Abra o arquivo [src/App.tsx](file:///c:/Users/evand/OneDrive/Documents/oticasaion/src/App.tsx).
 2. Modifique a constante:
    ```ts
-   export const WHATSAPP_PHONE_NUMBER = '5511999999999'; // Seu número comercial com DDI e DDD
+   export const WHATSAPP_PHONE_NUMBER = '5511988176072'; // Seu número comercial com DDI e DDD
    ```
-

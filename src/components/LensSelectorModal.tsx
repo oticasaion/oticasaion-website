@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Product } from '../types';
 import { LENS_OPTIONS } from '../data/lenses';
 import { X, Check, ShieldCheck, Question, Stack } from '@phosphor-icons/react';
 import { trackBeginCheckout } from '../firebase';
 import { ImageWithFade } from './ImageWithFade';
 import { WhatsAppIcon } from './WhatsAppIcon';
+import { currency } from '../lib/productPresentation';
 
 interface LensSelectorModalProps {
   product: Product | null;
+  analyticsEnabled?: boolean;
+  initialColorIndex?: number;
   isOpen: boolean;
   onClose: () => void;
   onConfirmWhatsApp: (message: string) => void;
@@ -15,12 +18,27 @@ interface LensSelectorModalProps {
 
 export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
   product,
+  analyticsEnabled = true,
+  initialColorIndex = 0,
   isOpen,
   onClose,
   onConfirmWhatsApp,
 }) => {
-  const [selectedColor, setSelectedColor] = useState<number>(0);
+  const [selectedColor, setSelectedColor] = useState<number>(() => Math.min(Math.max(0, initialColorIndex), Math.max(0, (product?.colors.length || 0) - 1)));
   const [selectedLensId, setSelectedLensId] = useState<string>('fina-poly');
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (!isOpen || !product) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const body = dialog.ownerDocument.body;
+    const previous = body.style.overflow;
+    body.style.overflow = 'hidden';
+    const focused = dialog.ownerDocument.activeElement as HTMLElement | null;
+    dialog.showModal();
+    return () => { dialog.close(); body.style.overflow = previous; focused?.focus(); };
+  }, [isOpen, product?.id]);
 
   if (!isOpen || !product) return null;
 
@@ -29,14 +47,14 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
   const pixPrice = totalPrice * (1 - product.pixDiscountPercent / 100);
 
   const handleWhatsAppCheckout = () => {
-    trackBeginCheckout(product.name, currentLens.name, pixPrice);
-    const colorName = product.colors[selectedColor]?.name || 'Padrão';
-    const message = `*Olá, Óticas Aion!* 👋\n\nGostaria de encomendar este óculos de grau completo:\n\n👓 *Armação:* ${product.name}\n🎨 *Cor escolhida:* ${colorName}\n🔬 *Lente escolhida:* ${currentLens.name} (${currentLens.subtitle})\n💰 *Valor estimado:* R$ ${pixPrice.toFixed(2)} à vista no PIX (ou R$ ${totalPrice.toFixed(2)} parcelado)\n\nTenho minha receita em mãos e gostaria de enviar a foto para conferência técnica e medição da DNP. Como procedemos?`;
+    if (analyticsEnabled) trackBeginCheckout(product.name, currentLens.name, pixPrice);
+    const colorName = product.colors[selectedColor]?.name || 'A confirmar com o atendimento';
+    const message = `*Olá, Óticas Aion!* 👋\n\n${currentLens.id === 'only-frame' ? 'Gostaria de encomendar somente esta armação:' : 'Gostaria de encomendar este óculos de grau completo:'}\n\n👓 *Armação:* ${product.name}\n🎨 *Cor escolhida:* ${colorName}\n🔬 *Lente escolhida:* ${currentLens.name} (${currentLens.subtitle})\n💰 *Valor estimado:* ${currency(pixPrice)} à vista no PIX (ou ${currency(totalPrice)} antes do desconto PIX; consulte parcelamento)\n\n${currentLens.id === 'only-frame' ? 'Como confirmo disponibilidade e entrega?' : 'Gostaria de enviar minha receita para análise e receber orientação sobre a medição da DNP. Como procedemos?'}`;
     onConfirmWhatsApp(message);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-hidden bg-black/70 backdrop-blur-sm animate-fadeIn">
+    <dialog ref={dialogRef} aria-label="Configure suas lentes" onCancel={event => { event.preventDefault(); onClose(); }} className="lens-config-dialog">
       <div className="relative w-full max-w-3xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden h-[92vh] sm:h-auto sm:max-h-[90vh] flex flex-col">
         
         {/* Modal Header */}
@@ -55,7 +73,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
         </div>
 
         {/* Modal Body - Scrollable */}
-        <div className="p-5 sm:p-8 overflow-y-auto space-y-8 divide-y divide-stone-100">
+        <div className="p-5 sm:p-8 overflow-y-auto overscroll-contain space-y-8 divide-y divide-stone-100">
           
           {/* Step 1: Frame review & Color selection */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -73,15 +91,16 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
             </div>
 
             <div className="md:col-span-7 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-2">
-                  1. Selecione a cor da armação:
-                </label>
+              {product.colors.length > 0 && <div>
+                <p className="block text-xs font-semibold text-stone-700 mb-2">
+                  Selecione a cor da armação:
+                </p>
                 <div className="flex flex-wrap gap-2.5">
                   {product.colors.map((color, index) => (
                     <button
                       key={color.name}
                       onClick={() => setSelectedColor(index)}
+                      aria-pressed={selectedColor === index}
                       className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${
                         selectedColor === index
                           ? 'border-[#0c251d] bg-[#0c251d] text-white shadow-sm'
@@ -96,7 +115,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
                     </button>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
@@ -113,7 +132,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               <div>
                 <h4 className="text-base font-bold text-stone-900 flex items-center gap-2">
                   <Stack className="w-5 h-5 text-[#c8a25a]" />
-                  <span>2. Escolha suas lentes oftálmicas</span>
+                  <span>Escolha suas lentes oftálmicas</span>
                 </h4>
                 <p className="text-xs text-stone-500">Selecione o índice ideal para a sua receita médica</p>
               </div>
@@ -123,10 +142,12 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               {LENS_OPTIONS.map((lens) => {
                 const isSelected = selectedLensId === lens.id;
                 return (
-                  <div
+                  <button
+                    type="button"
+                    aria-pressed={isSelected}
                     key={lens.id}
                     onClick={() => setSelectedLensId(lens.id)}
-                    className={`relative cursor-pointer rounded-2xl p-4 sm:p-5 border-2 transition-all ${
+                    className={`relative w-full text-left cursor-pointer rounded-2xl p-4 sm:p-5 border-2 transition-colors ${
                       isSelected
                         ? 'border-[#c8a25a] bg-gradient-to-r from-[#c8a25a]/10 via-[#c8a25a]/5 to-transparent shadow-md'
                         : 'border-stone-200 hover:border-stone-300 bg-white'
@@ -181,13 +202,13 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
                         <div className="inline-block bg-stone-50 border border-stone-200/80 px-4 py-2 rounded-xl text-center">
                           <span className="text-xs text-stone-500 block">Adicional</span>
                           <span className="text-base sm:text-lg font-bold text-stone-900">
-                            {lens.price === 0 ? 'Grátis' : `+ R$ ${lens.price.toFixed(2)}`}
+                            {lens.price === 0 ? 'Sem adicional' : '+ ' + currency(lens.price)}
                           </span>
                         </div>
                       </div>
 
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -214,7 +235,7 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               <span className="text-xs text-stone-500 block">Total estimado:</span>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xl sm:text-3xl font-extrabold text-[#0c251d]">
-                  R$ {pixPrice.toFixed(2)}
+                  {currency(pixPrice)}
                 </span>
                 <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                   no PIX
@@ -230,12 +251,12 @@ export const LensSelectorModal: React.FC<LensSelectorModalProps> = ({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 rounded-xl shadow-xl shadow-[#25D366]/25 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               <WhatsAppIcon className="w-5 h-5 text-white shrink-0" />
-              <span>Concluir no WhatsApp com receita</span>
+              <span>{currentLens.id === 'only-frame' ? 'Pedir armação no WhatsApp' : 'Enviar pedido e receita no WhatsApp'}</span>
             </button>
           </div>
         </div>
 
       </div>
-    </div>
+    </dialog>
   );
 };

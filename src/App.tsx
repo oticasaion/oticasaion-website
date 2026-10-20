@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Product } from './types';
-import { PRODUCTS } from './data/products';
+import { getPage, pageHashes, type AppView } from './lib/navigation';
+export type { AppView } from './lib/navigation';
 import { getLocalStoredProducts, fetchProducts } from './services/productService';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -15,89 +16,69 @@ import { Faq } from './components/Faq';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { LensSelectorModal } from './components/LensSelectorModal';
-import { AdminAuthModal } from './components/admin/AdminAuthModal';
 import { trackWhatsAppLead, trackProductView } from './firebase';
 
-// Configuração central do número de atendimento WhatsApp da Óticas Aion
-export const WHATSAPP_PHONE_NUMBER = '5511999999999';
+const AdminView = lazy(() => import('./components/admin/AdminView').then(module => ({ default: module.AdminView })));
 
-export type AppView = 'home' | 'catalog' | 'product-detail' | 'terms-policy';
+// Configuração central do número de atendimento WhatsApp da Óticas Aion
+export const WHATSAPP_PHONE_NUMBER = '5511988176072';
+
 
 export const App: React.FC = () => {
   // Dynamic products state (synced with Supabase & localStorage fallback)
   const [products, setProducts] = useState<Product[]>(() => getLocalStoredProducts());
   
   // Navigation view state
-  const [currentView, setCurrentView] = useState<AppView>('home');
-  const [activeProductDetail, setActiveProductDetail] = useState<Product | null>(null);
+  const [currentView, setCurrentView] = useState<AppView>(() => getPage(window.location.hash));
+  const [routeHash, setRouteHash] = useState(window.location.hash);
+  const productParams = new URLSearchParams(routeHash.split('?')[1] || '');
+  let productId = productParams.get('id');
+  if (!productId && getPage(routeHash) === 'product-detail') {
+    try { productId = decodeURIComponent(routeHash.replace(/^#\/?/, '').split('/')[1] || ''); } catch { productId = null; }
+  }
+  const activeProductDetail = products.find(p => p.id === productId) || null;
 
-  // Admin and Lens modals
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  // Lens selection modal
   const [selectedProductForLenses, setSelectedProductForLenses] = useState<Product | null>(null);
   const [isLensModalOpen, setIsLensModalOpen] = useState(false);
+  const [initialLensColor, setInitialLensColor] = useState(0);
 
   // Load products from Supabase on mount
   useEffect(() => {
     fetchProducts().then(({ products: loaded }) => {
-      if (loaded && loaded.length > 0) {
+      if (loaded) {
         setProducts(loaded);
       }
     });
   }, []);
 
-  // Hash-based URL router support (compatible with GitHub Pages)
+  // Dedicated hash pages remain compatible with static hosting.
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#produto')) {
-        const idMatch = hash.match(/[?&]id=([^&]+)/) || hash.split('/')[1];
-        const prodId = typeof idMatch === 'string' ? idMatch : idMatch?.[1];
-        if (prodId) {
-          const currentList = getLocalStoredProducts();
-          const found = currentList.find((p) => p.id === prodId) || PRODUCTS.find((p) => p.id === prodId);
-          if (found) {
-            setActiveProductDetail(found);
-            setCurrentView('product-detail');
-            return;
-          }
-        }
-      }
-
-      if (hash === '#catalogo' || hash === '#/catalogo') {
-        setCurrentView('catalog');
-        setActiveProductDetail(null);
-      } else if (hash === '#termos' || hash === '#politicas' || hash === '#/termos' || hash === '#/politicas') {
-        setCurrentView('terms-policy');
-        setActiveProductDetail(null);
-      } else if (hash === '#admin') {
-        setIsAdminModalOpen(true);
-      } else if (hash === '' || hash === '#' || hash === '#home' || hash === '#/') {
-        setCurrentView('home');
-        setActiveProductDetail(null);
-      }
+    const update = () => {
+      setCurrentView(getPage(window.location.hash));
+      setRouteHash(window.location.hash);
+      setIsLensModalOpen(false);
+      window.scrollTo({ top: 0 });
     };
-
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
   }, []);
 
+  useEffect(() => {
+    const titles: Record<AppView, string> = {
+      home: 'Óculos de grau completo', catalog: 'Catálogo de armações',
+      'product-detail': activeProductDetail?.name || 'Armação',
+      'terms-policy': 'Políticas e termos', admin: 'Painel administrativo',
+      'how-it-works': 'Como funciona', about: 'Por que a Aion?', faq: 'Dúvidas frequentes',
+    };
+    document.title = titles[currentView] + ' | Óticas Aion';
+  }, [currentView, activeProductDetail?.name]);
+
   const navigateTo = (view: AppView, targetProduct?: Product) => {
-    setCurrentView(view);
-    if (view === 'product-detail' && targetProduct) {
-      setActiveProductDetail(targetProduct);
-      window.location.hash = `#produto?id=${targetProduct.id}`;
-    } else if (view === 'catalog') {
-      setActiveProductDetail(null);
-      window.location.hash = '#catalogo';
-    } else if (view === 'terms-policy') {
-      setActiveProductDetail(null);
-      window.location.hash = '#termos';
-    } else {
-      setActiveProductDetail(null);
-      window.location.hash = '#';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.location.hash = view === 'product-detail' && targetProduct
+      ? pageHashes[view] + '?id=' + encodeURIComponent(targetProduct.id)
+      : pageHashes[view];
+    window.scrollTo({ top: 0 });
   };
 
   const handleOpenWhatsApp = (message?: string, context: string = 'geral') => {
@@ -114,7 +95,8 @@ export const App: React.FC = () => {
     navigateTo('product-detail', product);
   };
 
-  const handleOpenLensModal = (product: Product) => {
+  const handleOpenLensModal = (product: Product, colorIndex = 0) => {
+    setInitialLensColor(colorIndex);
     setSelectedProductForLenses(product);
     setIsLensModalOpen(true);
   };
@@ -124,6 +106,20 @@ export const App: React.FC = () => {
       `Olá! Tenho interesse no modelo *${productName}*. Ele está disponível para fazer com meu grau?`
     );
   };
+
+  // View Dedicada: Painel do Lojista (Acesso Separado)
+  if (currentView === 'admin') {
+    return (
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#f6f7f4] text-[#18392d]" role="status">Carregando painel…</div>}>
+      <AdminView
+        products={products}
+        onProductsUpdated={(updated) => setProducts(updated)}
+        onBackToStore={() => navigateTo('home')}
+        onPreviewProduct={handleOpenProductDetail}
+      />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col font-sans-brand bg-[#fcfbf9] text-stone-900">
@@ -135,7 +131,11 @@ export const App: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main id="main-content" className="flex-1" tabIndex={-1}>
+        {currentView === 'how-it-works' && <HowItWorks onWhatsAppClick={handleOpenWhatsApp} />}
+        {currentView === 'about' && <><Comparison /><Testimonials /></>}
+        {currentView === 'faq' && <Faq onWhatsAppClick={handleOpenWhatsApp} />}
+        {currentView === 'product-detail' && !activeProductDetail && <div className="max-w-5xl mx-auto p-12"><h1 className="text-2xl font-bold">Armação não encontrada</h1><a href="#/catalogo" className="inline-block mt-5 underline">Voltar ao catálogo</a></div>}
         {/* TELA 1: POLÍTICA E TERMOS */}
         {currentView === 'terms-policy' && (
           <TermsAndPolicyView
@@ -148,6 +148,7 @@ export const App: React.FC = () => {
         {/* TELA 2: DETALHES DO PRODUTO */}
         {currentView === 'product-detail' && activeProductDetail && (
           <ProductDetailView
+            key={activeProductDetail.id}
             product={activeProductDetail}
             allProducts={products}
             onBackToCatalog={() => navigateTo('catalog')}
@@ -179,14 +180,7 @@ export const App: React.FC = () => {
               onOpenLensModal={handleOpenLensModal}
               onWhatsAppQuickAsk={handleQuickAskProduct}
             />
-
-            <HowItWorks onWhatsAppClick={handleOpenWhatsApp} />
-
-            <Comparison />
-
             <Testimonials />
-
-            <Faq onWhatsAppClick={handleOpenWhatsApp} />
           </>
         )}
       </main>
@@ -195,7 +189,6 @@ export const App: React.FC = () => {
       <Footer
         onWhatsAppClick={handleOpenWhatsApp}
         onNavigate={navigateTo}
-        onOpenAdminLogin={() => setIsAdminModalOpen(true)}
       />
 
       {/* Floating WhatsApp Action Button (Oculto na primeira página / Home) */}
@@ -207,6 +200,8 @@ export const App: React.FC = () => {
 
       {/* Lens Selection & WhatsApp Checkout Modal (Direcionado para WhatsApp) */}
       <LensSelectorModal
+        key={(selectedProductForLenses?.id || 'none') + ':' + initialLensColor + ':' + isLensModalOpen}
+        initialColorIndex={initialLensColor}
         product={selectedProductForLenses}
         isOpen={isLensModalOpen}
         onClose={() => setIsLensModalOpen(false)}
@@ -214,15 +209,6 @@ export const App: React.FC = () => {
           setIsLensModalOpen(false);
           handleOpenWhatsApp(customMessage, 'checkout_lente');
         }}
-      />
-
-      {/* Supabase Admin Auth & Product Manager Modal */}
-      <AdminAuthModal
-        isOpen={isAdminModalOpen}
-        onClose={() => setIsAdminModalOpen(false)}
-        products={products}
-        onProductsUpdated={(updated) => setProducts(updated)}
-        onPreviewProduct={handleOpenProductDetail}
       />
     </div>
   );

@@ -1,6 +1,8 @@
 import { Product } from '../types';
 import { PRODUCTS as INITIAL_PRODUCTS } from '../data/products';
 import { supabase } from '../lib/supabase';
+import { requireAdmin } from '../lib/adminAccess';
+import adminAccessSql from '../../docs/admin-access.sql?raw';
 
 const LOCAL_STORAGE_KEY = 'oticas_aion_products_v2';
 
@@ -30,19 +32,8 @@ create table if not exists public.products (
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- Ativar segurança RLS
-alter table public.products enable row level security;
 
--- Política para permitir que qualquer visitante veja os produtos
-create policy "Produtos visíveis publicamente" 
-on public.products for select 
-using (true);
-
--- Política para permitir que usuários autenticados criem/atualizem/deletem produtos
-create policy "Gerenciamento de produtos por usuários autenticados" 
-on public.products for all 
-using (auth.role() = 'authenticated');
-`;
+` + adminAccessSql;
 
 // Helper para converter produto do formato Supabase para o formato do Frontend
 function mapSupabaseRowToProduct(row: any): Product {
@@ -115,7 +106,7 @@ export function getLocalStoredProducts(): Product[] {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         const hasLegacyImages = parsed.some((p: any) =>
           Array.isArray(p.images) && p.images.some((img: string) => typeof img === 'string' && img.includes('unsplash.com'))
         );
@@ -147,7 +138,7 @@ export async function fetchProducts(): Promise<{ products: Product[]; source: 's
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       const mapped = data.map(mapSupabaseRowToProduct);
       saveLocalStoredProducts(mapped);
       return { products: mapped, source: 'supabase' };
@@ -159,60 +150,35 @@ export async function fetchProducts(): Promise<{ products: Product[]; source: 's
   return { products: getLocalStoredProducts(), source: 'local' };
 }
 
-// Salvar ou atualizar um produto (no Supabase e localmente)
+// Commit remotely before updating the local cache.
 export async function saveProduct(product: Product): Promise<{ success: boolean; savedInSupabase: boolean; error?: string }> {
-  // 1. Atualiza no cache local imediatamente para feedback instantâneo
-  const current = getLocalStoredProducts();
-  const index = current.findIndex((p) => p.id === product.id);
-  let updatedList: Product[];
-
-  if (index >= 0) {
-    updatedList = [...current];
-    updatedList[index] = product;
-  } else {
-    updatedList = [product, ...current];
-  }
-  saveLocalStoredProducts(updatedList);
-
-  // 2. Tenta sincronizar com o Supabase
-  let savedInSupabase = false;
   try {
-    const row = mapProductToSupabaseRow(product);
-    const { error } = await supabase.from('products').upsert(row, { onConflict: 'id' });
-    if (!error) {
-      savedInSupabase = true;
-    } else {
-      console.warn('Aviso ao sincronizar produto com Supabase:', error.message);
-    }
-  } catch (err: any) {
-    console.warn('Aviso Supabase indisponível no momento:', err?.message);
+    await requireAdmin();
+    const { data, error } = await supabase.from('products')
+      .upsert(mapProductToSupabaseRow(product), { onConflict: 'id' }).select('id').single();
+    if (error || !data) throw new Error('Não foi possível salvar na loja. Verifique sua conexão e permissão e tente novamente.');
+    const current = getLocalStoredProducts();
+    saveLocalStoredProducts(current.some(p => p.id === product.id)
+      ? current.map(p => p.id === product.id ? product : p) : [product, ...current]);
+    return { success: true, savedInSupabase: true };
+  } catch (error) {
+    return { success: false, savedInSupabase: false, error: error instanceof Error ? error.message : 'Falha ao salvar produto.' };
   }
-
-  return { success: true, savedInSupabase };
 }
 
-// Excluir um produto
-export async function deleteProduct(productId: string): Promise<{ success: boolean; deletedInSupabase: boolean }> {
-  // 1. Remove localmente
-  const current = getLocalStoredProducts();
-  const updatedList = current.filter((p) => p.id !== productId);
-  saveLocalStoredProducts(updatedList);
-
-  // 2. Remove do Supabase
-  let deletedInSupabase = false;
+export async function deleteProduct(productId: string): Promise<{ success: boolean; deletedInSupabase: boolean; error?: string }> {
   try {
-    const { error } = await supabase.from('products').delete().eq('id', productId);
-    if (!error) {
-      deletedInSupabase = true;
-    }
-  } catch (err) {
-    console.warn('Erro ao remover produto do Supabase:', err);
+    await requireAdmin();
+    const { data, error } = await supabase.from('products').delete().eq('id', productId).select('id');
+    if (error || !data?.length) throw new Error('Não foi possível excluir da loja. Verifique sua conexão e permissão e tente novamente.');
+    saveLocalStoredProducts(getLocalStoredProducts().filter(p => p.id !== productId));
+    return { success: true, deletedInSupabase: true };
+  } catch (error) {
+    return { success: false, deletedInSupabase: false, error: error instanceof Error ? error.message : 'Falha ao excluir produto.' };
   }
-
-  return { success: true, deletedInSupabase };
 }
 
-// Restaurar para produtos de fábrica
+// Legacy local reset, retained for compatibility; not exposed in the active panel.
 export function resetProductsToDefaults(): Product[] {
   saveLocalStoredProducts(INITIAL_PRODUCTS);
   return INITIAL_PRODUCTS;

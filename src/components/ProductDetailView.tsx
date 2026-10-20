@@ -1,667 +1,123 @@
-import React, { useState } from 'react';
-import { Product } from '../types';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import type { Product } from '../types';
 import { PRODUCTS } from '../data/products';
-import {
-  CaretLeft,
-  CaretRight,
-  Star,
-  ShieldCheck,
-  Truck,
-  Clock,
-  Sparkle,
-  Stack,
-  Check,
-  Package,
-  Ruler,
-  Question,
-  ArrowLeft,
-} from '@phosphor-icons/react';
-import { ImageWithFade } from './ImageWithFade';
+import { ArrowLeft, ArrowRight, Check, CreditCard, Eyeglasses, Package, Ruler, ShieldCheck, Star, Truck } from '@phosphor-icons/react';
+import { ProductGallery } from './ProductGallery';
 import { WhatsAppIcon } from './WhatsAppIcon';
+import { currency, formatCep, normalizeCep, productInquiry, productPricing } from '../lib/productPresentation';
 
 interface ProductDetailViewProps {
   product: Product;
   allProducts?: Product[];
   onBackToCatalog: () => void;
   onSelectProduct: (product: Product) => void;
-  onOpenLensModal: (product: Product) => void;
-  onWhatsAppClick: (customText?: string) => void;
+  onOpenLensModal: (product: Product, colorIndex?: number) => void;
+  onWhatsAppClick: (message?: string) => void;
 }
+const plainClick = (event: React.MouseEvent) => !event.defaultPrevented && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
-export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
-  product,
-  allProducts = PRODUCTS,
-  onBackToCatalog,
-  onSelectProduct,
-  onOpenLensModal,
-  onWhatsAppClick,
-}) => {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<'medidas' | 'descricao' | 'inclusos'>('medidas');
-  
-  // Shipping calculator state
+export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ product, allProducts = PRODUCTS, onBackToCatalog, onSelectProduct, onOpenLensModal, onWhatsAppClick }) => {
+  const [colorIndex, setColorIndex] = useState(0);
   const [cep, setCep] = useState('');
-  const [shippingResult, setShippingResult] = useState<{
-    calculated: boolean;
-    pac: string;
-    sedex: string;
-  } | null>(null);
-  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+  const [cepError, setCepError] = useState('');
+  const cepInput = useRef<HTMLInputElement>(null);
+  const uid = useId();
+  const price = productPricing(product);
+  const selectedColorIndex = product.colors[colorIndex] ? colorIndex : 0;
+  const selectedColor = product.colors[selectedColorIndex];
+  const related = allProducts.filter(p => p.id !== product.id)
+    .sort((a,b) => Number(b.shape === product.shape) - Number(a.shape === product.shape)).slice(0,4);
+  const measures = [
+    ['Largura da lente', product.dimensions.lensWidth],
+    ['Altura da lente', product.dimensions.lensHeight],
+    ['Ponte', product.dimensions.bridgeWidth],
+    ['Frente total', product.dimensions.totalFront],
+    ['Comprimento da haste', product.dimensions.templeLength],
+  ] as const;
+  const specs = [
+    ['Material da frente', product.specs.materialFront || product.material],
+    ['Material das hastes', product.specs.materialTemple],
+    ['Tipo de aro', product.rimType],
+    ['Plaquetas nasais', product.specs.nosePads],
+    ['Mola nas hastes', product.specs.springHinges],
+    ['Estilo', product.specs.style],
+  ].filter(([, value]) => value?.trim());
 
-  const discountPercent = Math.round(
-    ((product.originalPrice - product.currentPrice) / product.originalPrice) * 100
-  );
+  useEffect(() => { setColorIndex(0); setCep(''); setCepError(''); }, [product.id]);
 
-  const productList = allProducts && allProducts.length > 0 ? allProducts : PRODUCTS;
-  const currentIndex = productList.findIndex((p) => p.id === product.id);
-  const safeIndex = currentIndex >= 0 ? currentIndex : 0;
-  const prevProduct = productList[(safeIndex - 1 + productList.length) % productList.length];
-  const nextProduct = productList[(safeIndex + 1) % productList.length];
-
-  const relatedProducts = productList.filter((p) => p.id !== product.id).slice(0, 4);
-
-  const handleCalculateShipping = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cep || cep.replace(/\D/g, '').length < 8) {
-      alert('Por favor, informe um CEP válido com 8 dígitos.');
+  const configure = () => onOpenLensModal(product, selectedColorIndex);
+  const consultShipping = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (normalizeCep(cep).length !== 8) {
+      setCepError('Informe um CEP com 8 dígitos para consultar a entrega.');
+      cepInput.current?.focus();
       return;
     }
-    setIsCalculatingShipping(true);
-    setTimeout(() => {
-      setIsCalculatingShipping(false);
-      setShippingResult({
-        calculated: true,
-        pac: 'Frete Econômico: R$ 14,90 (5 a 7 dias úteis)',
-        sedex: 'Frete Expresso: R$ 24,50 (2 a 4 dias úteis)',
-      });
-    }, 500);
+    setCepError('');
+    onWhatsAppClick(productInquiry(product, selectedColorIndex, 'shipping', cep));
   };
 
-  return (
-    <div className="bg-[#fcfbf9] text-stone-900 pb-28 sm:pb-32 animate-fadeIn">
-      
-      {/* Breadcrumb Bar */}
-      <div className="bg-white border-b border-stone-200 py-3.5 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm text-stone-500">
-          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
-            <button
-              onClick={onBackToCatalog}
-              className="text-[#0c251d] font-bold hover:underline flex items-center gap-1 shrink-0"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Catálogo</span>
-            </button>
-            <span>/</span>
-            <span className="text-stone-900 font-semibold truncate max-w-[150px] sm:max-w-none">
-              {product.name}
-            </span>
+  return <article className="product-page bg-[#fcfbf9] text-[#18392d]">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
+      <nav aria-label="Caminho do produto" className="flex items-center gap-2 text-xs text-stone-500 min-w-0">
+        <a href="#/catalogo" onClick={event => { if (plainClick(event)) { event.preventDefault(); onBackToCatalog(); } }} className="inline-flex items-center gap-2 hover:text-[#18392d] shrink-0"><ArrowLeft size={15} aria-hidden="true" /> Catálogo</a><span aria-hidden="true">/</span><span aria-current="page" className="truncate">{product.name || 'Produto'}</span>
+      </nav>
+      <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-7 lg:gap-14 items-start mt-6">
+        <div className="min-w-0 lg:sticky lg:top-28"><ProductGallery key={product.id} product={product} /><p className="text-[11px] leading-relaxed text-stone-500 mt-3">As cores podem variar conforme a iluminação e a tela. Confirme os detalhes com nosso atendimento.</p></div>
+        <section className="min-w-0" aria-labelledby={'product-title-' + uid}>
+          <div className="flex flex-wrap gap-2 items-center mb-4"><span className="text-[10px] tracking-[.18em] font-semibold uppercase text-[#7d6946]">Óticas Aion</span>{product.gender && <span className="text-[10px] capitalize rounded-full bg-[#eef0e8] px-2.5 py-1 text-[#5f7056]">{product.gender}</span>}</div>
+          <h1 id={'product-title-' + uid} className="text-3xl sm:text-4xl lg:text-[2.5rem] font-semibold tracking-tight leading-[1.1] text-balance break-words">{product.name || 'Nome do produto'}</h1>
+          <p className="text-sm text-stone-500 mt-4">{[product.material, product.shape].filter(Boolean).join(' · ')}</p>
+          {product.reviewsCount > 0 ? <div className="flex items-center gap-2 mt-4 text-xs"><span className="flex gap-0.5 text-[#9e762f]" aria-hidden="true">{Array.from({length:5},(_,i) => <Star key={i} size={13} weight={i < Math.round(product.rating) ? 'fill' : 'regular'} />)}</span><span>{new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(product.rating)} · {product.reviewsCount} avaliações</span></div> : <p className="text-xs text-stone-500 mt-4">Novo no catálogo</p>}
+          <div className="mt-6 border-y border-stone-200 py-6">
+            <p className="text-xs font-medium text-stone-500 mb-2">Somente a armação</p>
+            {price.previous !== null && <p className="text-xs text-stone-400 mb-1"><span className="sr-only">Preço anterior: </span><del>{currency(price.previous)}</del></p>}
+            <div className="flex flex-wrap items-end gap-3"><strong className="text-4xl sm:text-[2.65rem] font-semibold tracking-tight tabular-nums">{currency(price.pix)}</strong><span className="text-xs text-[#45613c] pb-1.5">no Pix{price.discount > 0 ? ' · ' + price.discount + '% de desconto' : ''}</span></div>
+            <p className="text-xs text-stone-500 mt-3">{currency(price.frame)} antes do desconto Pix. Consulte as condições de parcelamento.</p>
+            {price.completePix !== null && <div className="rounded-xl bg-[#eef1e8] px-4 py-3 mt-5 flex items-start gap-3"><Eyeglasses size={21} className="shrink-0 text-[#61754e]" aria-hidden="true" /><div><p className="text-xs font-medium">Armação + lentes com grau a partir de {currency(price.completePix)} no Pix</p><p className="text-[11px] text-stone-500 mt-1 leading-relaxed">O total depende da lente escolhida. Confira no configurador e envie sua receita para análise.</p></div></div>}
           </div>
-
-          <div className="flex items-center gap-3 text-xs font-semibold shrink-0">
-            <button
-              onClick={() => onSelectProduct(prevProduct)}
-              className="hover:text-stone-900 flex items-center gap-0.5"
-            >
-              <CaretLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Anterior</span>
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => onSelectProduct(nextProduct)}
-              className="hover:text-stone-900 flex items-center gap-0.5"
-            >
-              <span className="hidden sm:inline">Próximo</span>
-              <CaretRight className="w-4 h-4" />
-            </button>
+          {product.colors.length > 0 && <fieldset className="mt-6"><legend className="text-xs font-medium mb-3">Cor: <span className="font-semibold">{selectedColor?.name}</span></legend><div className="flex flex-wrap gap-2">{product.colors.map((color,index) => <label key={color.name + index} className={'cursor-pointer flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-xs min-h-11 transition-colors ' + (index === selectedColorIndex ? 'border-[#173e2d] bg-[#eef1e8]' : 'border-stone-200 bg-white hover:border-stone-400')}><input type="radio" name={'product-color-' + uid} value={index} checked={index === selectedColorIndex} onChange={() => setColorIndex(index)} className="sr-only peer" /><span aria-hidden="true" className="w-4 h-4 rounded-full border border-black/15 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-[#a8843d]" style={{backgroundColor:color.hex}} /><span>{color.name}</span>{index === selectedColorIndex && <Check size={14} aria-hidden="true" />}</label>)}</div></fieldset>}
+          <div className="mt-6 space-y-3">
+            <button type="button" onClick={configure} className="product-primary w-full"><Eyeglasses size={21} aria-hidden="true" /> Escolher lentes e montar meus óculos <ArrowRight size={17} aria-hidden="true" /></button>
+            <button type="button" onClick={() => onWhatsAppClick(productInquiry(product,selectedColorIndex,'frame'))} className="product-secondary w-full"><WhatsAppIcon className="w-4 h-4" /> Pedir somente a armação</button>
+            <p className="text-[11px] text-stone-500 text-center leading-relaxed">Você confere tudo antes de concluir o pedido pelo WhatsApp.</p>
           </div>
-        </div>
+          <div className="grid grid-cols-3 gap-2 mt-6 pt-5 border-t border-stone-200 text-center">{[
+            {icon:ShieldCheck,title:'Adaptação',text:'Consulte as garantias'},
+            {icon:Truck,title:'Envio nacional',text:'Prazo por endereço'},
+            {icon:CreditCard,title:'Pagamento',text:'Pix ou cartão'},
+          ].map(item => <div key={item.title} className="flex flex-col items-center"><item.icon size={20} className="text-[#7a8969] mb-2" aria-hidden="true" /><p className="text-[11px] font-medium">{item.title}</p><p className="text-[10px] text-stone-500 mt-1">{item.text}</p></div>)}</div>
+          <form onSubmit={consultShipping} noValidate className="mt-7 p-4 rounded-2xl border border-stone-200 bg-white">
+            <label htmlFor={'product-cep-' + uid} className="text-xs font-medium flex gap-2 items-center mb-3"><Truck size={16} aria-hidden="true" /> Consulte entrega para seu endereço</label>
+            <div className="flex gap-2"><input ref={cepInput} id={'product-cep-' + uid} name="postal-code" autoComplete="postal-code" inputMode="numeric" maxLength={9} placeholder="00000-000" value={cep} onChange={e => { setCep(formatCep(e.target.value)); setCepError(''); }} aria-invalid={!!cepError} aria-describedby={'product-cep-help-' + uid} className="min-w-0 flex-1 rounded-xl border border-stone-300 bg-[#fafbf8] px-3 py-2.5 text-base" /><button type="submit" className="rounded-xl bg-[#eef1e8] hover:bg-[#e2e8d9] text-[#25432e] px-4 text-xs font-semibold">Consultar</button></div>
+            <p id={'product-cep-help-' + uid} className={'text-[11px] leading-relaxed mt-2 ' + (cepError ? 'text-red-700' : 'text-stone-500')} role={cepError ? 'alert' : undefined}>{cepError || 'O atendimento confirma o frete e o prazo pelo WhatsApp. Lentes com grau também passam pela etapa de confecção.'}</p>
+          </form>
+          <button type="button" onClick={() => onWhatsAppClick(productInquiry(product,selectedColorIndex,'help'))} className="mt-5 text-xs font-medium underline underline-offset-4 hover:text-[#8a6b36]">Precisa de ajuda com o modelo ou a receita?</button>
+        </section>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
-        
-        {/* Main Grid: Gallery (Left) & Buy Box (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          
-          {/* Left Column: Interactive Photo Gallery */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Main Image Frame with Smooth Fade-in */}
-            <div className="relative aspect-square sm:aspect-[4/3] bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-4 sm:p-8 flex items-center justify-center shadow-sm overflow-hidden">
-              {/* Badges in normalcase */}
-              <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
-                {discountPercent > 0 && (
-                  <span className="bg-rose-600 text-white font-medium text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
-                    {discountPercent}% OFF
-                  </span>
-                )}
-                {product.isBestseller && (
-                  <span className="bg-[#0c251d] text-[#c8a25a] font-medium text-xs px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm">
-                    Mais vendido
-                  </span>
-                )}
-              </div>
-
-              <ImageWithFade
-                src={product.images[selectedImageIndex] || product.images[0]}
-                alt={product.name}
-                loading="eager"
-                containerClassName="w-full h-full flex items-center justify-center"
-                className="w-full max-h-[220px] xs:max-h-[260px] sm:max-h-[360px] object-contain transition-transform duration-500"
-              />
-
-              {/* Prev / Next Image arrows */}
-              {product.images.length > 1 && (
-                <>
-                  <button
-                    onClick={() =>
-                      setSelectedImageIndex(
-                        (selectedImageIndex - 1 + product.images.length) % product.images.length
-                      )
-                    }
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow-md border border-stone-200 flex items-center justify-center text-stone-700 active:scale-95 transition"
-                    aria-label="Imagem anterior"
-                  >
-                    <CaretLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setSelectedImageIndex((selectedImageIndex + 1) % product.images.length)
-                    }
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 shadow-md border border-stone-200 flex items-center justify-center text-stone-700 active:scale-95 transition"
-                    aria-label="Próxima imagem"
-                  >
-                    <CaretRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnails Row */}
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 scrollbar-none">
-              {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImageIndex(idx)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-white border-2 p-1 shrink-0 overflow-hidden transition-all ${
-                    selectedImageIndex === idx
-                      ? 'border-[#0c251d] ring-2 ring-[#c8a25a]/40 shadow-sm'
-                      : 'border-stone-200 opacity-70 hover:opacity-100'
-                  }`}
-                  aria-label={`Selecionar foto ${idx + 1}`}
-                >
-                  <img src={img} alt="" className="w-full h-full object-cover rounded-lg" />
-                </button>
-              ))}
-
-              {/* Client real photos thumbnails */}
-              {product.clientPhotos?.map((clientImg, idx) => (
-                <div
-                  key={`client-${idx}`}
-                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-stone-100 border border-stone-200 p-1 shrink-0 overflow-hidden relative"
-                >
-                  <img src={clientImg} alt="" className="w-full h-full object-cover rounded-lg" />
-                  <span className="absolute bottom-1 right-1 bg-black/75 text-[9px] text-white px-1 rounded font-medium">
-                    Real
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* UGC Client Photos Box */}
-            {product.clientPhotos && product.clientPhotos.length > 0 && (
-              <div className="bg-stone-100/90 rounded-2xl p-3 sm:p-4 border border-stone-200 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex -space-x-2 shrink-0">
-                    {product.clientPhotos.map((c, i) => (
-                      <img
-                        key={i}
-                        src={c}
-                        alt="Cliente Aion"
-                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white object-cover"
-                      />
-                    ))}
-                  </div>
-                  <div className="text-xs">
-                    <strong className="text-stone-900 block font-bold">
-                      Fotos reais de clientes
-                    </strong>
-                    <span className="text-stone-500">Recebidos e aprovados no WhatsApp</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() =>
-                    onWhatsAppClick(
-                      `Olá! Gostaria de ver mais fotos reais de clientes usando o ${product.name}.`
-                    )
-                  }
-                  className="text-xs font-semibold text-[#0c251d] underline shrink-0"
-                >
-                  Ver no WhatsApp
-                </button>
-              </div>
-            )}
+      <section aria-labelledby={'product-details-' + uid} className="mt-12 sm:mt-16 border-t border-stone-200 pt-9">
+        <div className="mb-6"><p className="text-[10px] uppercase tracking-[.18em] text-[#7d6946] font-semibold">Conheça o modelo</p><h2 id={'product-details-' + uid} className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight">Detalhes para escolher com confiança</h2></div>
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10">
+          <div className="space-y-3">
+            <details open className="product-disclosure"><summary><span>Sobre a armação</span><span aria-hidden="true">+</span></summary><div className="px-5 pb-5 text-sm text-stone-600 leading-relaxed whitespace-pre-line break-words">{product.description || 'A descrição deste modelo está em atualização. Fale com nosso atendimento para conhecer os detalhes.'}</div></details>
+            {specs.length > 0 && <details className="product-disclosure"><summary><span>Ficha técnica</span><span aria-hidden="true">+</span></summary><dl className="px-5 pb-5 divide-y divide-stone-100">{specs.map(([label,value]) => <div key={label} className="grid grid-cols-2 gap-3 py-3 text-xs"><dt className="text-stone-500">{label}</dt><dd className="font-medium text-right break-words">{value}</dd></div>)}</dl></details>}
+            {product.includedItems.length > 0 && <details className="product-disclosure"><summary><span>O que acompanha seu pedido</span><Package size={17} aria-hidden="true" /></summary><ul className="px-5 pb-5 space-y-3">{product.includedItems.map((item,index) => <li key={index} className="flex items-start gap-2 text-xs text-stone-600"><Check size={15} className="text-[#61754e] shrink-0" aria-hidden="true" />{item}</li>)}</ul></details>}
+            <a href="#/politicas/garantia" className="flex items-center gap-2 text-xs text-stone-500 px-1 py-2 hover:text-[#18392d]"><ShieldCheck size={16} aria-hidden="true" /> Consulte trocas, garantias e condições de adaptação <ArrowRight size={14} aria-hidden="true" /></a>
           </div>
-
-          {/* Right Column: Buy Box & Actions */}
-          <div className="lg:col-span-5 space-y-5 sm:space-y-6 bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-stone-200 shadow-sm">
-            
-            {/* Title & Rating */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center gap-0.5 text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} weight="fill" className="w-3.5 h-3.5 text-amber-400" />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-stone-700">
-                  {product.rating} ({product.reviewsCount} avaliações)
-                </span>
-                <span className="text-stone-300">•</span>
-                <span className="text-xs text-stone-500 font-medium capitalize">
-                  {product.gender}
-                </span>
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0c251d] font-serif-brand leading-tight">
-                {product.name}
-              </h1>
-              <p className="text-xs sm:text-sm text-stone-500 mt-1">{product.material}</p>
-            </div>
-
-            {/* Price Box */}
-            <div className="bg-[#faf8f5] rounded-2xl p-4 sm:p-5 border border-stone-200">
-              <span className="text-xs text-stone-400 line-through">
-                De R$ {product.originalPrice.toFixed(2)}
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl sm:text-4xl font-black text-[#0c251d]">
-                  R$ {product.currentPrice.toFixed(2)}
-                </span>
-                <span className="text-xs font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
-                  No PIX (5% OFF)
-                </span>
-              </div>
-
-              <div className="mt-2.5 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/80 pt-2.5">
-                <span>ou até <strong>12x de R$ {(product.currentPrice / 12 * 1.08).toFixed(2)}</strong></span>
-                <span className="text-stone-400">no cartão</span>
-              </div>
-            </div>
-
-            {/* Color Selector */}
-            <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-2">
-                Cor selecionada:{' '}
-                <span className="text-stone-900 font-bold">
-                  {product.colors[selectedColorIndex]?.name}
-                </span>
-              </label>
-
-              <div className="flex items-center gap-2.5">
-                {product.colors.map((color, idx) => (
-                  <button
-                    key={color.name}
-                    onClick={() => setSelectedColorIndex(idx)}
-                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 p-0.5 transition-all ${
-                      selectedColorIndex === idx
-                        ? 'border-[#0c251d] scale-110 shadow-md ring-2 ring-[#c8a25a]/50'
-                        : 'border-transparent'
-                    }`}
-                    title={color.name}
-                  >
-                    <span
-                      className="block w-full h-full rounded-full border border-black/20"
-                      style={{ backgroundColor: color.hex }}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Actions (Direcionado para WhatsApp - Sem compra no site) */}
-            <div className="space-y-2.5 pt-1">
-              <button
-                onClick={() => onOpenLensModal(product)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-sm sm:text-base py-3.5 sm:py-4 px-4 sm:px-6 rounded-2xl shadow-xl shadow-amber-700/20 active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-amber-500"
-              >
-                <Stack className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Personalizar lentes & pedir no WhatsApp</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  const colorName = product.colors[selectedColorIndex]?.name || 'Padrão';
-                  const pixVal = product.currentPrice * (1 - product.pixDiscountPercent / 100);
-                  onWhatsAppClick(
-                    `*Olá, Óticas Aion!* 👋\n\nGostaria de pedir apenas a *armação sem lentes de grau*:\n\n👓 *Modelo:* ${product.name}\n🎨 *Cor:* ${colorName}\n💰 *Valor com desconto PIX:* R$ ${pixVal.toFixed(2)} (ou R$ ${product.currentPrice.toFixed(2)} normal)\n\nQual o procedimento para envio e entrega?`
-                  );
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm py-3 px-4 rounded-xl transition active:scale-95 text-center shadow-md shadow-emerald-700/20"
-              >
-                <WhatsAppIcon className="w-4 h-4 text-white shrink-0" />
-                <span>Pedir apenas a armação no WhatsApp</span>
-              </button>
-
-              <button
-                onClick={() =>
-                  onWhatsAppClick(
-                    `Olá! Gostaria de tirar dúvidas sobre a armação *${product.name}* na cor *${product.colors[selectedColorIndex]?.name}*. Tenho minha receita em mãos!`
-                  )
-                }
-                className="w-full flex items-center justify-center gap-2 border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 font-medium text-xs sm:text-sm py-2.5 sm:py-3 px-4 rounded-xl transition active:scale-95 text-center"
-              >
-                <Question className="w-4 h-4 text-stone-500 shrink-0" />
-                <span>Dúvidas sobre o modelo? Falar com consultor</span>
-              </button>
-            </div>
-
-            {/* Delivery Alert Box */}
-            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-xs text-amber-900 flex items-start gap-2">
-              <Clock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-              <span>
-                <strong>Prazo laboratorial:</strong> Para lentes com grau, o prazo de confecção e conferência técnica é de até <strong>7 dias úteis</strong>.
-              </span>
-            </div>
-
-            {/* Freight Simulator */}
-            <div className="pt-2 border-t border-stone-200">
-              <form onSubmit={handleCalculateShipping} className="space-y-2">
-                <label className="block text-xs font-semibold text-stone-700">
-                  Calcular frete e prazo:
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="Seu CEP (00000-000)"
-                    value={cep}
-                    onChange={(e) => setCep(e.target.value)}
-                    maxLength={9}
-                    className="flex-1 bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:border-[#0c251d]"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isCalculatingShipping}
-                    className="bg-[#0c251d] text-[#c8a25a] font-semibold text-xs px-4 py-2.5 rounded-xl shrink-0 disabled:opacity-50"
-                  >
-                    {isCalculatingShipping ? '...' : 'Calcular'}
-                  </button>
-                </div>
-              </form>
-
-              {shippingResult?.calculated && (
-                <div className="mt-2.5 p-2.5 bg-stone-50 rounded-xl border border-stone-200 text-xs space-y-1 animate-fadeIn">
-                  <div className="flex items-center gap-1.5 text-stone-700">
-                    <Truck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>{shippingResult.pac}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-stone-700 pt-1 border-t border-stone-200">
-                    <Sparkle className="w-3.5 h-3.5 text-[#c8a25a] shrink-0" />
-                    <span>{shippingResult.sedex}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Trust highlights */}
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100 text-xs text-stone-600">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Garantia de 7 dias</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Receita conferida</span>
-              </div>
-            </div>
-
-          </div>
-
+          <section className="rounded-2xl bg-[#f0f1e9] p-5 sm:p-7" aria-label="Medidas da armação">
+            <h3 className="text-sm font-semibold flex items-center gap-2"><Ruler size={18} aria-hidden="true" /> Encontre o encaixe ideal</h3><p className="text-xs text-stone-500 mt-2 leading-relaxed">Compare as medidas com uma armação que já veste bem em você. Todas as medidas abaixo estão em milímetros.</p>
+            <svg viewBox="0 0 360 120" className="w-full max-w-sm mx-auto my-5 text-[#849070]" fill="none" aria-hidden="true"><path d="M37 47Q39 32 60 32H133Q150 32 150 48L146 78Q144 96 126 96H65Q47 96 43 78ZM210 48Q210 32 227 32H300Q321 32 323 47L317 78Q313 96 295 96H234Q216 96 214 78ZM150 48Q180 37 210 48M37 47L14 42M323 47L346 42" stroke="currentColor" strokeWidth="3" /><path d="M45 111H145M214 111H317M156 61H204" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" /></svg>
+            <dl className="grid grid-cols-2 sm:grid-cols-3 gap-3">{measures.filter(([,value]) => value > 0).map(([label,value]) => <div key={label} className="bg-white/70 rounded-xl p-3"><dt className="text-[10px] text-stone-500">{label}</dt><dd className="mt-2 text-xl font-semibold tabular-nums">{new Intl.NumberFormat('pt-BR').format(value)}<span className="text-[10px] font-normal text-stone-500 ml-1">mm</span></dd></div>)}</dl>
+            {!measures.some(([,value]) => value > 0) && <p className="text-xs text-stone-500">Medidas ainda não informadas.</p>}
+            <button type="button" onClick={() => onWhatsAppClick(productInquiry(product,selectedColorIndex,'help'))} className="mt-5 text-xs font-semibold underline underline-offset-4">Quero ajuda para conferir as medidas</button>
+          </section>
         </div>
-
-        {/* Technical Tabs: Medidas, Descrição, Itens Inclusos */}
-        <div className="mt-10 sm:mt-16 bg-white rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
-          
-          {/* Tab Navigation */}
-          <div className="flex border-b border-stone-200 bg-stone-50 text-xs sm:text-sm font-bold">
-            <button
-              onClick={() => setActiveTab('medidas')}
-              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'medidas'
-                  ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500 hover:text-stone-800'
-              }`}
-            >
-              <Ruler className="w-3.5 h-3.5" />
-              <span>Medidas</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('descricao')}
-              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'descricao'
-                  ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500 hover:text-stone-800'
-              }`}
-            >
-              <Question className="w-3.5 h-3.5" />
-              <span>Descrição</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('inclusos')}
-              className={`flex-1 py-3.5 sm:py-4 px-2 sm:px-6 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'inclusos'
-                  ? 'border-[#0c251d] text-[#0c251d] bg-white'
-                  : 'border-transparent text-stone-500 hover:text-stone-800'
-              }`}
-            >
-              <Package className="w-3.5 h-3.5" />
-              <span>Itens inclusos</span>
-            </button>
-          </div>
-
-          {/* Tab 1: Medidas */}
-          {activeTab === 'medidas' && (
-            <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
-                
-                {/* Visual Technical Diagram */}
-                <div className="lg:col-span-6 bg-[#faf8f5] rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-stone-200 flex flex-col items-center justify-center">
-                  <span className="text-xs font-semibold text-stone-500 mb-2 sm:mb-4 block text-center">
-                    Diagrama técnico de medidas (em milímetros)
-                  </span>
-
-                  <div className="w-full max-w-sm sm:max-w-md py-2">
-                    <svg viewBox="0 0 400 200" className="w-full h-auto drop-shadow-sm">
-                      <rect x="50" y="50" width="120" height="80" rx="16" fill="none" stroke="#0c251d" strokeWidth="3" />
-                      <rect x="230" y="50" width="120" height="80" rx="16" fill="none" stroke="#0c251d" strokeWidth="3" />
-                      <path d="M 170 80 Q 200 68 230 80" fill="none" stroke="#c8a25a" strokeWidth="3.5" />
-                      <line x1="50" y1="65" x2="15" y2="55" stroke="#0c251d" strokeWidth="3" />
-                      <line x1="350" y1="65" x2="385" y2="55" stroke="#0c251d" strokeWidth="3" />
-
-                      <line x1="172" y1="40" x2="228" y2="40" stroke="#78716c" strokeWidth="1.5" />
-                      <text x="200" y="32" textAnchor="middle" fill="#1c1917" fontSize="12" fontWeight="bold">
-                        {product.dimensions.bridgeWidth} mm (Ponte)
-                      </text>
-
-                      <line x1="232" y1="40" x2="348" y2="40" stroke="#78716c" strokeWidth="1.5" />
-                      <text x="290" y="32" textAnchor="middle" fill="#1c1917" fontSize="12" fontWeight="bold">
-                        {product.dimensions.lensWidth} mm (Aro)
-                      </text>
-
-                      <line x1="30" y1="52" x2="30" y2="128" stroke="#78716c" strokeWidth="1.5" />
-                      <text x="22" y="95" textAnchor="end" fill="#1c1917" fontSize="11" fontWeight="bold">
-                        {product.dimensions.lensHeight} mm
-                      </text>
-
-                      <line x1="50" y1="160" x2="350" y2="160" stroke="#c8a25a" strokeWidth="2" strokeDasharray="4 2" />
-                      <text x="200" y="180" textAnchor="middle" fill="#0c251d" fontSize="13" fontWeight="bold">
-                        {product.dimensions.totalFront} mm (Frente total)
-                      </text>
-                    </svg>
-
-                    <div className="text-center mt-2 text-xs text-stone-500">
-                      Hastes: <strong>{product.dimensions.templeLength} mm</strong>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Specs Table */}
-                <div className="lg:col-span-6">
-                  <div className="border border-stone-200 rounded-2xl overflow-hidden shadow-sm">
-                    <table className="w-full text-xs sm:text-sm text-left">
-                      <tbody className="divide-y divide-stone-100">
-                        <tr className="bg-stone-50/50">
-                          <td className="p-3 font-semibold text-stone-600 w-1/2">Material da frente</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.materialFront}</td>
-                        </tr>
-                        <tr>
-                          <td className="p-3 font-semibold text-stone-600">Material da haste</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.materialTemple}</td>
-                        </tr>
-                        <tr className="bg-stone-50/50">
-                          <td className="p-3 font-semibold text-stone-600">Tipo de aro</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.rimType}</td>
-                        </tr>
-                        <tr>
-                          <td className="p-3 font-semibold text-stone-600">Plaquetas nasais</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.nosePads}</td>
-                        </tr>
-                        <tr className="bg-stone-50/50">
-                          <td className="p-3 font-semibold text-stone-600">Mola na haste</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.springHinges}</td>
-                        </tr>
-                        <tr>
-                          <td className="p-3 font-semibold text-stone-600">Estilo</td>
-                          <td className="p-3 text-stone-900 font-medium">{product.specs.style}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Descrição */}
-          {activeTab === 'descricao' && (
-            <div className="p-5 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
-              <h3 className="text-lg sm:text-xl font-bold font-serif-brand text-[#0c251d]">
-                Detalhes de construção & ergonomia
-              </h3>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                {product.description}
-              </p>
-            </div>
-          )}
-
-          {/* Tab 3: Itens Inclusos */}
-          {activeTab === 'inclusos' && (
-            <div className="p-5 sm:p-10 space-y-3 sm:space-y-4 max-w-3xl">
-              <h3 className="text-lg sm:text-xl font-bold font-serif-brand text-[#0c251d]">
-                O que você recebe no estojo:
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 pt-1">
-                {product.includedItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs sm:text-sm font-semibold text-stone-800"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-[#0c251d] text-[#c8a25a] flex items-center justify-center shrink-0">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </div>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </div>
-
-        {/* You May Also Like */}
-        <div className="mt-12 sm:mt-20">
-          <div className="flex items-center justify-between mb-4 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#0c251d] font-serif-brand">
-              Modelos similares
-            </h3>
-            <button
-              onClick={onBackToCatalog}
-              className="text-xs sm:text-sm font-semibold text-[#0c251d] hover:underline"
-            >
-              Ver todos →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {relatedProducts.map((rel) => (
-              <div
-                key={rel.id}
-                onClick={() => {
-                  onSelectProduct(rel);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="cursor-pointer bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-3 shadow-sm hover:shadow-lg transition-all"
-              >
-                <div className="aspect-square bg-stone-50 rounded-xl overflow-hidden p-2 flex items-center justify-center">
-                  <ImageWithFade
-                    src={rel.images[0]}
-                    alt={rel.name}
-                    containerClassName="w-full h-full flex items-center justify-center"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="mt-2">
-                  <h4 className="font-semibold text-stone-900 text-xs sm:text-sm truncate">
-                    {rel.name}
-                  </h4>
-                  <span className="text-sm sm:text-base font-extrabold text-[#0c251d] block mt-0.5">
-                    R$ {rel.currentPrice.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
-
-      {/* Sticky Bottom Buy Bar for Mobile & Desktop */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-stone-200 py-2.5 sm:py-3 px-3 sm:px-8 shadow-2xl pb-safe">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <img
-              src={product.images[0]}
-              alt=""
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain border border-stone-200 shrink-0"
-            />
-            <div className="min-w-0">
-              <span className="font-semibold text-stone-900 text-xs sm:text-sm block truncate max-w-[140px] xs:max-w-[200px] sm:max-w-none">
-                {product.name}
-              </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-sm sm:text-base font-black text-[#0c251d]">
-                  R$ {product.currentPrice.toFixed(2)}
-                </span>
-                <span className="text-[10px] text-emerald-800 font-semibold bg-emerald-50 px-1 rounded">
-                  no PIX
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <button
-              onClick={() => onOpenLensModal(product)}
-              className="bg-gradient-to-r from-[#d97706] to-[#b45309] hover:from-[#b45309] hover:to-[#92400e] text-white font-bold text-xs sm:text-sm py-2.5 sm:py-3 px-3.5 sm:px-8 rounded-xl shadow-md transition active:scale-95 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-amber-500"
-            >
-              <span className="hidden xs:inline">Comprar com lentes</span>
-              <span className="xs:hidden">Comprar com grau</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
+      </section>
+      {related.length > 0 && <section className="mt-12 sm:mt-16 mb-8" aria-label="Outras armações"><div className="flex justify-between items-center gap-4 mb-5"><h2 className="text-xl sm:text-2xl font-semibold tracking-tight">Outros modelos para conhecer</h2><a href="#/catalogo" onClick={event => { if (plainClick(event)) { event.preventDefault(); onBackToCatalog(); } }} className="text-xs font-medium shrink-0 hover:underline">Ver catálogo →</a></div><div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">{related.map(item => <a key={item.id} href={'#/produto?id=' + encodeURIComponent(item.id)} onClick={event => { if (plainClick(event)) { event.preventDefault(); onSelectProduct(item); } }} className="group min-w-0"><div className="bg-[#f1f1eb] rounded-2xl overflow-hidden aspect-[5/4] p-3 sm:p-5 border border-transparent group-hover:border-[#c3cbb7] transition-colors">{item.images[0] ? <img src={item.images[0]} width={400} height={320} loading="lazy" decoding="async" alt={item.name} className="w-full h-full object-contain" /> : <div className="h-full flex items-center justify-center text-xs text-stone-400">Foto em breve</div>}</div><h3 className="text-xs sm:text-sm font-medium mt-3 break-words">{item.name}</h3><p className="text-sm font-semibold mt-1">{currency(productPricing(item).pix)}<span className="text-[10px] text-stone-500 font-normal ml-1">no Pix</span></p></a>)}</div></section>}
     </div>
-  );
+    <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-stone-200 px-4 pt-3 product-mobile-buy">
+      <div className="max-w-2xl mx-auto flex items-center justify-between gap-3"><div className="min-w-0"><p className="text-[10px] text-stone-500">Armação no Pix</p><p className="text-lg font-semibold tabular-nums">{currency(price.pix)}</p></div><button type="button" onClick={configure} className="product-primary text-xs px-4 py-3">Escolher lentes <ArrowRight size={16} aria-hidden="true" /></button></div>
+    </div>
+  </article>;
 };

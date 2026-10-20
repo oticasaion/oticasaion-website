@@ -1,3 +1,4 @@
+import type { AppView } from '../lib/navigation';
 import React from 'react';
 import { Logo } from './Logo';
 import { ShieldCheck, Truck, Lock, CreditCard, FileText } from '@phosphor-icons/react';
@@ -5,14 +6,12 @@ import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface FooterProps {
   onWhatsAppClick: (customText?: string) => void;
-  onNavigate: (view: 'home' | 'catalog' | 'terms-policy') => void;
-  onOpenAdminLogin: () => void;
+  onNavigate: (view: AppView) => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onWhatsAppClick,
   onNavigate,
-  onOpenAdminLogin,
 }) => {
   return (
     <footer className="bg-[#081a14] text-stone-300 pt-16 pb-12 border-t border-white/10">
@@ -64,12 +63,12 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <a href="#como-funciona" className="hover:text-white transition block">
+                <a href="#/como-funciona" className="hover:text-white transition block">
                   Como funciona o envio da receita
                 </a>
               </li>
               <li>
-                <a href="#comparativo" className="hover:text-white transition block">
+                <a href="#/por-que-aion" className="hover:text-white transition block">
                   Por que escolher a Aion
                 </a>
               </li>
@@ -83,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <a href="#faq" className="hover:text-white transition block">
+                <a href="#/duvidas" className="hover:text-white transition block">
                   Perguntas frequentes (FAQ)
                 </a>
               </li>
@@ -142,7 +141,7 @@ export const Footer: React.FC<FooterProps> = ({
             <span className="text-stone-700">•</span>
             {/* Botão Discreto de Acesso Lojista (Supabase) */}
             <button
-              onClick={onOpenAdminLogin}
+              onClick={() => onNavigate('admin')}
               className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-200 transition py-1 px-2.5 rounded-lg border border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10"
               title="Acesso Lojista / Gerenciar Produtos (Supabase)"
             >

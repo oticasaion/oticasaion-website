@@ -41,9 +41,9 @@ export const Comparison: React.FC = () => {
         
         {/* Header without redundant AI pill */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand tracking-tight text-balance">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand tracking-tight text-balance">
             Por que escolher a Óticas Aion?
-          </h2>
+          </h1>
           <p className="mt-3 text-sm sm:text-base text-stone-600 px-2 text-pretty leading-relaxed">
             Eliminamos os altos custos de estruturas físicas para entregar armações nobres e lentes oftálmicas de laboratório pelo preço justo.
           </p>

@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import type { AppView } from '../lib/navigation';
+import React, { useState, useEffect, useRef } from 'react';
 import { Logo } from './Logo';
 import { List, X, ShieldCheck, Truck, Sparkle, CheckCircle } from '@phosphor-icons/react';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface HeaderProps {
   onWhatsAppClick: (customText?: string) => void;
-  onNavigate: (view: 'home' | 'catalog' | 'terms-policy') => void;
-  currentView?: 'home' | 'catalog' | 'product-detail' | 'terms-policy';
+  onNavigate: (view: AppView) => void;
+  currentView?: AppView;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,26 +16,27 @@ export const Header: React.FC<HeaderProps> = ({
   currentView = 'home',
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
+    const view = headerRef.current?.ownerDocument.defaultView || window;
     const handleResize = () => {
-      if (window.innerWidth >= 1024) setMobileMenuOpen(false);
+      if (view.innerWidth >= 1024) setMobileMenuOpen(false);
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    view.addEventListener('resize', handleResize);
+    return () => view.removeEventListener('resize', handleResize);
   }, []);
 
-  // Prevent background scroll when mobile menu is open
+  // Use the owning document so the same header works in the live preview.
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    if (!mobileMenuOpen) return;
+    const doc = headerRef.current?.ownerDocument || document;
+    const previous = doc.body.style.overflow;
+    doc.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setMobileMenuOpen(false); };
+    doc.addEventListener('keydown', closeOnEscape);
+    return () => { doc.body.style.overflow = previous; doc.removeEventListener('keydown', closeOnEscape); };
   }, [mobileMenuOpen]);
 
   const handleLinkClick = (action: () => void) => {
@@ -43,16 +45,8 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleSectionClick = (anchor: string) => {
-    if (currentView !== 'home') {
-      onNavigate('home');
-      setTimeout(() => {
-        const el = document.querySelector(anchor);
-        el?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.querySelector(anchor);
-      el?.scrollIntoView({ behavior: 'smooth' });
-    }
+    const pages: Record<string, AppView> = { '#como-funciona': 'how-it-works', '#comparativo': 'about', '#faq': 'faq' };
+    onNavigate(pages[anchor] || 'home');
     setMobileMenuOpen(false);
   };
 
@@ -89,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Sticky Navbar */}
-      <header className="sticky top-0 z-40 w-full shadow-md">
+      <header ref={headerRef} className="sticky top-0 z-40 w-full shadow-md">
         <div className="bg-[#0c251d] text-white backdrop-blur-md bg-opacity-95 border-b border-[#c8a25a]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           <button
@@ -174,6 +168,8 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-xl transition min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <List className="w-6 h-6" />}
             </button>
@@ -185,7 +181,7 @@ export const Header: React.FC<HeaderProps> = ({
       {mobileMenuOpen && (
         <div className="fixed inset-0 top-16 sm:top-20 z-50 lg:hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-[#0a1e17] border-b border-[#c8a25a]/30 px-6 py-6 space-y-6 max-h-[calc(100vh-64px)] overflow-y-auto">
-            <nav className="flex flex-col space-y-1">
+            <nav id="mobile-navigation" className="flex flex-col space-y-1">
               <button
                 onClick={() => handleLinkClick(() => onNavigate('home'))}
                 className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${

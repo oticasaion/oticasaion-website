@@ -7,8 +7,11 @@
     "dev": "vite",
     "build": "vite build && node -e \"const fs=require('fs'); fs.copyFileSync('dist/app.html', 'dist/index.html'); fs.copyFileSync('dist/app.html', 'dist/404.html'); fs.copyFileSync('dist/app.html', 'index.html'); fs.copyFileSync('dist/app.html', '404.html'); fs.writeFileSync('dist/.nojekyll', ''); fs.writeFileSync('.nojekyll', ''); fs.cpSync('dist/assets', 'assets', {recursive: true}); fs.cpSync('dist/produtos-reais', 'produtos-reais', {recursive: true}); fs.cpSync('dist/branding', 'branding', {recursive: true});\"",
     "preview": "vite preview",
+    "test:admin": "node --experimental-vm-modules tests/admin-access.test.mjs",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --dotfiles -b gh-pages"
+    "deploy": "gh-pages -d dist --dotfiles -b gh-pages",
+    "test:products": "node --experimental-vm-modules tests/product-creation.test.mjs",
+    "test:product-page": "node tests/product-page.test.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

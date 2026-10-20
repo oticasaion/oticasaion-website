@@ -91,7 +91,7 @@ export const Hero: React.FC<HeroProps> = () => {
             <div className="space-y-3 pt-1">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3">
                 <a
-                  href="#catalogo"
+                  href="#/catalogo"
                   className="inline-flex items-center justify-center gap-2.5 bg-[#c8a25a] hover:bg-[#d8b56d] text-[#071d16] font-bold text-sm sm:text-base px-8 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-[#c8a25a]/20 transition-all active:scale-95 text-center focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c8a25a]"
                 >
                   <span>Escolher minha armação</span>
