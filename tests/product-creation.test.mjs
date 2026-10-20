@@ -22,6 +22,7 @@ async function load(path) {
   await module.link(specifier => {
     if (specifier.endsWith('/lib/supabase')) return synthetic({ supabase });
     if (specifier.endsWith('/lib/adminAccess')) return synthetic({ requireAdmin: async () => { if (!authorized) throw new Error('Unauthorized'); return {id:'admin-user'}; } });
+    if (specifier === './bulkProductImport') return load('src/lib/bulkProductImport.ts').then(namespace => synthetic({ requiredImportIssues: namespace.requiredImportIssues }));
     throw new Error('Unexpected import: ' + specifier);
   });
   await module.evaluate();
@@ -64,9 +65,10 @@ assert.equal(imported.dimensions.lensWidth,51);
 assert.throws(() => importProductsCsv(exported.replace('https://example.test/photo.webp','javascript:alert(1)')),/links HTTPS/);
 console.log('PASS: CSV export/import preserves product fields and rejects unsafe image URLs.');
 
-const {parseImportEntries,fillFromExisting,importIssues,productFromImport} = await load('src/lib/bulkProductImport.ts');
+const {parseImportEntries,fillFromExisting,importIssues,requiredImportIssues,productFromImport} = await load('src/lib/bulkProductImport.ts');
 const imageUrl = 'https://vdptrgqxrwugrtienktg.supabase.co/storage/v1/object/public/product-images/test.webp';
 const [prepared] = parseImportEntries([{reference:'modelo-01',name:'Modelo novo',description:'Descrição do arquivo',shape:'redondo',gender:null,rim_type:'Aro Fechado',images:[imageUrl],required_to_confirm:{material_front:null,current_price:null,lens_width_mm:null,lens_height_mm:null,bridge_width_mm:null,total_front_mm:null,temple_length_mm:null}}]);
+assert.equal(requiredImportIssues(prepared).length,8);
 const existing = {...product,id:'aion-import-modelo-01',gender:'feminino',material:'Metal'};
 const filled = fillFromExisting(prepared,existing);
 assert.equal(filled.name,'Modelo novo');
@@ -77,8 +79,9 @@ assert.deepEqual(filled.images,[imageUrl]);
 assert.deepEqual(importIssues(filled),[]);
 assert.equal(productFromImport(filled).images[0],imageUrl);
 assert.ok(importIssues({...filled,images:[]}).includes('fotos públicas (1 a 8)'));
-const {exportPreparedCsv} = await load('src/lib/productSpreadsheet.ts');
+const {exportPreparedCsv,exportImportAuditCsv} = await load('src/lib/productSpreadsheet.ts');
 assert.equal(importProductsCsv(exportPreparedCsv([filled]))[0].images[0],imageUrl);
+assert.match(exportImportAuditCsv([prepared]),/material da frente \| preço/);
 console.log('PASS: JSON keeps supplied content, fills missing fields from matching products and validates edited image URLs.');
 
 const {validateImageFile,uploadProductImage,removeUnpublishedImages,MAX_IMAGE_BYTES} = await load('src/services/productImages.ts');

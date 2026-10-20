@@ -1,5 +1,5 @@
 import type { Product } from '../types';
-import type { ImportEntry } from './bulkProductImport';
+import { requiredImportIssues, type ImportEntry } from './bulkProductImport';
 
 export const columns = ['id','nome','descricao','material_frente','formato','publico','tipo_aro','preco','preco_anterior','desconto_pix','largura_lente_mm','altura_lente_mm','ponte_mm','largura_frontal_mm','haste_mm','material_hastes','plaquetas','molas_hastes','estilo','cores','itens_inclusos','imagens','promocao','mais_vendido'] as const;
 type Column = typeof columns[number];
@@ -18,6 +18,12 @@ export function exportProductsCsv(products: Product[], siteBase?: string): strin
 export function exportPreparedCsv(entries: ImportEntry[]): string {
   const rows=entries.map(e=>[ `aion-import-${e.reference}`,e.name,e.description,e.required_to_confirm.material_front||'',e.shape||'',e.gender||'',e.rim_type,e.required_to_confirm.current_price??'',e.optional_to_confirm?.original_price??'',e.optional_to_confirm?.pix_discount_percent??'',e.required_to_confirm.lens_width_mm??'',e.required_to_confirm.lens_height_mm??'',e.required_to_confirm.bridge_width_mm??'',e.required_to_confirm.total_front_mm??'',e.required_to_confirm.temple_length_mm??'',e.optional_to_confirm?.material_temple||'',e.optional_to_confirm?.nose_pads||'',e.optional_to_confirm?.spring_hinges||'','',e.optional_to_confirm?.colors?.map(c=>`${c.name}:${c.hex}`).join('|')||'',e.optional_to_confirm?.included_items?.join('|')||'',e.images.join('|'),'não','não'].map(clean));
   return '\ufeff'+[columns.map(quote).join(';'),...rows.map(row=>row.map(quote).join(';'))].join('\r\n')+'\r\n';
+}
+
+export function exportImportAuditCsv(entries: ImportEntry[]): string {
+  const header = ['referencia','nome','fotos','campos_obrigatorios_pendentes'];
+  const rows = entries.map(entry => [entry.reference,entry.name,String(entry.images.length),requiredImportIssues(entry).join(' | ')]);
+  return '\ufeff' + [header,...rows].map(row => row.map(value => quote(value)).join(';')).join('\r\n') + '\r\n';
 }
 
 function parseDelimited(text: string): string[][] {

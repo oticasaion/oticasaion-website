@@ -78,7 +78,7 @@ export function fillFromExisting(entry: ImportEntry, product?: Product): ImportE
   };
 }
 
-export function importIssues(entry: ImportEntry): string[] {
+export function requiredImportIssues(entry: ImportEntry): string[] {
   const data = entry.required_to_confirm;
   const issues: string[] = [];
   if (!entry.name?.trim()) issues.push('nome');
@@ -90,6 +90,12 @@ export function importIssues(entry: ImportEntry): string[] {
   if (!data.material_front?.trim()) issues.push('material da frente');
   if (!positive(data.current_price)) issues.push('preço');
   for (const [key,label] of [['lens_width_mm','largura da lente'],['lens_height_mm','altura da lente'],['bridge_width_mm','ponte'],['total_front_mm','largura frontal'],['temple_length_mm','haste']] as const) if (!positive(data[key])) issues.push(label);
+  return issues;
+}
+
+export function importIssues(entry: ImportEntry): string[] {
+  const issues = requiredImportIssues(entry);
+  const data = entry.required_to_confirm;
   const opt = entry.optional_to_confirm;
   if (opt?.original_price != null && (!positive(opt.original_price) || opt.original_price < (data.current_price || 0))) issues.push('preço anterior');
   if (opt?.pix_discount_percent != null && (!Number.isFinite(opt.pix_discount_percent) || opt.pix_discount_percent < 0 || opt.pix_discount_percent > 100)) issues.push('desconto Pix');
