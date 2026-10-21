@@ -58,9 +58,9 @@ export const Faq: React.FC<FaqProps> = ({ onWhatsAppClick }) => {
         
         {/* Header without redundant AI pill */}
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand tracking-tight text-balance">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0c251d] font-serif-brand tracking-tight text-balance">
             Perguntas frequentes
-          </h1>
+          </h2>
           <p className="mt-3 text-sm sm:text-base text-stone-600 px-2 text-pretty leading-relaxed">
             Tudo o que você precisa saber antes de encomendar seu óculos de grau completo com total tranquilidade.
           </p>

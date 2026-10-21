@@ -63,14 +63,68 @@ export const Footer: React.FC<FooterProps> = ({
                 </button>
               </li>
               <li>
-                <a href="#/como-funciona" className="hover:text-white transition block">
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('como-funciona');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      onNavigate('home');
+                      setTimeout(() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' }), 150);
+                    }
+                  }}
+                  className="hover:text-white transition text-left"
+                >
                   Como funciona o envio da receita
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#/por-que-aion" className="hover:text-white transition block">
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('comparativo');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      onNavigate('home');
+                      setTimeout(() => document.getElementById('comparativo')?.scrollIntoView({ behavior: 'smooth' }), 150);
+                    }
+                  }}
+                  className="hover:text-white transition text-left"
+                >
                   Por que escolher a Aion
-                </a>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('depoimentos');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      onNavigate('home');
+                      setTimeout(() => document.getElementById('depoimentos')?.scrollIntoView({ behavior: 'smooth' }), 150);
+                    }
+                  }}
+                  className="hover:text-white transition text-left"
+                >
+                  Avaliações de clientes
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('faq');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      onNavigate('home');
+                      setTimeout(() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }), 150);
+                    }
+                  }}
+                  className="hover:text-white transition text-left"
+                >
+                  Perguntas frequentes (FAQ)
+                </button>
               </li>
               <li>
                 <button
@@ -80,11 +134,6 @@ export const Footer: React.FC<FooterProps> = ({
                   <FileText className="w-3.5 h-3.5 text-stone-400" />
                   <span>Políticas & Termos de Uso (LGPD)</span>
                 </button>
-              </li>
-              <li>
-                <a href="#/duvidas" className="hover:text-white transition block">
-                  Perguntas frequentes (FAQ)
-                </a>
               </li>
             </ul>
           </div>

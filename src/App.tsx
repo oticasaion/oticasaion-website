@@ -12,6 +12,9 @@ import { TermsAndPolicyView } from './components/TermsAndPolicyView';
 import { HowItWorks } from './components/HowItWorks';
 import { Comparison } from './components/Comparison';
 import { Faq } from './components/Faq';
+import { Testimonials } from './components/Testimonials';
+import { TrustBar } from './components/TrustBar';
+import { FinalCta } from './components/FinalCta';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { LensSelectorModal } from './components/LensSelectorModal';
@@ -69,13 +72,45 @@ export const App: React.FC = () => {
 
   // Dedicated hash pages remain compatible with static hosting.
   useEffect(() => {
+    const sectionTargets: Record<string, string> = {
+      'como-funciona': 'como-funciona',
+      'comparativo': 'comparativo',
+      'por-que-aion': 'comparativo',
+      'depoimentos': 'depoimentos',
+      'duvidas': 'faq',
+      'faq': 'faq',
+      'catalogo': 'catalogo',
+    };
+
     const update = () => {
-      setCurrentView(getPage(window.location.hash));
+      const page = getPage(window.location.hash);
+      setCurrentView(page);
       setRouteHash(window.location.hash);
       setIsLensModalOpen(false);
-      window.scrollTo({ top: 0 });
+
+      const rawPath = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+      const targetId = sectionTargets[rawPath];
+      if (page === 'home' && targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else if (page !== 'product-detail') {
+        window.scrollTo({ top: 0 });
+      }
     };
+
     window.addEventListener('hashchange', update);
+
+    const initialRawPath = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    const initialTargetId = sectionTargets[initialRawPath];
+    if (initialTargetId) {
+      setTimeout(() => {
+        const el = document.getElementById(initialTargetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 350);
+    }
+
     return () => window.removeEventListener('hashchange', update);
   }, []);
 
@@ -86,7 +121,7 @@ export const App: React.FC = () => {
       'terms-policy': 'Políticas e termos', admin: 'Painel administrativo',
       'how-it-works': 'Como funciona', about: 'Por que a Aion?', faq: 'Dúvidas frequentes',
     };
-    document.title = titles[currentView] + ' | Óticas Aion';
+    document.title = (titles[currentView] || 'Óculos de grau completo') + ' | Óticas Aion';
   }, [currentView, activeProductDetail?.name]);
 
   const navigateTo = (view: AppView, targetProduct?: Product) => {
@@ -194,8 +229,13 @@ export const App: React.FC = () => {
         {/* HOME LANDING PAGE */}
         {currentView === 'home' && (
           <>
+            {/* 1. Banner Principal */}
             <Hero onWhatsAppClick={handleOpenWhatsApp} settings={homeSettings} />
 
+            {/* 2. Barra de Vantagens e Confiança */}
+            <TrustBar />
+
+            {/* 3. Vitrine de Armações com Filtros */}
             <Catalog
               products={products}
               onOpenProductDetail={handleOpenProductDetail}
@@ -204,6 +244,21 @@ export const App: React.FC = () => {
               title={homeSettings.catalogTitle}
               subtitle={homeSettings.catalogSubtitle}
             />
+
+            {/* 4. Como Funciona o Pedido e Medição DNP */}
+            <HowItWorks onWhatsAppClick={handleOpenWhatsApp} />
+
+            {/* 5. Comparativo: Óticas Aion vs Óticas de Shopping */}
+            <Comparison />
+
+            {/* 6. Avaliações e Prova Social de Clientes */}
+            <Testimonials />
+
+            {/* 7. Dúvidas Frequentes (FAQ) */}
+            <Faq onWhatsAppClick={handleOpenWhatsApp} />
+
+            {/* 8. Chamada Final para Envio de Receita no WhatsApp */}
+            <FinalCta onWhatsAppClick={handleOpenWhatsApp} />
           </>
         )}
       </main>

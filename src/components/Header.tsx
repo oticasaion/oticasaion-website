@@ -47,9 +47,21 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const handleSectionClick = (anchor: string) => {
-    const pages: Record<string, AppView> = { '#como-funciona': 'how-it-works', '#comparativo': 'about', '#faq': 'faq' };
-    onNavigate(pages[anchor] || 'home');
     setMobileMenuOpen(false);
+    if (currentView === 'home') {
+      const el = document.querySelector(anchor);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+    }
+    onNavigate('home');
+    setTimeout(() => {
+      const el = document.querySelector(anchor);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 150);
   };
 
   return (
@@ -113,19 +125,26 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
-              onClick={() => onNavigate('terms-policy')}
-              className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
-                currentView === 'terms-policy' ? 'text-[#c8a25a] font-bold border-b-2 border-[#c8a25a]' : ''
-              }`}
+              onClick={() => handleSectionClick('#depoimentos')}
+              className="whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a]"
             >
-              Políticas & Termos
+              Avaliações
             </button>
 
             <button
               onClick={() => handleSectionClick('#faq')}
               className="whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a]"
             >
-              Dúvidas Frequentes
+              Dúvidas
+            </button>
+
+            <button
+              onClick={() => onNavigate('terms-policy')}
+              className={`whitespace-nowrap transition-colors py-1 hover:text-[#c8a25a] ${
+                currentView === 'terms-policy' ? 'text-[#c8a25a] font-bold border-b-2 border-[#c8a25a]' : ''
+              }`}
+            >
+              Políticas & Termos
             </button>
           </nav>
 
@@ -198,12 +217,10 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               <button
-                onClick={() => handleLinkClick(() => onNavigate('terms-policy'))}
-                className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
-                  currentView === 'terms-policy' ? 'text-[#c8a25a]' : 'text-stone-200'
-                }`}
+                onClick={() => handleSectionClick('#depoimentos')}
+                className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
               >
-                <span>Políticas de Privacidade & Termos</span>
+                <span>Avaliações de Clientes</span>
                 <span className="text-stone-500 text-xs">→</span>
               </button>
 
@@ -212,6 +229,16 @@ export const Header: React.FC<HeaderProps> = ({
                 className="text-left text-stone-200 hover:text-[#c8a25a] text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between"
               >
                 <span>Perguntas Frequentes (FAQ)</span>
+                <span className="text-stone-500 text-xs">→</span>
+              </button>
+
+              <button
+                onClick={() => handleLinkClick(() => onNavigate('terms-policy'))}
+                className={`text-left text-base font-bold py-3.5 border-b border-white/5 px-2 rounded-lg flex items-center justify-between ${
+                  currentView === 'terms-policy' ? 'text-[#c8a25a]' : 'text-stone-200'
+                }`}
+              >
+                <span>Políticas de Privacidade & Termos</span>
                 <span className="text-stone-500 text-xs">→</span>
               </button>
             </nav>
